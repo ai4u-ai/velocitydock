@@ -1,0 +1,270 @@
+<!-- BEGIN PAGE BREADCRUMB -->
+<ul class="page-breadcrumb breadcrumb">
+	<li>
+		<a href="#/dashboard.html">Home</a><i class="fa fa-circle"></i>
+	</li>
+	<li class="active" data-ng-bind="$state.current.data.pageTitle">
+	</li>
+</ul>
+<!-- END PAGE BREADCRUMB -->
+
+<!-- BEGIN MAIN CONTENT -->
+<!--<div class="note note-success note-bordered">
+	<h3>Angular File Upload</h3>
+	<p>
+		Angular File Upload is a module for the AngularJS framework. Supports drag-n-drop upload, upload progress, validation filters and a file upload queue. It supports native HTML5 uploads, but degrades to a legacy iframe upload method for older browsers. Works with any server side platform which supports standard HTML form uploads.
+	</p>
+	<p><span class="label label-danger">File upload is disabled in the demo only!</span></p>
+	<p>
+		For more info please check the <a href="https://github.com/nervgh/angular-file-upload">official github page</a>
+	</p>
+</div>-->
+<div ng-controller="AnnotationsController">
+
+	<div class="col-md-6 col-sm-12">
+
+
+		<!-- BEGIN: ACCORDION DEMO -->
+		<div class="portlet light">
+
+			<div class="portlet-body">
+				<videogular   vg-player-ready="onPlayerReady($API)"  vg-theme="config.theme.url">
+
+
+					<canvas  style="position: absolute;  z-index: 3;width:100%; height:100%" ></canvas>
+					<vg-media  vg-src="config.sources">
+					</vg-media>
+
+					<vg-controls>
+						<vg-play-pause-button></vg-play-pause-button>
+						<vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+						<vg-scrub-bar>
+							<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+						</vg-scrub-bar>
+						<vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+
+						<vg-volume>
+							<vg-mute-button></vg-mute-button>
+							<vg-volume-bar></vg-volume-bar>
+						</vg-volume>
+						<vg-fullscreen-button></vg-fullscreen-button>
+					</vg-controls>
+
+					<vg-analytics vg-track-info="analytics"></vg-analytics>
+
+					<!-- <drawing width="500" height="300" rectangle-list='rectangles'></drawing>-->
+
+					<vg-buffering></vg-buffering>
+
+					<!--<vg-poster vg-url='videoService.config.plugins.poster'></vg-poster>-->
+				</videogular>
+
+
+			</div>
+
+
+
+		</div>
+	</div>
+<div class="row">
+	<div class="col-md-6 col-sm-12">
+		<div  class="todo-content">
+			<div class="portlet light">
+				<!-- PROJECT HEAD -->
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="icon-bar-chart font-green-sharp hide"></i>
+						<span class="caption-helper">My</span> &nbsp; <span class="caption-subject font-green-sharp bold uppercase">annotations</span>
+					</div>
+					<div class="actions">
+						<div class="btn-group">
+							<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown" dropdown-menu-hover data-close-others="true">
+								MANAGE <i class="fa fa-angle-down"></i>
+							</a>
+							<ul class="dropdown-menu pull-right">
+								<li >
+									<a  ng-hide="selectedAnnotation.length===0"  ng-click="saveAnnotations()">
+										<i class="i"></i> Save </a>
+								</li>
+								<li class="divider">
+								</li>
+								<li>
+									<a href="#">
+										Pending <span class="badge badge-danger">
+										4 </span>
+									</a>
+								</li>
+								<li>
+									<a href="#">
+										Completed <span class="badge badge-success">
+										12 </span>
+									</a>
+								</li>
+								<li>
+									<a href="#">
+										Overdue <span class="badge badge-warning">
+										9 </span>
+									</a>
+								</li>
+								<li class="divider">
+								</li>
+								<li>
+									<a  ng-hide="files.length===0"  ng-click="">
+										<i class="fa fa-trash-o"></i> Delete All</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- end PROJECT HEAD -->
+				<div class="portlet-body">
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-md-12 col-sm-12">
+								<div class="scroller" style="height: 355px; max-height: 700px;" data-always-visible="1" data-rail-visible="1" data-handle-color="#dae3e7">
+									<div class="todo-tasklist">
+										<div  ng-click="goToSelectedAnnoTime(selection,$index)" id="{{selection.currentTime}}"   ng-repeat="selection in selectedAnnotation.annotation " class="todo-tasklist-item todo-tasklist-item-border-green">
+											<img  class="todo-userpic pull-left" ng-src="{{selection.objectSelector.dataUrl}}" width="75px" height="75px">
+											<!--<div class="todo-tasklist-item-title">
+                                                Slider Redesign
+                                            </div>
+                                            <div class="todo-tasklist-item-text">
+                                                Lorem dolor sit amet ipsum dolor sit consectetuer dolore.
+                                            </div>-->
+											<div class="todo-tasklist-controls pull-left">
+												<span class="todo-tasklist-date"><i class="fa fa-calendar"></i>  {{selection.currentTime| date:'mm:ss' }}</span>
+												<span class="todo-tasklist-badge badge badge-roundless">Class:{{selection.objectSelector.class.name}}</span>
+												<span>x1:{{selection.objectSelector.x1}} x2:{{selection.objectSelector.x2}} y1:{{selection.objectSelector.y1}} y2:{{selection.objectSelector.y2}}</span>
+											</div>
+											<div class="todo-tasklist-controls pull-right">
+												<button type="button" class="btn btn-danger btn-xs" ng-click="removeAnnotation($index,selection)">
+													<span class="glyphicon glyphicon-trash"></span> Remove
+												</button>
+											</div>
+										</div>
+										<div ng-show="false"class="todo-tasklist-item todo-tasklist-item-border-red">
+											<!--<img class="todo-userpic pull-left" src="" width="27px" height="27px">-->
+											<!--<div class="todo-tasklist-item-title">
+											&lt;!&ndash;	Homepage Alignments to adjust&ndash;&gt;
+											</div>-->
+											<!--<div class="todo-tasklist-item-text">
+											&lt;!&ndash;	Lorem ipsum dolor sit amet, consectetuer dolore dolor sit amet.&ndash;&gt;
+											</div>-->
+										<!--	<div class="todo-tasklist-controls pull-left">
+												<span class="todo-tasklist-date"><i class="fa fa-calendar"></i> </span>
+												<span class="todo-tasklist-badge badge badge-roundless">Important</span>
+											</div>-->
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<!-- BEGIN: ACCORDION DEMO -->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-settings font-green-sharp"></i>
+					<span class="caption-subject bold uppercase">My Annotations </span>
+					<span class="caption-helper">Queue length: {{ files.length }}</span>
+				</div>
+				<div class="actions">
+					<div class="btn-group">
+						<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">
+							<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>
+						</a>
+						<ul class="dropdown-menu pull-right">
+							<li>
+								<a href="#">
+									<i class="fa fa-pencil"></i> Edit </a>
+							</li>
+							<li>
+								<a href="#">
+									<i class="fa fa-trash-o"></i> Delete </a>
+							</li>
+							<li>
+								<a href="#">
+									<i class="fa fa-ban"></i> Ban </a>
+							</li>
+							<li class="divider">
+							</li>
+							<li>
+								<a href="#">
+									<i class="i"></i> Make admin </a>
+							</li>
+						</ul>
+					</div>
+					<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">
+					</a>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div class="table-scrollable table-scrollable-borderless">
+					<table class="table table-hover table-light">
+						<thead>
+						<tr class="uppercase">
+							<th width="50%">Name</th>
+
+						<!--	<th ng-show="uploader.isHTML5">Write Access</th>
+							<th ng-show="uploader.isHTML5">Read Access</th>
+							<th ng-show="uploader.isHTML5">Size</th>-->
+						<!--	<th>Actions</th>-->
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-class="{'active': selectedAnnotation._id === item._id}"  ng-click="select($index)"ng-repeat="item in files">
+							<td><strong>{{ item._id }}</strong></td>
+
+							<td><strong><!--{{item.writeaccess}}-->
+								<!--<select type="text" ng-model="item.file.writeaccess" value="{{item.writeaccess}}">
+									<option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;
+									<option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;
+									<option value="public">Public</option>
+								</select>--></strong>
+							</td>
+							<td><strong><!--{{item.readaccess}}-->
+								<!--<select type="text" ng-model="item.file.readaccess" value="{{item.readaccess}}">
+									<option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;
+									<option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;
+									<option value="public">Public</option>
+								</select>--></strong>
+							</td>
+							<td ng-show="uploader.isHTML5" nowrap><!--{{ item.media.grid.length/1024/1024|number:2 }}--> MB</td>
+
+							<td nowrap>
+								<button type="button" class="btn btn-danger btn-xs" ng-click="removeAnnotation($index,item._id )">
+									<span class="glyphicon glyphicon-trash"></span> Remove
+								</button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+
+
+				<button type="button" class="btn btn-danger btn-s" ng-click="removeAllAnnotations()" ng-disabled="!files.length">
+					<span class="glyphicon glyphicon-trash"></span> Remove all
+				</button>
+			</div>
+		</div>
+		<!-- END: ACCORDION DEMO -->
+	</div>
+
+</div>
+</div>
+
+<!-- END MAIN CONTENT -->
+
+<!-- BEGIN MAIN JS-->
+<script>
+
+</script>
+<!-- BEGIN MAIN JS -->

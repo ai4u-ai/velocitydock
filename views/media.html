@@ -1,0 +1,173 @@
+<!-- BEGIN PAGE BREADCRUMB -->
+<ul class="page-breadcrumb breadcrumb">
+	<li>
+		<a href="#/dashboard.html">Home</a><i class="fa fa-circle"></i>
+	</li>
+	<li class="active" data-ng-bind="$state.current.data.pageTitle">
+	</li>
+</ul>
+<!-- END PAGE BREADCRUMB -->
+
+<!-- BEGIN MAIN CONTENT -->
+<!--<div class="note note-success note-bordered">
+	<h3>Angular File Upload</h3>
+	<p>
+		Angular File Upload is a module for the AngularJS framework. Supports drag-n-drop upload, upload progress, validation filters and a file upload queue. It supports native HTML5 uploads, but degrades to a legacy iframe upload method for older browsers. Works with any server side platform which supports standard HTML form uploads.
+	</p>
+	<p><span class="label label-danger">File upload is disabled in the demo only!</span></p>
+	<p>
+		For more info please check the <a href="https://github.com/nervgh/angular-file-upload">official github page</a>
+	</p>
+</div>-->
+<div ng-controller="MediaController">
+<div class="row" >
+
+
+
+	<div class="col-md-6 col-sm-12">
+		<!-- BEGIN: ACCORDION DEMO -->
+		<div class="portlet light">
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-settings font-green-sharp"></i>
+					<span class="caption-subject bold uppercase">My Multimedia Files</span>
+					<span class="caption-helper">Queue length: {{ files.length }}</span>
+				</div>
+				<div class="actions">
+					<div class="btn-group">
+						<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">
+							<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>
+						</a>
+						<ul class="dropdown-menu pull-right">
+							<li>
+								<a href="#">
+									<i class="fa fa-pencil"></i> Edit </a>
+							</li>
+							<li>
+								<a href="#">
+									<i class="fa fa-trash-o"></i> Delete </a>
+							</li>
+							<li>
+								<a href="#">
+									<i class="fa fa-ban"></i> Ban </a>
+							</li>
+							<li class="divider">
+							</li>
+							<li>
+								<a href="#">
+									<i class="i"></i> Make admin </a>
+							</li>
+						</ul>
+					</div>
+					<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">
+					</a>
+				</div>
+			</div>
+			<div class="portlet-body">
+				<div class="table-scrollable table-scrollable-borderless">
+					<table class="table table-hover table-light">
+						<thead>
+						<tr class="uppercase">
+							<th width="50%">Name</th>
+
+							<th ng-show="uploader.isHTML5">Write Access</th>
+							<th ng-show="uploader.isHTML5">Read Access</th>
+							<th ng-show="uploader.isHTML5">Size</th>
+							<th>Actions</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr ng-click="select($index)" ng-repeat="item in files">
+							<td><strong>{{ item.originalname }}</strong></td>
+
+							<td><strong>{{item.writeaccess}}
+								<!--<select type="text" ng-model="item.file.writeaccess" value="{{item.writeaccess}}">
+									<option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;
+									<option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;
+									<option value="public">Public</option>
+								</select>--></strong>
+							</td>
+							<td><strong>{{item.readaccess}}
+								<!--<select type="text" ng-model="item.file.readaccess" value="{{item.readaccess}}">
+									<option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;
+									<option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;
+									<option value="public">Public</option>
+								</select>--></strong>
+							</td>
+							<td nowrap>{{ item.media.grid.length/1024/1024|number:2 }} MB</td>
+
+							<td nowrap>
+								<button type="button" class="btn btn-danger btn-xs" ng-click="removeOne($index,item._id)">
+									<span class="glyphicon glyphicon-trash"></span> Remove
+								</button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+
+
+				<button type="button" class="btn btn-danger btn-s" ng-click="removeAll()" ng-disabled="!files.length">
+					<span class="glyphicon glyphicon-trash"></span> Remove all
+				</button>
+			</div>
+		</div>
+		</div>
+		<div class="col-md-6 col-sm-12">
+
+
+				<!-- BEGIN: ACCORDION DEMO -->
+				<div class="portlet light">
+
+					<div class="portlet-body">
+					<videogular   vg-player-ready="onPlayerReady($API)"  vg-theme="config.theme.url">
+
+
+
+					<vg-media  vg-src="config.sources">
+					</vg-media>
+
+					<vg-controls>
+						<vg-play-pause-button></vg-play-pause-button>
+						<vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+						<vg-scrub-bar>
+							<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+						</vg-scrub-bar>
+						<vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+
+						<vg-volume>
+							<vg-mute-button></vg-mute-button>
+							<vg-volume-bar></vg-volume-bar>
+						</vg-volume>
+						<vg-fullscreen-button></vg-fullscreen-button>
+					</vg-controls>
+
+					<vg-analytics vg-track-info="analytics"></vg-analytics>
+
+					<!-- <drawing width="500" height="300" rectangle-list='rectangles'></drawing>-->
+
+					<vg-buffering></vg-buffering>
+
+					<!--<vg-poster vg-url='videoService.config.plugins.poster'></vg-poster>-->
+				</videogular>
+
+
+</div>
+
+
+
+		</div>
+	</div>
+
+
+</div>
+
+
+<!-- END MAIN CONTENT -->
+
+<!-- BEGIN MAIN JS-->
+<script>
+
+</script>
+<!-- BEGIN MAIN JS -->

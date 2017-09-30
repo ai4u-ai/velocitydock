@@ -1,0 +1,1286 @@
+<!-- BEGIN PAGE BREADCRUMB -->
+<ul class="page-breadcrumb breadcrumb">
+	<li>
+		<a href="#/dashboard.html">Home</a><i class="fa fa-circle"></i>
+	</li>
+	<li class="active" data-ng-bind="$state.current.data.pageTitle">
+	</li>
+</ul>
+<style>
+	[dnd-list] {
+		min-height: 60px;
+		min-width: 60px;
+		margin: 0px;
+		padding-left: 0px;
+	}
+</style>
+<!-- END PAGE BREADCRUMB -->
+
+<!-- BEGIN MAIN CONTENT -->
+<!--<div class="note note-success note-bordered">
+	<h3>Angular File Upload</h3>
+	<p>
+		Angular File Upload is a module for the AngularJS framework. Supports drag-n-drop upload, upload progress, validation filters and a file upload queue. It supports native HTML5 uploads, but degrades to a legacy iframe upload method for older browsers. Works with any server side platform which supports standard HTML form uploads.
+	</p>
+	<p><span class="label label-danger">File upload is disabled in the demo only!</span></p>
+	<p>
+		For more info please check the <a href="https://github.com/nervgh/angular-file-upload">official github page</a>
+	</p>
+</div>-->
+
+<div ng-controller="AlgosController">
+	<!--<div class="timeline">
+		&lt;!&ndash; TIMELINE ITEM &ndash;&gt;
+		<div class="timeline-item">
+			<div class="timeline-badge">
+				<img class="timeline-badge-userpic" src="../../assets/admin/pages/media/users/avatar80_1.jpg">
+			</div>
+			<div class="timeline-body">
+				<div class="timeline-body-arrow">
+				</div>
+				<div class="timeline-body-head">
+					<div class="timeline-body-head-caption">
+						<a href="javascript:;" class="timeline-body-title font-blue-madison">Andres Iniesta</a>
+						<span class="timeline-body-time font-grey-cascade">Replied at 7:45 PM</span>
+					</div>
+					<div class="timeline-body-head-actions">
+						<div class="btn-group">
+							<button class="btn btn-circle green-haze btn-sm dropdown-toggle" type="button" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+								Actions <i class="fa fa-angle-down"></i>
+							</button>
+							<ul class="dropdown-menu pull-right" role="menu">
+								<li>
+									<a href="javascript:;">Action </a>
+								</li>
+								<li>
+									<a href="javascript:;">Another action </a>
+								</li>
+								<li>
+									<a href="javascript:;">Something else here </a>
+								</li>
+								<li class="divider">
+								</li>
+								<li>
+									<a href="javascript:;">Separated link </a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="timeline-body-content">
+							<span class="font-grey-cascade">
+							Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. </span>
+				</div>
+			</div>
+		</div>
+		<div class="timeline-item">
+			<div class="timeline-badge">
+				<div class="timeline-icon">
+					<i class="icon-docs font-red-intense"></i>
+				</div>
+			</div>
+			<div class="timeline-body">
+				<div class="timeline-body-arrow">
+				</div>
+				<div class="timeline-body-head">
+					<div class="timeline-body-head-caption">
+						<span class="timeline-body-alerttitle font-green-haze">Server Report</span>
+						<span class="timeline-body-time font-grey-cascade">Yesterday at 11:00 PM</span>
+					</div>
+					<div class="timeline-body-head-actions">
+						<div class="btn-group dropup">
+							<button class="btn btn-circle green-haze btn-sm dropdown-toggle" type="button" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+								Actions <i class="fa fa-angle-down"></i>
+							</button>
+							<ul class="dropdown-menu pull-right" role="menu">
+								<li>
+									<a href="javascript:;">Action </a>
+								</li>
+								<li>
+									<a href="javascript:;">Another action </a>
+								</li>
+								<li>
+									<a href="javascript:;">Something else here </a>
+								</li>
+								<li class="divider">
+								</li>
+								<li>
+									<a href="javascript:;">Separated link </a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="timeline-body-content">
+							<span class="font-grey-cascade">
+							Lorem ipsum dolore sit amet <a href="javascript:;">Ispect</a>
+							</span>
+				</div>
+			</div>
+		</div>
+		</div>-->
+		<!-- END TIMELINE ITEM -->
+
+
+
+
+<div class="row">
+	<div class="col-md-12">
+		<!-- BEGIN TODO SIDEBAR -->
+		<div class="todo-ui margin-top-10">
+			<div class="todo-sidebar">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption" data-toggle="collapse" data-target=".todo-project-list-content">
+							<span class="caption-subject font-green-sharp bold uppercase">ALGO'S </span>
+							<span class="caption-helper visible-sm-inline-block visible-xs-inline-block">click to view project list</span>
+						</div>
+						<div class="actions">
+							<div class="btn-group">
+								<a class="btn green-haze btn-circle btn-sm todo-projects-config" href="#" data-toggle="dropdown" dropdown-menu-hover data-close-others="true">
+									<i class="icon-settings"></i> &nbsp; <i class="fa fa-angle-down"></i>
+								</a>
+								<ul class="dropdown-menu pull-right">
+									<li>
+										<a href="#">
+											<i class="i"></i> New Algo </a>
+									</li>
+									<li class="divider">
+									</li>
+									<li>
+										<a href="#">
+											Pending <span class="badge badge-danger">
+										4 </span>
+										</a>
+									</li>
+									<li>
+										<a href="#">
+											Completed <span class="badge badge-success">
+										12 </span>
+										</a>
+									</li>
+									<li>
+										<a href="#">
+											Overdue <span class="badge badge-warning">
+										9 </span>
+										</a>
+									</li>
+									<li class="divider">
+									</li>
+									<li>
+										<a href="#">
+											<i class="i"></i> Archived Projects </a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="portlet-body todo-project-list-content">
+						<div class="todo-project-list">
+							<ul   ng-repeat="algo in algos" class="nav nav-pills nav-stacked">
+								<li  ng-class="{'active': algo._id === selected._id}">
+								<a ng-click="select($index)">{{algo.name}}
+
+								</a>
+
+
+
+
+
+								</li>
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END TODO SIDEBAR -->
+			<!-- BEGIN TODO CONTENT -->
+			<div class="todo-content">
+				<div class="portlet light">
+					<!-- PROJECT HEAD -->
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="icon-bar-chart font-green-sharp hide"></i>
+							<span class="caption-helper">ALGO:</span> &nbsp; <span class="caption-subject font-green-sharp bold uppercase">{{selected.name}}</span>&nbsp; <span class="caption-subject font-green-sharp bold uppercase">{{selected.version}}</span>
+						</div>
+						<div class="actions">
+							<div class="btn-group">
+								<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown" dropdown-menu-hover data-close-others="true">
+									MANAGE <i class="fa fa-angle-down"></i>
+								</a>
+								<ul class="dropdown-menu pull-right">
+									<li>
+										<a ng-click="createAlgo()">
+											<i class="i"></i> New Algo </a>
+									</li>
+									<li class="divider">
+									</li>
+									<li>
+										<a href="#">
+											Pending <span class="badge badge-danger">
+										4 </span>
+										</a>
+									</li>
+									<li>
+										<a href="#">
+											Completed <span class="badge badge-success">
+										12 </span>
+										</a>
+									</li>
+									<li>
+										<a href="#">
+											Overdue <span class="badge badge-warning">
+										9 </span>
+										</a>
+									</li>
+									<li class="divider">
+									</li>
+									<li>
+										<a  ng-click="removeOne(selected._id)">
+											<span  class="fa fa-trash-o"> </span>	<i class="i"></i> Delete algo </a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- end PROJECT HEAD -->
+					<div class="portlet-body">
+						<div class="row">
+							<div class="col-md-3 col-sm-3">
+								<div class="scroller" style="max-height: 600px;" data-always-visible="0" data-rail-visible="0" data-handle-color="#dae3e7">
+									<div class="todo-tasklist">
+										<div class="todo-tasklist-item todo-tasklist-item-border-green"  ng-class="{'todo-tasklist-badge todo-tasklist-item-border-red': selectedStep === 0}"  ng-click="selectStep(0)">
+										<!--	<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar4.jpg" width="27px" height="27px">-->
+											<div   class="todo-tasklist-item-title">
+												Name and Description
+											</div>
+											<!--<div class="todo-tasklist-item-text">
+												Lorem dolor sit amet ipsum dolor sit consectetuer dolore.
+											</div>
+											<div class="todo-tasklist-controls pull-left">
+												<span class="todo-tasklist-date"><i class="fa fa-calendar"></i> 21 Sep 2014 </span>
+												<span class="todo-tasklist-badge badge badge-roundless">Urgent</span>
+											</div>-->
+										</div>
+										<div class="todo-tasklist-item todo-tasklist-item-border-green"  ng-class="{'todo-tasklist-badge  todo-tasklist-item-border-red': selectedStep === 1}" ng-click="selectStep(1)">
+											<!--<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar5.jpg" width="27px" height="27px">-->
+											<div class="todo-tasklist-item-title">
+												Model
+											</div>
+											<!--<div class="todo-tasklist-item-text">
+												Lorem ipsum dolor sit amet, consectetuer dolore dolor sit amet.
+											</div>
+											<div class="todo-tasklist-controls pull-left">
+												<span class="todo-tasklist-date"><i class="fa fa-calendar"></i> 14 Sep 2014 </span>
+												<span class="todo-tasklist-badge badge badge-roundless">Important</span>
+											</div>-->
+										</div>
+										<div class="todo-tasklist-item todo-tasklist-item-border-green"  ng-class="{'todo-tasklist-badge todo-tasklist-item-border-red': selectedStep ===2}" ng-click="selectStep(2)">
+											<!--<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar9.jpg" width="27px" height="27px">-->
+											<div class="todo-tasklist-item-title">
+												Dependencies
+											</div>
+											<!--<div class="todo-tasklist-controls pull-left">
+												<span class="todo-tasklist-date"><i class="fa fa-calendar"></i> 10 Feb 2015 </span>
+												<span class="todo-tasklist-badge badge badge-roundless">Important</span>&nbsp;
+											</div>-->
+										</div>
+										<div class="todo-tasklist-item todo-tasklist-item-border-blue"   ng-class="{'todo-tasklist-badge todo-tasklist-item-border-red': selectedStep === 3}" ng-click="selectStep(3)">
+											<!--<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar6.jpg" width="27px" height="27px">-->
+											<div class="todo-tasklist-item-title">
+												Promo Video
+											</div>
+											<!--<div class="todo-tasklist-item-text">
+												Lorem ipsum amet, consectetuer dolore dolor sit amet.
+											</div>
+											<div class="todo-tasklist-controls pull-left">
+												<span class="todo-tasklist-date"><i class="fa fa-calendar"></i> 04 Oct 2014 </span>
+												<span class="todo-tasklist-badge badge badge-roundless">Postponed</span>&nbsp; <span class="todo-tasklist-badge badge badge-roundless">Test</span>
+											</div>-->
+										</div>
+
+										<div class="todo-tasklist-item todo-tasklist-item-border-blue"  ng-class="{'todo-tasklist-badge todo-tasklist-item-border-red': selectedStep === 4}"  ng-click="selectStep(4)">
+
+											<div class="todo-tasklist-item-title">
+												Permissions
+											</div>
+
+										</div>
+										<div class="todo-tasklist-item todo-tasklist-item-border-purple"   ng-class="{'todo-tasklist-badge  todo-tasklist-item-  todo-tasklist-item-border-red': selectedStep === 5}" ng-click="selectStep(5)">
+											<!--<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar7.jpg" width="27px" height="27px">-->
+											<div class="todo-tasklist-item-title">
+												Price
+											</div>
+											<!--<div class="todo-tasklist-item-text">
+												Lorem ipsum dolor sit amet, consectetuer dolore psum dolor sit.
+											</div>
+											<div class="todo-tasklist-controls pull-left">
+												<span class="todo-tasklist-date"><i class="fa fa-calendar"></i> 19 Dec 2014 </span>
+											</div>-->
+										</div>
+										<div class="todo-tasklist-item todo-tasklist-item-border-blue"   ng-class="{'todo-tasklist-badge todo-tasklist-item-border-red': selectedStep === 6}" ng-click="selectStep(6)">
+											<!--<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar6.jpg" width="27px" height="27px">-->
+											<div class="todo-tasklist-item-title">
+												Train Model
+											</div>
+											<!--<div class="todo-tasklist-item-text">
+												Lorem ipsum amet, consectetuer dolore dolor sit amet.
+											</div>
+											<div class="todo-tasklist-controls pull-left">
+												<span class="todo-tasklist-date"><i class="fa fa-calendar"></i> 04 Oct 2014 </span>
+												<span class="todo-tasklist-badge badge badge-roundless">Postponed</span>&nbsp; <span class="todo-tasklist-badge badge badge-roundless">Test</span>
+											</div>-->
+										</div>
+										<div  class="todo-tasklist-item todo-tasklist-item-border-purple"   ng-class="{'todo-tasklist-badge todo-tasklist-item- todo-tasklist-item-border-red': selectedStep === 7}" ng-click="selectStep(7)">
+											<!--<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar7.jpg" width="27px" height="27px">-->
+											<div class="todo-tasklist-item-title">
+												Publish
+											</div>
+											<!--<div class="todo-tasklist-item-text">
+												Lorem ipsum dolor sit amet, consectetuer dolore psum dolor sit.
+											</div>
+											<div class="todo-tasklist-controls pull-left">
+												<span class="todo-tasklist-date"><i class="fa fa-calendar"></i> 19 Dec 2014 </span>
+											</div>-->
+										</div>
+
+									</div>
+								</div>
+							</div>
+							<div class="todo-tasklist-devider">
+							</div>
+							<div class="col-md-9 col-sm-9">
+								<div class="scroller" style="max-height: 600px;" data-always-visible="0" data-rail-visible="0" data-handle-color="#dae3e7">
+									<form action="#" class="form-horizontal">
+										<!-- TASK HEAD -->
+										<div class="form" ng-show="selectedStep===0">
+											<div class="form-group">
+												<div class="col-md-8 col-sm-8">
+													<div class="todo-taskbody-user">
+
+														<span class="todo-username pull-left">/{{getUser().userName| lowercase}}/{{selected.name|removeSpaces| lowercase}}/</span>
+
+													</div>
+												</div>
+
+											</div>
+											<!-- END TASK HEAD -->
+											<!-- TASK TITLE -->
+											<div class="form-group">
+												<div class="col-md-6">
+													<input type="text" ng-model="selected.name" class="form-control todo-taskbody-tasktitle" placeholder="Algo Title...">
+												</div>
+												<div class="col-md-6">
+													<input type="text" ng-model="selected.version" class="form-control todo-taskbody-tasktitle" placeholder="Algo Version...">
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="col-md-6">
+													<ui-select ng-model="selected.framework" theme="bootstrap">
+														<ui-select-match placeholder="Select or search a framework in the list...">{{$select.selected.name}}</ui-select-match>
+														<ui-select-choices repeat="framework in frameworks| filter: $select.search">
+															<div ng-bind-html="framework.name| highlight: $select.search"></div>
+
+														</ui-select-choices>
+													</ui-select>
+
+												</div>
+												<div class="col-md-6">
+												<ui-select ng-model="selected.language" theme="bootstrap">
+													<ui-select-match placeholder="Select or search a language in the list...">{{$select.selected.name}}</ui-select-match>
+													<ui-select-choices repeat="language in selected.framework.languages| filter: $select.search">
+														<div ng-bind-html="language.name| highlight: $select.search"></div>
+
+													</ui-select-choices>
+												</ui-select>
+
+											</div>
+
+											</div>
+
+											<!-- TASK DESC -->
+											<div class="form-group">
+												<div class="col-md-12">
+													<textarea class="form-control todo-taskbody-taskdesc" ng-model="selected.description"  rows="8" placeholder="Algo Description..."></textarea>
+												</div>
+											</div>
+											<!-- END TASK DESC -->
+											<!-- TASK DUE DATE -->
+											<!--<div class="form-group">
+												<div class="col-md-12">
+													<div class="input-icon">
+														<i class="fa fa-calendar"></i>
+														<input type="text" class="form-control todo-taskbody-due" placeholder="Due Date...">
+													</div>
+												</div>
+											</div>-->
+											<!-- TASK TAGS -->
+										<!--	<div class="form-group">
+												<div class="col-md-12">
+													<input type="text" class="form-control todo-taskbody-tags" placeholder="Tags..." value="Face Recognition">
+												</div>
+											</div>-->
+											<!-- TASK TAGS -->
+											<div class="form-actions right todo-form-actions">
+												<button ng-click="saveAlgo()"class="btn btn-circle btn-sm green-haze">Save Changes</button>
+												<button class="btn btn-circle btn-sm btn-default">Cancel</button>
+											</div>
+										</div>
+										<div class="row"  ng-show="selectedStep===1" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
+
+											<div class="col-md-12">
+												<!-- BEGIN: ACCORDION DEMO -->
+												<div class="portlet light" ng-show="selectedStep===1">
+													<div class="portlet-title">
+														<div class="caption font-green-sharp">
+															<i class="icon-settings font-green-sharp"></i>
+															<span class="caption-subject bold uppercase">Select a Model</span>
+															<span class="caption-helper bold uppercase">{{ selected.model.name }}</span>
+														</div>
+														<div class="actions">
+															<!--<div class="btn-group">
+																<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">
+																	<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>
+																</a>
+																<ul class="dropdown-menu pull-right">
+																	<li>
+																		<a href="#">
+																			<i class="fa fa-pencil"></i> Edit </a>
+																	</li>
+																	<li>
+																		<a href="#">
+																			<i class="fa fa-trash-o"></i> Delete </a>
+																	</li>
+																	<li>
+																		<a href="#">
+																			<i class="fa fa-ban"></i> Ban </a>
+																	</li>
+																	<li class="divider">
+																	</li>
+																	<li>
+																		<a href="#">
+																			<i class="i"></i> Make admin </a>
+																	</li>
+																</ul>
+															</div>-->
+															<!--	<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">
+                                                                </a>-->
+														</div>
+													</div>
+													<div class="portlet-body">
+
+
+														<div class="table-scrollable table-scrollable-borderless">
+
+
+															<table  class="table table-hover table-light">
+																<thead>
+																<tr class="uppercase">
+																	<th width="50%">Name</th>
+
+																	<th ng-show="uploader.isHTML5">Write Access</th>
+																	<th ng-show="uploader.isHTML5">Read Access</th>
+																	<th ng-show="uploader.isHTML5">Size</th>
+
+																</tr>
+																</thead>
+																<tbody>
+																<tr ng-class="{'active': selected.model._id === item._id}" ng-click="selectModel(item)" ng-repeat="item in models">
+																	<td><strong>{{ item.originalname }}</strong></td>
+
+																	<td><strong>{{item.writeaccess}}
+																		<!--<select type="text" ng-model="item.file.writeaccess" value="{{item.writeaccess}}">
+                                                                            <option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;
+                                                                            <option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;
+                                                                            <option value="public">Public</option>
+                                                                        </select>--></strong>
+																	</td>
+																	<td><strong>{{item.readaccess}}
+																		<!--<select type="text" ng-model="item.file.readaccess" value="{{item.readaccess}}">
+                                                                            <option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;
+                                                                            <option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;
+                                                                            <option value="public">Public</option>
+                                                                        </select>--></strong>
+																	</td>
+																	<td ng-show="uploader.isHTML5" nowrap>{{ item.media.grid.length/1024/1024|number:2 }} MB</td>
+
+
+																</tr>
+																</tbody>
+															</table>
+														</div>
+
+
+
+													<!--	<button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
+															<span class="glyphicon glyphicon-trash"></span> Remove all
+														</button>-->
+													</div>
+												</div>
+												<div class="form-actions right todo-form-actions">
+													<button ng-click="saveAlgo()"class="btn btn-circle btn-sm green-haze">Save Changes</button>
+													<button class="btn btn-circle btn-sm btn-default">Cancel</button>
+												</div>
+
+											</div>
+												<!-- END: ACCORDION DEMO -->
+
+													</div>
+
+
+
+
+
+<div class="row"  ng-show="selectedStep===2">
+
+	<div class="col-md-6 col-sm-6">
+		<div class="portlet light" >
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-settings font-green-sharp"></i>
+					<span class="caption-subject bold uppercase">Drop dependencies</span>
+					<span class="caption-helper"> {{ selected.dependencies.length}}</span>
+				</div>
+
+			</div>
+			<div class="portlet-body">
+		<div class="file-drop-zone margin-bottom-20 ">
+
+			<ul dnd-list="selected.dependencies"   dnd-drop="dropCallback(event, index, item, external, type, 'itemType')">
+
+				<li ng-repeat="item  in selected.dependencies track by $index"
+					dnd-draggable="item"
+					dnd-moved="dependencies.push( selected.dependencies[$index]); "
+					dnd-effect-allowed="move" >
+
+				{{item.name}}<a ng-click="removeFromSelectedDep($index)">
+					<span class="fa fa-trash-o"> </span>
+					<i class="i"></i>
+				</a>
+				</li>
+
+
+			</ul >
+		</div>
+				</div>
+
+	</div>
+		</div>
+	<div class="col-md-6 col-sm-6">
+		<div class="portlet light" >
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-settings font-green-sharp"></i>
+					<span class="caption-subject bold uppercase">My dependencies</span>
+					<span class="caption-helper"> {{ dependencies.length }}</span>
+				</div>
+
+			</div>
+			<div class="portlet-body">
+
+				<div class="table-scrollable table-scrollable-borderless">
+					<table class="table table-hover table-light">
+						<thead>
+						<tr class="uppercase">
+							<th width="50%">Name</th>
+
+						</tr>
+						</thead>
+						<tbody>
+						<tr dnd-draggable="item" dnd-list="dependencies"  dnd-drop="dropCallbackDependencies(event, index, item, external, type, 'itemType')" dnd-effect-allowed="move" ng-repeat="item in dependencies">
+							<td><strong>{{ item.originalname }}</strong></td>
+
+
+
+
+
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+
+
+			</div>
+		</div>
+	</div>
+	<div class="form-actions right todo-form-actions">
+		<button ng-click="saveAlgo()"class="btn btn-circle btn-sm green-haze">Save Changes</button>
+		<button class="btn btn-circle btn-sm btn-default">Cancel</button>
+	</div>
+</div>
+
+
+										<div class="row"  ng-show="selectedStep===6">
+
+											<div class="col-md-6 col-sm-6">
+												<div class="portlet light" >
+													<div class="portlet-title">
+														<div class="caption font-green-sharp">
+															<i class="icon-settings font-green-sharp"></i>
+															<span class="caption-subject bold uppercase">Drop annotations</span>
+															<span class="caption-helper"> {{ selected.annotations.length}}</span>
+														</div>
+
+													</div>
+													<div class="portlet-body">
+														<div class="file-drop-zone margin-bottom-20 ">
+
+															<ul dnd-list="selected.annotations"   dnd-drop="dropCallbackAnnotations(event, index, item, external, type, 'itemType')">
+
+																<li ng-repeat="item  in selected.annotations track by $index"
+																	dnd-draggable="item"
+																	dnd-moved="annotations.push( selected.annotations[$index]); "
+																	dnd-effect-allowed="move" >
+
+																	{{item._id}}<a ng-click="removeFromSelectedAnn($index)">
+																	<span class="fa fa-trash-o"> </span>
+																	<i class="i"></i>
+																</a>
+																</li>
+
+
+															</ul >
+														</div>
+													</div>
+
+												</div>
+												<div class="form-actions right todo-form-actions">
+
+
+															  	<a href="" ng-click="trainModel()"class="btn btn-circle btn-sm green-haze">Train model</a>
+																<a href="" ng-click="saveAlgo()"class="btn btn-circle btn-sm green-haze">Save </a>
+																<a href="" class="btn btn-circle btn-sm btn-default">Cancel</a>
+																<a href="" class="btn btn-circle btn-sm btn-default">Cancel</a>
+													&nbsp;<div class="caption">
+													<i class="icon-bar-chart font-green-sharp"></i>
+													<span class="caption-helper font-green-sharp bold uppercase">State:</span>  &nbsp; <span class="caption-subject font-red-thunderbird bold uppercase">{{training.status}}</span> &nbsp; <span class="caption-helper font-green-sharp bold uppercase">Duration:</span>   <span class="caption-subject font-red-thunderbird bold uppercase">{{getDuration(training.startDate,training.endDate) | date :'mm:ss.sss'}}</span>
+
+												</div>
+
+												</div>
+												<span class="caption-helper">
+																	<div class="input-group-mini"><label>Training Steps: <input class="input-mini"  ng-model="trainingSteps"></label>
+
+																</div>
+																</span>
+												<div class="form-group">
+													<label class="col-sm-3 control-label">Select Training</label>
+													<div class="col-sm-4">
+
+														<ui-select ng-model="selected.selectedModelToTrain" theme="bootstrap">
+															<ui-select-match placeholder="Select a training in the list...">{{$select.selected.startDate|date}}</ui-select-match>
+															<ui-select-choices repeat="training in trainings| filter: $select.search">
+																<div ng-bind-html="training.startDate|date| highlight: $select.search"></div>
+																<small>
+																	version: {{training.endModel.version}}
+																	status: {{training.status}}
+
+																</small>
+
+															</ui-select-choices>
+														</ui-select>
+
+													</div>
+
+
+												</div>
+											</div>
+
+											<div class="col-md-6 col-sm-6">
+												<div class="portlet light" >
+													<div class="portlet-title">
+														<div class="caption font-green-sharp">
+															<i class="icon-settings font-green-sharp"></i>
+															<span class="caption-subject bold uppercase">My Annotations</span>
+															<span class="caption-helper"> {{ annotations.length }}</span>
+														</div>
+
+													</div>
+													<div class="portlet-body">
+												<div class="row">
+														<div class="table-scrollable table-scrollable-borderless">
+															<table class="table table-hover table-light">
+																<thead>
+																<tr class="uppercase">
+																	<th width="50%">Name</th>
+
+																</tr>
+																</thead>
+																<tbody>
+																<tr dnd-draggable="item" dnd-list="annotations"  ng-click="selectAnnotation($index)" dnd-drop="dropCallbackDependencies(event, index, item, external, type, 'itemType')" dnd-effect-allowed="move" ng-repeat="item in annotations">
+																	<td><strong>{{ item._id }}</strong></td>
+
+
+
+
+
+																</tr>
+																</tbody>
+															</table>
+														</div>
+
+												</div>
+														<div class="row">
+															<div class="col-md-12 col-sm-12">
+																<div class="col-md-12 col-sm-12">
+																	<div class="scroller" style="height: 355px; max-height: 700px;" data-always-visible="1" data-rail-visible="1" data-handle-color="#dae3e7">
+																		<div class="todo-tasklist">
+																			<div  ng-click="goToSelectedAnnoTime(selection,$index)" id="{{selection.currentTime}}"  ng-show="selection.objectSelector.mouseDown" ng-repeat="selection in selectedAnnotation.annotation " class="todo-tasklist-item todo-tasklist-item-border-green">
+																				<img  class="todo-userpic pull-left" ng-src="{{selection.objectSelector.dataUrl}}" width="75px" height="75px">
+																				<!--<div class="todo-tasklist-item-title">
+                                                                                    Slider Redesign
+                                                                                </div>
+                                                                                <div class="todo-tasklist-item-text">
+                                                                                    Lorem dolor sit amet ipsum dolor sit consectetuer dolore.
+                                                                                </div>-->
+																				<div class="todo-tasklist-controls pull-left">
+																					<span class="todo-tasklist-date"><i class="fa fa-calendar"></i>  {{selection.currentTime| date:'mm:ss' }}</span>
+																					<span class="todo-tasklist-badge badge badge-roundless">Class:{{selection.objectSelector.class.name}}</span>
+																					<span>x1:{{selection.objectSelector.x1}} x2:{{selection.objectSelector.x2}} y1:{{selection.objectSelector.y1}} y2:{{selection.objectSelector.y2}}</span>
+																				</div>
+
+																			</div>
+																			<div ng-show="false"class="todo-tasklist-item todo-tasklist-item-border-red">
+																				<!--<img class="todo-userpic pull-left" src="" width="27px" height="27px">-->
+																				<!--<div class="todo-tasklist-item-title">
+                                                                                &lt;!&ndash;	Homepage Alignments to adjust&ndash;&gt;
+                                                                                </div>-->
+																				<!--<div class="todo-tasklist-item-text">
+                                                                                &lt;!&ndash;	Lorem ipsum dolor sit amet, consectetuer dolore dolor sit amet.&ndash;&gt;
+                                                                                </div>-->
+																				<!--	<div class="todo-tasklist-controls pull-left">
+                                                                                        <span class="todo-tasklist-date"><i class="fa fa-calendar"></i> </span>
+                                                                                        <span class="todo-tasklist-badge badge badge-roundless">Important</span>
+                                                                                    </div>-->
+																			</div>
+
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+
+
+													</div>
+														</div>
+
+
+
+
+
+
+
+
+												</div>
+											</div>
+
+
+
+
+											</div>
+
+
+
+
+
+										<div class="row"  ng-show="selectedStep===3">
+
+
+
+											<div class="col-md-6 col-sm-12">
+												<!-- BEGIN: ACCORDION DEMO -->
+												<div class="portlet light">
+													<div class="portlet-title">
+														<div class="caption font-green-sharp">
+															<i class="icon-settings font-green-sharp"></i>
+															<span class="caption-subject bold uppercase">Selected:</span>
+															<span class="caption-helper"> {{ selected.media.name }}</span>
+														</div>
+
+													</div>
+													<div class="portlet-body">
+														<div class="table-scrollable table-scrollable-borderless">
+															<table class="table table-hover table-light">
+																<thead>
+																<tr class="uppercase">
+
+
+																</tr>
+																</thead>
+																<tbody>
+																<tr ng-class="{'active': selected.media._id === item._id}" ng-click="selectMedia($index)" ng-repeat="item in media">
+																	<td><strong>{{ item.originalname }}</strong></td>
+
+
+																</tr>
+																</tbody>
+															</table>
+														</div>
+
+
+
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6 col-sm-12">
+
+
+												<!-- BEGIN: ACCORDION DEMO -->
+												<div class="portlet light">
+
+													<div class="portlet-body">
+														<videogular   vg-player-ready="onPlayerReady($API)"  vg-theme="config.theme.url">
+
+
+
+															<vg-media  vg-src="config.sources">
+															</vg-media>
+
+															<vg-controls>
+																<vg-play-pause-button></vg-play-pause-button>
+																<vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+																<vg-scrub-bar>
+																	<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+																</vg-scrub-bar>
+																<vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+
+																<vg-volume>
+																	<vg-mute-button></vg-mute-button>
+																	<vg-volume-bar></vg-volume-bar>
+																</vg-volume>
+																<vg-fullscreen-button></vg-fullscreen-button>
+															</vg-controls>
+
+															<vg-analytics vg-track-info="analytics"></vg-analytics>
+
+															<!-- <drawing width="500" height="300" rectangle-list='rectangles'></drawing>-->
+
+															<vg-buffering></vg-buffering>
+
+															<!--<vg-poster vg-url='videoService.config.plugins.poster'></vg-poster>-->
+														</videogular>
+
+
+													</div>
+
+
+
+												</div>
+												<div class="form-actions right todo-form-actions">
+													<button ng-click="saveAlgo()"class="btn btn-circle btn-sm green-haze">Save Changes</button>
+													<button class="btn btn-circle btn-sm btn-default">Cancel</button>
+												</div>
+											</div>
+
+
+										</div>
+
+										<div class="row" ng-show="selectedStep===7">
+	<div class="col-md-12">
+		<!-- BEGIN PORTLET-->
+										<div class="portlet box red-sunglo">
+											<div class="portlet-title">
+												<div class="caption">
+													<!--<i class="fa fa-gift"></i>-->
+												</div>
+
+											</div>
+											<div class="portlet-body form">
+
+												<form  id="form-username" class="form-horizontal form-bordered">
+													<div class="todo-tasklist-devider">
+													</div>
+													<div class="form-group" style="padding-top:15px">
+														<label class="col-sm-3 control-label">Name</label>
+														<div class="col-sm-4">
+															<div class="input-group">
+								<span class="input-group-addon">
+								<i class="fa fa-user"></i>
+								</span>
+																<input type="text"  ng-disabled="1" id="typeahead_example_1" name="typeahead_example_1" class="form-control" ng-value="selected.name"/>
+															</div>
+															<p class="help-block">
+																Path:<br>
+																<span class="label label-success label-sm">
+								GET </span>
+																<a target="_blank" href="selected.apipath">
+																{{selected.apipath}} </a>
+															</p>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Select Training</label>
+														<div class="col-sm-4">
+
+															<ui-select ng-model="selected.selectedTraining" theme="bootstrap">
+																<ui-select-match placeholder="Select a training in the list...">{{$select.selected.startDate|date}}</ui-select-match>
+																<ui-select-choices repeat="training in trainings| filter: $select.search">
+																	<div ng-bind-html="training.startDate|date| highlight: $select.search"></div>
+																	<small>
+																		version: {{training.endModel.version}}
+																		status: {{training.status}}
+
+																	</small>
+
+																</ui-select-choices>
+															</ui-select>
+
+														</div>
+
+
+													</div>
+
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Used Model</label>
+														<div class="col-sm-4">
+															<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-cogs"></i>
+															</span>
+																<input type="text"  ng-disabled="1"  id="typeahead_example_2" ng-value="selected.selectedTraining.endModel.name" name="typeahead_example_2" class="form-control"/>
+															</div>
+															<p class="help-block">
+																The model you have selected
+															</p>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="control-label col-md-3">Use</label>
+														<div class="col-md-9">
+															<input type="checkbox" class="make-switch" data-on-text="&nbsp;Public&nbsp;" data-off-text="&nbsp;Private&nbsp;">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="control-label col-md-3">Internet Access</label>
+														<div class="col-md-9">
+															<input type="checkbox" class="make-switch" data-on-text="Yes" data-off-text="No">
+
+														</div>
+													</div>
+
+													<!--<div class="form-group">
+														<label class="col-sm-3 control-label">Custom Template</label>
+														<div class="col-sm-4">
+															<div class="input-group">
+								<span class="input-group-addon">
+								<i class="fa fa-cogs"></i>
+								</span>
+																<input type="text" id="typeahead_example_3" name="typeahead_example_3" class="form-control"/>
+															</div>
+															<p class="help-block">
+																Uses a precompiled template to customize look of suggestion.</code>
+															</p>
+														</div>
+													</div>
+													<div class="form-group ">
+														<label class="col-sm-3 control-label">Multiple Sections with Headers</label>
+														<div class="col-sm-4">
+															<div class="input-group">
+								<span class="input-group-addon">
+								<i class="fa fa-check"></i>
+								</span>
+																<input type="text" id="typeahead_example_4" name="typeahead_example_4" class="form-control"/>
+															</div>
+															<p class="help-block">
+																Two datasets that are prefetched, stored, and searched on the client. Highlighting is enabled.
+															</p>
+														</div>
+													</div>
+													<div class="form-group last">
+														<label class="control-label col-md-3">Modal</label>
+														<div class="col-md-4">
+															<a href="#" data-target="#myModal_autocomplete" role="button" class="btn red" data-toggle="modal">
+																View in Modal </a>
+														</div>
+													</div>-->
+													<div class="form-actions">
+														<div class="row">
+															<div class="col-md-offset-3 col-md-9">
+																<button ng-click="saveAndPublish()" class="btn purple"><i class="fa fa-check"></i> Submit</button>
+																<button type="button" class="btn default">Cancel</button>
+															</div>
+														</div>
+													</div>
+												</form>
+												<div id="myModal_autocomplete" class="modal fade" role="dialog" aria-hidden="true">
+													<div class="modal-dialog">
+														<div class="modal-content">
+															<div class="modal-header">
+																<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+																<h4 class="modal-title">Radio Switch in Modal</h4>
+															</div>
+															<div class="modal-body form">
+																<form action="#" class="form-horizontal form-row-seperated">
+																	<div class="form-group">
+																		<label class="col-sm-4 control-label">Basic Auto Complete</label>
+																		<div class="col-sm-8">
+																			<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-user"></i>
+												</span>
+																				<input type="text" id="typeahead_example_modal_1" name="typeahead_example_modal_1" class="form-control"/>
+																			</div>
+																			<p class="help-block">
+																				E.g: metronic, keenthemes.<br>
+																				<span class="label label-success label-sm">
+												Learn more: </span>
+																				<a target="_blank" href="http://twitter.github.io/typeahead.js/">
+																					http://twitter.github.io/typeahead.js/ </a>
+																			</p>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-sm-4 control-label">Country Auto Complete</label>
+																		<div class="col-sm-8">
+																			<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-search"></i>
+												</span>
+																				<input type="text" id="typeahead_example_modal_2" name="typeahead_example_modal_2" class="form-control"/>
+																			</div>
+																			<p class="help-block">
+																				</code>
+																			</p>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-sm-4 control-label">Custom Template</label>
+																		<div class="col-sm-8">
+																			<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-cogs"></i>
+												</span>
+																				<input type="text" id="typeahead_example_modal_3" name="typeahead_example_modal_3" class="form-control"/>
+																			</div>
+																			<p class="help-block">
+																				Uses a precompiled template to customize look of suggestion.</code>
+																			</p>
+																		</div>
+																	</div>
+																	<div class="form-group last">
+																		<label class="col-sm-4 control-label">Multiple Sections with Headers</label>
+																		<div class="col-sm-8">
+																			<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-check"></i>
+												</span>
+																				<input type="text" id="typeahead_example_modal_4" name="typeahead_example_modal_4" class="form-control"/>
+																			</div>
+																			<p class="help-block">
+																				Two datasets that are prefetched, stored, and searched on the client. Highlighting is enabled.
+																			</p>
+																		</div>
+																	</div>
+																</form>
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+																<button type="button" class="btn btn-primary"><i class="fa fa-check"></i> Save changes</button>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- END PORTLET-->
+								</div>
+							</div>
+										<!--<div class="row"  ng-show="selectedStep===2">
+                                        <div class="col-md-12 col-sm-12">
+                                            <div class="portlet light" >
+                                                <div class="portlet-title">
+                                                    <div class="caption font-green-sharp">
+                                                        <i class="icon-settings font-green-sharp"></i>
+                                                        <span class="caption-subject bold uppercase">Drop to remove from selected</span>
+                                                        <span class="caption-helper"> {{ selectedDependencies.length-1 }}</span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="portlet-body">
+                                                    <div class="file-drop-zone margin-bottom-20">
+                                                        Drop to remove
+                                                        <ul dnd-list="delete" dnd-horizontal-list="true">
+
+                                                            <li ng-repeat="item  in delete"
+                                                                dnd-dragend="logEvent('Drag operation ended', event)"
+                                                                dnd-moved="delete.splice($index, 1); logEvent('Item moved', event)"
+                                                                >
+                                                                {{item.name}}
+                                                            </li>
+
+
+                                                        </ul >
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        </div>-->
+
+
+
+										<div ng-show="0" class="tabbable-line">
+											<ul class="nav nav-tabs ">
+												<li class="active">
+													<a href="#" data-target="#tab_1" data-toggle="tab">
+														Comments </a>
+												</li>
+												<li>
+													<a href="#" data-target="#tab_2" data-toggle="tab">
+														History </a>
+												</li>
+											</ul>
+											<div class="tab-content">
+												<div class="tab-pane active" id="tab_1">
+													<!-- TASK COMMENTS -->
+													<div class="form-group">
+														<div class="col-md-12">
+															<ul class="media-list">
+																<li class="media">
+																	<a class="pull-left" href="#">
+																		<img class="todo-userpic" src="../../../assets/admin/layout/img/avatar8.jpg" width="27px" height="27px">
+																	</a>
+																	<div class="media-body todo-comment">
+																		<button type="button" class="todo-comment-btn btn btn-circle btn-default btn-xs">&nbsp; Reply &nbsp;</button>
+																		<p class="todo-comment-head">
+																			<span class="todo-comment-username">Christina Aguilera</span> &nbsp; <span class="todo-comment-date">17 Sep 2014 at 2:05pm</span>
+																		</p>
+																		<p class="todo-text-color">
+																			Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
+																		</p>
+																		<!-- Nested media object -->
+																		<div class="media">
+																			<a class="pull-left" href="#">
+																				<img class="todo-userpic" src="../../../assets/admin/layout/img/avatar4.jpg" width="27px" height="27px">
+																			</a>
+																			<div class="media-body">
+																				<p class="todo-comment-head">
+																					<span class="todo-comment-username">Carles Puyol</span> &nbsp; <span class="todo-comment-date">17 Sep 2014 at 4:30pm</span>
+																				</p>
+																				<p class="todo-text-color">
+																					Thanks so much my dear!
+																				</p>
+																			</div>
+																		</div>
+																	</div>
+																</li>
+																<li class="media">
+																	<a class="pull-left" href="#">
+																		<img class="todo-userpic" src="../../../assets/admin/layout/img/avatar5.jpg" width="27px" height="27px">
+																	</a>
+																	<div class="media-body todo-comment">
+																		<button type="button" class="todo-comment-btn btn btn-circle btn-default btn-xs">&nbsp; Reply &nbsp;</button>
+																		<p class="todo-comment-head">
+																			<span class="todo-comment-username">Andres Iniesta</span> &nbsp; <span class="todo-comment-date">18 Sep 2014 at 9:22am</span>
+																		</p>
+																		<p class="todo-text-color">
+																			Cras sit amet nibh libero, in gravida nulla. Scelerisque ante sollicitudin commodo Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. <br>
+																		</p>
+																	</div>
+																</li>
+																<li class="media">
+																	<a class="pull-left" href="#">
+																		<img class="todo-userpic" src="../../../assets/admin/layout/img/avatar6.jpg" width="27px" height="27px">
+																	</a>
+																	<div class="media-body todo-comment">
+																		<button type="button" class="todo-comment-btn btn btn-circle btn-default btn-xs">&nbsp; Reply &nbsp;</button>
+																		<p class="todo-comment-head">
+																			<span class="todo-comment-username">Olivia Wilde</span> &nbsp; <span class="todo-comment-date">18 Sep 2014 at 11:50am</span>
+																		</p>
+																		<p class="todo-text-color">
+																			Cras sit amet nibh libero, in gravida nulla. Scelerisque ante sollicitudin commodo Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. <br>
+																		</p>
+																	</div>
+																</li>
+															</ul>
+														</div>
+													</div>
+													<!-- END TASK COMMENTS -->
+													<!-- TASK COMMENT FORM -->
+													<div class="form-group">
+														<div class="col-md-12">
+															<ul class="media-list">
+																<li class="media">
+																	<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar4.jpg" width="27px" height="27px">
+																	<div class="media-body">
+																		<textarea class="form-control todo-taskbody-taskdesc" rows="4" placeholder="Type comment..."></textarea>
+																	</div>
+																</li>
+															</ul>
+															<button type="button" class="pull-right btn btn-sm btn-circle green-haze"> &nbsp; Submit &nbsp; </button>
+														</div>
+													</div>
+													<!-- END TASK COMMENT FORM -->
+												</div>
+												<div class="tab-pane" id="tab_2">
+													<ul class="todo-task-history">
+														<li>
+															<div class="todo-task-history-date">
+																20 Jun, 2014 at 11:35am
+															</div>
+															<div class="todo-task-history-desc">
+																Task created
+															</div>
+														</li>
+														<li>
+															<div class="todo-task-history-date">
+																21 Jun, 2014 at 10:35pm
+															</div>
+															<div class="todo-task-history-desc">
+																Task category status changed to "Top Priority"
+															</div>
+														</li>
+														<li>
+															<div class="todo-task-history-date">
+																22 Jun, 2014 at 11:35am
+															</div>
+															<div class="todo-task-history-desc">
+																Task owner changed to "Nick Larson"
+															</div>
+														</li>
+														<li>
+															<div class="todo-task-history-date">
+																30 Jun, 2014 at 8:09am
+															</div>
+															<div class="todo-task-history-desc">
+																Task completed by "Nick Larson"
+															</div>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END TODO CONTENT -->
+		</div>
+	</div>
+	<!-- END PAGE CONTENT-->
+
+	<div class="row">
+
+		<div class="col-md-6">
+			<!-- BEGIN: ACCORDION DEMO -->
+
+			<!-- END: ACCORDION DEMO -->
+		</div>
+
+	</div>
+</div>
+<!-- END PAGE CONTENT-->
+</div>
+
+<!-- END MAIN CONTENT -->
+
+<!-- BEGIN MAIN JS-->
+<script>
+//	Todo.init(); // init todo page
+</script>
+<!-- BEGIN MAIN JS -->

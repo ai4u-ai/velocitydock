@@ -1,0 +1,8 @@
+making the docker container:
+https://hub.docker.com/_/mongo/
+docker run --name velocitydb -d mongo
+
+Run mapping to mongo
+docker run -p 3000:3000 --link velocitydb:mongo  -it velocitydocker bash
+
+
