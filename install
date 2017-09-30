@@ -1,0 +1,8 @@
+python -m pip install virtualenv &
+python -m pip install --upgrade pip &
+python -m pip install grpcio --ignore-installed &
+python -m pip install grpcio-tools &
+python -m pip install tensorflow &
+python -m pip install pymongo &
+python -m pip install docker-py &
+python -m pip install docker

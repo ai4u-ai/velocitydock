@@ -12,7 +12,7 @@ import os
 import zipfile
 
 
-client= MongoClient("mongodb://velocitydb:27017")
+client= MongoClient("mongodb://localhost:27017")
 db = client.velocity
 fs = gridfs.GridFS(db)
 fsBuck=gridfs.GridFSBucket(db)
