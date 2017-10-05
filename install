@@ -1,1 +1,1 @@
-sudo node vidStreamer.js & sudo python velocitypy/dockerservice.py & udo python velocitypy/trainer_server.py
+sudo service mongod start & sudo node vidStreamer.js & sudo python velocitypy/dockerservice.py & sudo python velocitypy/trainer_server.py
