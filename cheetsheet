@@ -5,4 +5,12 @@ docker run --name velocitydb -d mongo
 Run mapping to mongo-
 docker run -p 3000:3000 --link velocitydb:mongo  -it velocitydocker bash
 
+https://superuser.com/questions/640138/restrict-folder-access-in-ubuntu
 
+As the owner or root, execute the command
+
+# chmod -R 700 /path/to/folder
+The chmod command changes the permissions of the file/folder. The 700 means that the owner has full access, and no one else. The -r means to apply the rules recursively (through subfolders). You will also want to run a chown
+
+# chown user:user -R /path/to/folder
+The chown command changes the owner of the file/folder. The user: part is the username to apply the owner as; the :user part is for the group. Every user typically has it's own group as well. Again, the -R is to recurse through to subfolders
