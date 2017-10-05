@@ -1,1 +1,1 @@
-sudo kill $(sudo lsof -t -i:3000)& sudo kill $(sudo lsof -t -i:50052)& sudo kill $(sudo lsof -t -i:50052) & sudo service mongod start & sudo node vidStreamer.js & sudo python velocitypy/dockerservice.py & sudo python velocitypy/trainer_server.py
+sudo kill $(sudo lsof -t -i:3000)& sudo kill $(sudo lsof -t -i:50052)& sudo kill $(sudo lsof -t -i:50051) & sudo service mongod start & sudo node vidStreamer.js & sudo python velocitypy/dockerservice.py & sudo python velocitypy/trainer_server.py
