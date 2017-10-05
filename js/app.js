@@ -143,7 +143,7 @@ MetronicApp.controller('LoginCtrl', function($scope, AuthService,  $state) {
 
     $scope.login = function() {
         AuthService.login($scope.user).then(function(msg) {
-            $state.go('profile/dashboard');
+            $state.go('profile/account');
         }, function(errMsg) {
 
         });
@@ -155,7 +155,7 @@ MetronicApp.controller('LoginCtrl', function($scope, AuthService,  $state) {
 
     $scope.signup = function() {
         AuthService.register($scope.user).then(function(msg) {
-            $state.go('profile/dashboard');
+            $state.go('profile/account');
 
         }, function(errMsg) {
           console.log(errMsg);
@@ -253,7 +253,7 @@ MetronicApp.filter('reverseHash', function() {
 MetronicApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider,$routeSegmentProvider) {
 
     // Redirect any unmatched url
-    $urlRouterProvider.otherwise("profile/dashboard");
+    $urlRouterProvider.otherwise("profile/account");
 
 
     $stateProvider
@@ -851,7 +851,7 @@ MetronicApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvi
         // User Profile Dashboard
         .state("profile.dashboard", {
             url: "/dashboard",
-            templateUrl: "views/profile/dashboard.html",
+            templateUrl: "views/profile/account.html",
             data: {pageTitle: 'User Profile', pageSubTitle: 'user profile dashboard sample'}
         })
 

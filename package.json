@@ -17,6 +17,7 @@
     "fluent-ffmpeg": "^2.1.0",
     "google-protobuf": "^3.0.0",
     "gridfs-locking-stream": "^1.1.1",
+    "gridfs-stream": "^1.1.1",
     "grpc": "^1.0.0",
     "image-plucker": "^0.1.1",
     "jsonfile": "^2.4.0",
