@@ -18,7 +18,9 @@ var GridFsStorage = require('multer-gridfs-storage');
 var GridFsStream=require('./js/stream/gridfsstream');
 var ffmpegFrames=require('./js/stream/ffmpegFrames');
 var express = require("express");
+var connectDomain = require('connect-domain');
 var app = express();
+app.use(connectDomain());
 var vidStreamer = require("vid-streamer");
 const videoStreamer = require('video-streamer');
 var User        = require('./js/models/user'); // get the mongoose model
@@ -51,7 +53,7 @@ var storage = GridFsStorage({
     gfs: gfs
 });
 
-
+var cluster = require('cluster');
 
 var upload = multer({ storage: storage });
 //authentication
@@ -81,6 +83,16 @@ var call = client.sayHelloAgain();
 // var io = require('socket.io')(8080);
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+
+process.on('uncaughtException', function(err) {
+    console.log( " UNCAUGHT EXCEPTION " );
+    console.log( "[Inside 'uncaughtException' event] " + err.stack || err.message );
+});
+
+app.use(function(err, req, res, next) {
+    res.end(err.message); // this catches the error!!
+   console.log(err.message)
+});
 
 
 var socket;

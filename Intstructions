@@ -1,0 +1,12 @@
+#open terminal and type:
+cd /home
+sudo ./run.sh
+
+
+This will start the application.
+Open Google Chrome you should be redirected to localhost:3000 if not type localhost:3000 in the URL section of the browser.
+This will log you in automatically into velocity.
+Credentials for the web application are:
+user:stelcomms
+pw:stelcomms
+
