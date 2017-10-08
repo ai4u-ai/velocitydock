@@ -196,7 +196,7 @@
 			</div>
 			<!-- END TODO SIDEBAR -->
 			<!-- BEGIN TODO CONTENT -->
-			<div class="todo-content">
+			<div class="todo-content" >
 				<div class="portlet light">
 					<!-- PROJECT HEAD -->
 					<div class="portlet-title">
@@ -614,7 +614,7 @@
 
 										<div class="row"  ng-show="selectedStep===6">
 
-											<div class="col-md-6 col-sm-6">
+											<div class="col-md-9 col-sm-6">
 												<div class="portlet light" >
 													<div class="portlet-title">
 														<div class="caption font-green-sharp">
@@ -622,10 +622,14 @@
 															<span class="caption-subject bold uppercase">Drop annotations</span>
 															<span class="caption-helper"> {{ selected.annotations.length}}</span>
 														</div>
+														<div class="caption pull-right" >
+															<i class="icon-bar-chart font-green-sharp"></i>
+															<span class="caption-helper font-green-sharp bold uppercase">State:</span>  &nbsp; <span class="caption-subject font-red-thunderbird bold uppercase">{{training.status}}</span> &nbsp; <span class="caption-helper font-green-sharp bold uppercase">Duration:</span>   <span class="caption-subject font-red-thunderbird bold uppercase">{{getDuration(training.startDate,training.endDate) | date :'mm:ss.sss'}}</span>
 
+														</div>
 													</div>
 													<div class="portlet-body">
-														<div class="file-drop-zone margin-bottom-20 ">
+														<div class="file-drop-zone" style="height: 250px;">
 
 															<ul dnd-list="selected.annotations"   dnd-drop="dropCallbackAnnotations(event, index, item, external, type, 'itemType')">
 
@@ -648,25 +652,15 @@
 												</div>
 												<div class="form-actions right todo-form-actions">
 
+																<label>Training Steps: <input class="input-mini"  ng-model="trainingSteps"></label>
 
 															  	<a href="" ng-click="trainModel()"class="btn btn-circle btn-sm green-haze">Train model</a>
 																<a href="" ng-click="saveAlgo()"class="btn btn-circle btn-sm green-haze">Save </a>
 																<a href="" class="btn btn-circle btn-sm btn-default">Cancel</a>
-																<a href="" class="btn btn-circle btn-sm btn-default">Cancel</a>
-													&nbsp;<div class="caption">
-													<i class="icon-bar-chart font-green-sharp"></i>
-													<span class="caption-helper font-green-sharp bold uppercase">State:</span>  &nbsp; <span class="caption-subject font-red-thunderbird bold uppercase">{{training.status}}</span> &nbsp; <span class="caption-helper font-green-sharp bold uppercase">Duration:</span>   <span class="caption-subject font-red-thunderbird bold uppercase">{{getDuration(training.startDate,training.endDate) | date :'mm:ss.sss'}}</span>
 
-												</div>
 
-												</div>
-												<span class="caption-helper">
-																	<div class="input-group-mini"><label>Training Steps: <input class="input-mini"  ng-model="trainingSteps"></label>
 
-																</div>
-																</span>
-												<div class="form-group">
-													<label class="col-sm-3 control-label">Select Training</label>
+													<!--<label class="col-sm-2 control-label">Select Training</label>-->
 													<div class="col-sm-4">
 
 														<ui-select ng-model="selected.selectedModelToTrain" theme="bootstrap">
@@ -684,11 +678,58 @@
 
 													</div>
 
+												</div>
+
+
+
+
+
+
+												<div class="row">
+													<div class="col-md-12 col-sm-12">
+														<div class="col-md-12 col-sm-12">
+															<div class="scroller" style="height: 355px; max-height: 700px;" data-always-visible="1" data-rail-visible="1" data-handle-color="#dae3e7">
+																<div class="todo-tasklist">
+																	<div  ng-click="goToSelectedAnnoTime(selection,$index)" id="{{selection.currentTime}}"  ng-show="selection.objectSelector.mouseDown" ng-repeat="selection in selectedAnnotation.annotation " class="todo-tasklist-item todo-tasklist-item-border-green">
+																		<img  class="todo-userpic pull-left" ng-src="{{selection.objectSelector.dataUrl}}" width="75px" height="75px">
+																		<!--<div class="todo-tasklist-item-title">
+                                                                            Slider Redesign
+                                                                        </div>
+                                                                        <div class="todo-tasklist-item-text">
+                                                                            Lorem dolor sit amet ipsum dolor sit consectetuer dolore.
+                                                                        </div>-->
+																		<div class="todo-tasklist-controls pull-left">
+																			<span class="todo-tasklist-date"><i class="fa fa-calendar"></i>  {{selection.currentTime| date:'mm:ss' }}</span>
+																			<span class="todo-tasklist-badge badge badge-roundless">Class:{{selection.objectSelector.class.name}}</span>
+																			<span>x1:{{selection.objectSelector.x1}} x2:{{selection.objectSelector.x2}} y1:{{selection.objectSelector.y1}} y2:{{selection.objectSelector.y2}}</span>
+																		</div>
+
+																	</div>
+																	<div ng-show="false"class="todo-tasklist-item todo-tasklist-item-border-red">
+																		<!--<img class="todo-userpic pull-left" src="" width="27px" height="27px">-->
+																		<!--<div class="todo-tasklist-item-title">
+                                                                        &lt;!&ndash;	Homepage Alignments to adjust&ndash;&gt;
+                                                                        </div>-->
+																		<!--<div class="todo-tasklist-item-text">
+                                                                        &lt;!&ndash;	Lorem ipsum dolor sit amet, consectetuer dolore dolor sit amet.&ndash;&gt;
+                                                                        </div>-->
+																		<!--	<div class="todo-tasklist-controls pull-left">
+                                                                                <span class="todo-tasklist-date"><i class="fa fa-calendar"></i> </span>
+                                                                                <span class="todo-tasklist-badge badge badge-roundless">Important</span>
+                                                                            </div>-->
+																	</div>
+
+																</div>
+															</div>
+														</div>
+
+													</div>
+
 
 												</div>
 											</div>
 
-											<div class="col-md-6 col-sm-6">
+											<div class="col-md-3 col-sm-6">
 												<div class="portlet light" >
 													<div class="portlet-title">
 														<div class="caption font-green-sharp">
@@ -702,12 +743,12 @@
 												<div class="row">
 														<div class="table-scrollable table-scrollable-borderless">
 															<table class="table table-hover table-light">
-																<thead>
+																<!--<thead>
 																<tr class="uppercase">
 																	<th width="50%">Name</th>
 
 																</tr>
-																</thead>
+																</thead>-->
 																<tbody>
 																<tr dnd-draggable="item" dnd-list="annotations"  ng-click="selectAnnotation($index)" dnd-drop="dropCallbackDependencies(event, index, item, external, type, 'itemType')" dnd-effect-allowed="move" ng-repeat="item in annotations">
 																	<td><strong>{{ item._id }}</strong></td>
@@ -722,48 +763,7 @@
 														</div>
 
 												</div>
-														<div class="row">
-															<div class="col-md-12 col-sm-12">
-																<div class="col-md-12 col-sm-12">
-																	<div class="scroller" style="height: 355px; max-height: 700px;" data-always-visible="1" data-rail-visible="1" data-handle-color="#dae3e7">
-																		<div class="todo-tasklist">
-																			<div  ng-click="goToSelectedAnnoTime(selection,$index)" id="{{selection.currentTime}}"  ng-show="selection.objectSelector.mouseDown" ng-repeat="selection in selectedAnnotation.annotation " class="todo-tasklist-item todo-tasklist-item-border-green">
-																				<img  class="todo-userpic pull-left" ng-src="{{selection.objectSelector.dataUrl}}" width="75px" height="75px">
-																				<!--<div class="todo-tasklist-item-title">
-                                                                                    Slider Redesign
-                                                                                </div>
-                                                                                <div class="todo-tasklist-item-text">
-                                                                                    Lorem dolor sit amet ipsum dolor sit consectetuer dolore.
-                                                                                </div>-->
-																				<div class="todo-tasklist-controls pull-left">
-																					<span class="todo-tasklist-date"><i class="fa fa-calendar"></i>  {{selection.currentTime| date:'mm:ss' }}</span>
-																					<span class="todo-tasklist-badge badge badge-roundless">Class:{{selection.objectSelector.class.name}}</span>
-																					<span>x1:{{selection.objectSelector.x1}} x2:{{selection.objectSelector.x2}} y1:{{selection.objectSelector.y1}} y2:{{selection.objectSelector.y2}}</span>
-																				</div>
 
-																			</div>
-																			<div ng-show="false"class="todo-tasklist-item todo-tasklist-item-border-red">
-																				<!--<img class="todo-userpic pull-left" src="" width="27px" height="27px">-->
-																				<!--<div class="todo-tasklist-item-title">
-                                                                                &lt;!&ndash;	Homepage Alignments to adjust&ndash;&gt;
-                                                                                </div>-->
-																				<!--<div class="todo-tasklist-item-text">
-                                                                                &lt;!&ndash;	Lorem ipsum dolor sit amet, consectetuer dolore dolor sit amet.&ndash;&gt;
-                                                                                </div>-->
-																				<!--	<div class="todo-tasklist-controls pull-left">
-                                                                                        <span class="todo-tasklist-date"><i class="fa fa-calendar"></i> </span>
-                                                                                        <span class="todo-tasklist-badge badge badge-roundless">Important</span>
-                                                                                    </div>-->
-																			</div>
-
-																		</div>
-																	</div>
-																</div>
-
-															</div>
-
-
-													</div>
 														</div>
 
 
