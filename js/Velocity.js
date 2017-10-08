@@ -1338,13 +1338,13 @@ VelocityModule.factory("videoService",function($sce,$rootScope,$http,$timeout,$f
             context.drawImage(tempCanv, this.selector.x1 * scale, this.selector.y1 * scale, width, height, 0, 0, width, height);
 
             //visualize
-          var newC=document.getElementById('new');
+      /*    var newC=document.getElementById('new');
           newC.width=width;
           newC.height=height;
           newC.getContext('2d').width=width;
           newC.getContext('2d').height=height;
           newC.getContext('2d').drawImage(canvas,0,0,width,height);
-
+*/
 
 
           return canvas;
@@ -1813,11 +1813,11 @@ var visualize$$=   rx.Observable.fromEvent(this.API.mediaElement, 'timeupdate').
                 elt.appendChild(layer_div);
             }
         }
-        var vis_elt = document.getElementById("visnet");
+       /* var vis_elt = document.getElementById("visnet");
         if(algoService.getTrainer().net.layers[0].out_act != undefined){
 
             visualize_activations(algoService.getTrainer().net, vis_elt);
-        }
+        }*/
 
     }
 
@@ -1834,25 +1834,25 @@ var visualize$$=   rx.Observable.fromEvent(this.API.mediaElement, 'timeupdate').
 
                             var newSceneCanvas=this.currentVideo.selections[this.currentVideo.selections.length-1].sceneCanvas;
                             var oldSceneCanvas=this.currentVideo.selections[this.currentVideo.selections.length-2].sceneCanvas;
-                            var newC=document.getElementById('new');
+                           /* var newC=document.getElementById('new');
                             newC.width=colsObject;
                             newC.height=rowsObject;
                             newC.getContext('2d').width=colsObject;
                             newC.getContext('2d').height=rowsObject;
                             newC.getContext('2d').drawImage(newSceneCanvas,this.selector.x1,this.selector.y1, colsObject,rowsObject,0,0,colsObject,rowsObject);
+*/
 
 
 
 
 
-
-                            var old=document.getElementById('old');
+                           /* var old=document.getElementById('old');
                             old.width=colsObject;
                             old.height=rowsObject;
                             old.getContext('2d').width=this.API.mediaElement.width();
                             old.getContext('2d').height=this.API.mediaElement.height();
                             old.getContext('2d').drawImage(oldSceneCanvas,this.selector.x1,this.selector.y1, colsObject,rowsObject,0,0,colsObject,rowsObject);
-
+*/
                             var zonesFull=    this.calculator.calculate(oldSceneCanvas.getContext('2d').getImageData(0, 0,  oldSceneCanvas.width, oldSceneCanvas.height).data, newSceneCanvas.getContext('2d').getImageData(0, 0,  newSceneCanvas.width, newSceneCanvas.height).data,newSceneCanvas.width,newSceneCanvas.height);
 
                             var zones =  this.calculator.calculate(old.getContext('2d').getImageData(0, 0, colsObject,rowsObject).data, newC.getContext('2d').getImageData(0, 0,  colsObject,rowsObject).data,colsObject, rowsObject);
@@ -2466,13 +2466,13 @@ var visualize$$=   rx.Observable.fromEvent(this.API.mediaElement, 'timeupdate').
                                         tempContext2.drawImage(newSceneCanvas,nearest.x1, nearest.y1,  nearest.x2-nearest.x1,nearest.y2-nearest.y1,0,0,algoService.getSize().width,algoService.getSize().height);
 
 
-                                        var convnettempCanv=document.getElementById('convnet');
+                                       /* var convnettempCanv=document.getElementById('convnet');
                                         convnettempCanv.width=algoService.getSize().width;
                                         convnettempCanv.height=algoService.getSize().height;
                                         convnettempCanv.getContext("2d").width=algoService.getSize().width;
                                         convnettempCanv.getContext("2d").height=algoService.getSize().height;
                                         convnettempCanv.getContext("2d").drawImage(newSceneCanvas,nearest.x1, nearest.y1,  nearest.x2-nearest.x1,nearest.y2-nearest.y1,0,0,algoService.getSize().widtt,algoService.getSize().height);
-
+*/
 
                                         var prob2 =  algoService.getTrainer().net.forward(convnetjs.img_to_vol(tempCanv2));
                                         algoService.getTrainer().net.getPrediction();
@@ -3325,13 +3325,13 @@ VelocityModule.directive('drawing',['videoService', function(videoService){
                         var height = (selector.y2 - selector.y1) * scale;
                  /*   canvas.width = width;
                  canvas.height = height;*/
-                        var canvas = document.getElementById('destCanvas');
+                  /*      var canvas = document.getElementById('destCanvas');
                         canvas.width=width;
-                        canvas.height = height;
+                        canvas.height = height;*/
                         var context = canvas.getContext('2d');
                         context.width=videoService.API.mediaElement.width();
                         context.height=videoService.API.mediaElement.height();
-                        context.clearRect(0, 0, canvas.width, canvas.height);
+                        context.clearRect(0, 0, tempCanv.width, tempCanv.height);
                         var video=videoService.API.mediaElement[0];
                         context.drawImage(tempCanv, selector.x1 * scale, selector.y1 * scale, width, height, 0, 0, width, height);
                  //return canvas.toDataURL('image/png');

@@ -7,5 +7,5 @@ RUN  python -m pip install grpcio --ignore-installed
 RUN  python -m pip install grpcio-tools
 RUN  python -m pip install tensorflow
 RUN  python -m pip install pymongo
-RUN python -m pip install docker-py
+RUN python -m pip install docker==2.0.0
 CMD ["python", "greeter_server.py"]
