@@ -519,6 +519,10 @@ apiRoutes.get('/anotations/loadAll', passport.authenticate('jwt', { session: fal
                 Annotation.find({uploadedBy:user._id}).populate('annotatedOnMedia').exec(function (err, docs) {
                     if (err) return handleError(err);
                     //console.log('The stories are an array: ', docs);
+
+                    docs.filter(function(doc){
+                       return doc.annotatedOnMedia!=null
+                    });
                     res.files=docs;
                     console.log(docs)
                     res.send(docs);
