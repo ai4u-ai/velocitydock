@@ -520,8 +520,8 @@ apiRoutes.get('/anotations/loadAll', passport.authenticate('jwt', { session: fal
                     if (err) return handleError(err);
                     //console.log('The stories are an array: ', docs);
 
-                    docs.filter(function(doc){
-                       return doc.annotatedOnMedia!=null
+                    docs=docs.filter(function(doc){
+                       return doc.annotatedOnMedia!=undefined
                     });
                     res.files=docs;
                     console.log(docs)
