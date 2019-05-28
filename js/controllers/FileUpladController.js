@@ -3,6 +3,152 @@
  */
 MetronicApp.controller('FileUploadCtrl',function ($scope, FileUploader,API_ENDPOINT,AuthService,$http,$location) {
 
+    $scope.mediaFolders=[];
+    $scope.tempMediaFolderCollection={};
+    $scope.addTempMediaFolder=function(){
+        $scope.tempMediaFolderCollection.folders.push({number: $scope.tempMediaFolderCollection.folders.length+1,path:'Fill in'});
+    };
+    var data = {
+        access_token:AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length)
+
+    };
+    var config = {
+        params: data,
+        headers : {'Content-Type': 'application/json'}
+
+    };
+
+
+    $scope.loadMediaFoldersInit= function(){  $http.get(
+        API_ENDPOINT.url+'/mediafolders/get',config
+
+    ).then(angular.bind(this,function(response) {
+        console.log('in controller'+response.data);
+        /* var json = JSON.parse(response.data.json);
+         net = new convnetjs.Net();*/
+        if(response.data!=null){
+            $scope.mediaFolders=   response.data;
+            if($scope.mediaFolders.length>0){
+
+                $scope.tempMediaFolderCollection.folders= $scope.mediaFolders;
+                $scope.tempMediaFolderCollection.name="Fill in Name";
+
+            }else{
+
+                $scope.tempMediaFolderCollection.folders=[];
+                $scope.tempMediaFolderCollection.name="Fill in Name";
+            }
+
+
+        }
+
+        //return response.data;
+    }));
+    };
+    $scope.loadMediaFoldersInit();
+        $scope.selectedMediaFolders=function(index){
+
+        $scope.mediaFolders=$scope.selectedMediaFolders[index];
+
+    };
+    $scope.getSelectedMediaFolders=function(){
+
+        return   $scope.selectedMediaFolders;
+    };
+
+    $scope.addMediaFolders=function(){
+
+        $scope.selectedMediaFolders.folders.push({number:  $scope.selectedMediaFolders.folders.length,path:'Fill in'});
+
+
+    };
+
+    $scope.deleteMediaFolders=function(index){
+
+        $scope.mediaFolders.splice(index,1);
+        $scope.mediaFolders.join();
+
+    },
+        $scope.setSelectedMediaFolder=function(index){
+
+            $scope.selectedMediaFolder=$scope.selectedMediaFolders.classes[index];
+
+        };
+    $scope.getMediaFolders=function(){
+
+        return $scope.mediaFolders;
+    };
+    $scope.getSelectedMediaFolder=function(){
+
+        return $scope.selectedMediaFolder;
+    },
+
+        $scope.deleteSelectedMediaFolder =function(index){
+
+
+        if ($scope.tempMediaFolderCollection.folders[index]._id!=undefined){
+
+            var data = {
+                access_token:AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length),
+                id:$scope.tempMediaFolderCollection.folders[index]._id
+            };
+
+            var config = {
+                params: data,
+                headers : {'Content-Type': 'application/json'}
+
+            };
+
+            $http.delete('/api/mediafolder/delete' ,config).success(function (data, status, headers) {
+
+                $scope.tempMediaFolderCollection.folders.splice(index, 1);
+                $scope.loadMediaFoldersInit();
+            })
+
+        }else{
+            $scope.tempMediaFolderCollection.folders.splice(index, 1);
+            $scope.loadMediaFoldersInit();
+        }
+
+        };
+        $scope.saveMediaFolders=function(mediaFolders){
+            var data ={
+                mediafolders:mediaFolders,
+                _id:mediaFolders._id
+
+            };
+            $http({
+                url:API_ENDPOINT.url+ '/mediafolders/save',
+                method: "POST",
+                data: data,
+                headers: {'Content-Type': 'application/json'}}).then(function(response)
+            {
+                console.log('success')
+                /*    $scope.setSelectedClasses(  $scope.classes.length-1);
+                    $scope.classes.push(classCollection);*/
+                $scope.loadMediaFoldersInit();
+
+            })   // success
+                .catch(function() {console.log('error')});
+
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     var uploader = $scope.uploader = new FileUploader({
         url: API_ENDPOINT.url+'/upload',
         /*withCredentials: false,

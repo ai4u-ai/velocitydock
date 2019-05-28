@@ -7,7 +7,7 @@ var MetronicApp = angular.module("MetronicApp", [
     "ui.router", "xeditable",
     "ui.bootstrap", 
     "oc.lazyLoad",  
-    "ngSanitize","velocity","rx","ngJsTree","angularFileUpload"
+    "ngSanitize","velocity","rx","ngJsTree","angularFileUpload",'angularTrix','colorpicker.module'
 ]); 
 
 /* Configure ocLazyLoader(refer: https://github.com/ocombe/ocLazyLoad) */
@@ -16,6 +16,22 @@ MetronicApp.config(['$ocLazyLoadProvider', function($ocLazyLoadProvider) {
         cssFilesInsertBefore: 'ng_load_plugins_before' // load the above css files before a LINK element with this ID. Dynamic CSS files must be loaded between core and theme css files
     });
 }]);
+
+
+function SquillFactory($window) {
+    if(!$window._){
+        // If lodash is not available you can now provide a
+        // mock service, try to load it from somewhere else,
+        // redirect the user to a dedicated error page, ...
+    }
+    return $window.Quill;
+}
+
+// Define dependencies
+SquillFactory.$inject = ['$window'];
+
+// Register factory
+MetronicApp.factory('Quill', SquillFactory);
 
 /********************************************
  BEGIN: BREAKING CHANGE in AngularJS v1.3.x:
@@ -59,7 +75,7 @@ angular.module('myModule').config(['$controllerProvider', function($controllerPr
 MetronicApp.config(['$controllerProvider', function($controllerProvider) {
   // this option might be handy for migrating old apps, but please don't use it
   // in new ones!
-  $controllerProvider.allowGlobals();
+   $controllerProvider.allowGlobals();
 }]);
 
 /*MetronicApp.config(['$analyticsProvider','deepQLearnServiceProvider', function ($analyticsProvider,deepQLearnServiceProvider) {
@@ -333,6 +349,62 @@ MetronicApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvi
                 }]
             }
         })
+        .state('videotexteditor', {
+            url: "/videoTextEditor.html",
+            templateUrl: "views/videoTextEditor.html",
+            data: {pageTitle: 'Video Text Editor', pageSubTitle: 'annotate & train algoritm'},
+            controller: "VideoTextEditorController",
+            resolve: {
+
+                deps: ['$ocLazyLoad', function($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'MetronicApp',
+                        insertBefore: '#ng_load_plugins_before', // load the above css files before '#ng_load_plugins_before'
+                        files: [
+                            'assets/global/plugins/morris/morris.css',
+                            'assets/admin/pages/css/tasks.css',
+                            'assets/admin/pages/css/timeline.css',
+                            'assets/global/plugins/morris/morris.min.js',
+                            'assets/global/plugins/morris/raphael-min.js',
+                            'assets/global/plugins/jquery.sparkline.min.js',
+                            'assets/global/plugins/select2/select2.css',
+                            'assets/admin/pages/css/todo.css',
+
+                            'assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                            'assets/global/plugins/select2/select2.min.js',
+
+                            'assets/admin/pages/scripts/todo.js',
+                            'assets/admin/pages/scripts/index3.js',
+                            'assets/admin/pages/scripts/tasks.js',
+                            'js/algorithms/jsfeat-min.js',
+                            'js/controllers/DashboardController.js',
+                            'assets/admin/pages/scripts/components-form-tools.js',
+                            'assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css',
+                            'assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css',
+                            'assets/global/plugins/jquery-tags-input/jquery.tagsinput.css',
+                            'assets/global/plugins/bootstrap-markdown/css/bootstrap-markdown.min.css',
+                            'assets/global/plugins/typeahead/typeahead.css',
+
+                            'assets/global/plugins/fuelux/js/spinner.min.js',
+                            'assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js',
+                            'assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js',
+                            'assets/global/plugins/jquery.input-ip-address-control-1.0.min.js',
+                            'assets/global/plugins/bootstrap-pwstrength/pwstrength-bootstrap.min.js',
+                            'assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js',
+                            'assets/global/plugins/jquery-tags-input/jquery.tagsinput.min.js',
+                            'assets/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js',
+                            'assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js',
+                            'assets/global/plugins/typeahead/handlebars.min.js',
+                            'assets/global/plugins/typeahead/typeahead.bundle.min.js',
+                            'assets/admin/pages/scripts/components-form-tools.js',
+                            'js/controllers/VideoTextEditorController.js',
+
+
+                        ]
+                    });
+                }]
+            }
+        })
         .state('shop', {
             url: "/shop",
             templateUrl: "views/shop/shop-search-result.html",
@@ -396,7 +468,7 @@ MetronicApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvi
         .state('fileupload', {
             url: "/file_upload.html",
             templateUrl: "views/file_upload.html",
-            data: {pageTitle: 'AngularJS File Upload', pageSubTitle: 'angularjs file upload'},
+            data: {pageTitle: 'File Upload', pageSubTitle: 'file upload'},
             controller: "GeneralPageController",
             resolve: {
                 deps: ['$ocLazyLoad', function($ocLazyLoad) {

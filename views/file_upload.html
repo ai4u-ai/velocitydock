@@ -22,22 +22,54 @@
 <div ng-controller="FileUploadCtrl">
 <div class="row"  nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
 	<div class="col-md-3">
+
+
 		<!-- BEGIN: ACCORDION DEMO -->
 		<div class="portlet light">
 			<div class="portlet-title">
+				<div class="actions">
+					<div class="btn-group">
+						<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown" dropdown-menu-hover data-close-others="true">
+							Media Folders<i class="fa fa-angle-down"></i>
+						</a>
+						<ul class="dropdown-menu pull-right">
+							<li >
+								<a  data-target="#myModal_autocomplete"  data-toggle="modal" >
+									<i class="i"></i> Edit </a>
+								<!--<a href="#" data-target="#myModal_autocomplete" role="button"  ng-click="annotationService.addNewClasses()" class="btn red" data-toggle="modal">
+                                    View in Modal </a>-->
+							<li ng-repeat="folder in mediaFolders track by $index">
+								<a  ng-click="setSelectedClasses($index)">
+									{{folder.path}} </a>
+
+
+							</li>
+							<li class="divider">
+							</li>
+
+							<li class="divider">
+							</li>
+							<li>
+								<a >
+									<i class="fa fa-trash-o"></i> Delete All</a>
+							</li>
+							</li>
+						</ul>
+					</div>
+				</div>
 				<div class="caption font-green-sharp">
 					<i class="icon-settings font-green-sharp"></i>
-					<span class="caption-subject bold uppercase">Select files</span>
+					<span class="caption-subject bold uppercase">Select</span>
 					<span class="caption-helper hide"></span>
 				</div>
-				<div class="actions">
-								<a class="btn btn-circle btn-icon-only btn-default" href="#">
-								<i class="icon-cloud-upload"></i>
-								</a>
-								<a class="btn btn-circle btn-icon-only btn-default" href="#">
-								<i class="icon-wrench"></i>
-								</a>
-							</div>
+				<!--<div class="actions">-->
+								<!--<a class="btn btn-circle btn-icon-only btn-default" href="#">-->
+								<!--<i class="icon-cloud-upload"></i>-->
+								<!--</a>-->
+								<!--<a class="btn btn-circle btn-icon-only btn-default" href="#">-->
+								<!--<i class="icon-wrench"></i>-->
+								<!--</a>-->
+							<!--</div>-->
 			</div>
 			<div class="portlet-body">
 				<div ng-show="uploader.isHTML5">
@@ -45,13 +77,7 @@
 					<div class="file-drop-zone margin-bottom-20" nv-file-over="" uploader="uploader" over-class="file-drop-zone-over">
 							Drop your data here
 					</div>
-					<!-- Example: nv-file-drop="" uploader="{Object}" options="{Object}" filters="{String}" -->
-					<!--<div nv-file-drop="" uploader="uploader" options="{ url: '/foo' }">
-						<div nv-file-over="" uploader="uploader" over-class="file-drop-zone-over" class="file-drop-zone margin-bottom-20">
-							Algo's model drop zone
 
-						</div>
-					</div>-->
 				</div>
 				<!-- Example: nv-file-select="" uploader="{Object}" options="{Object}" filters="{String}" -->
 				Multiple
@@ -62,44 +88,98 @@
 		</div>		
 		<!-- END: ACCORDION DEMO -->
 	</div>
-	<div class="col-md-9">
+
+
+	<div id="myModal_autocomplete" class="modal fade" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+					<h4 class="modal-title">{{tempMediaFolderCollection.name}}</h4>
+				</div>
+				<div class="modal-body form">
+					<form action="#" class="form-horizontal form-row-seperated">
+
+						<div ng-repeat="folder in tempMediaFolderCollection.folders track by $index" class="form-group">
+							<label class="col-sm-4 control-label">Folder Path {{folder.number}}</label>
+							<div class="col-sm-8">
+								<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-search"></i>
+												</span>
+									<input type="text" ng-model="folder.path "   ng-value="folder.path" id="typeahead_example_modal_2" name="typeahead_example_modal_2" class="form-control"/>
+
+									<span class="input-group-addon">
+												<a  ng-click="deleteSelectedMediaFolder($index)">
+							 <i class="fa fa-trash-o"></i></a>
+												</span>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="form-group last">
+							<label class="col-sm-4 control-label">Add path</label>
+							<div class="col-sm-8">
+								<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-check"></i>
+												</span>
+									<button  ng-click="addTempMediaFolder()" type="button" class="btn btn-default">Add path</button>
+								</div>
+								<p class="help-block">
+									<!--	Two datasets that are prefetched, stored, and searched on the client. Highlighting is enabled.-->
+								</p>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" ng-click="saveMediaFolders(tempMediaFolderCollection.folders)" data-dismiss="modal" class="btn btn-primary"><i class="fa fa-check"></i> Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-6">
 		<!-- BEGIN: ACCORDION DEMO -->
 		<div class="portlet light">
 			<div class="portlet-title">
 				<div class="caption font-green-sharp">
 					<i class="icon-settings font-green-sharp"></i>
 					<span class="caption-subject bold uppercase">Upload queue</span>
-					<span class="caption-helper">Queue length: {{ uploader.queue.length }}</span>
+					<!--<span class="caption-helper">Queue length: {{ uploader.queue.length }}</span>-->
 				</div>
-				<div class="actions">
-								<div class="btn-group">
-									<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">
-									<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-										<li>
-											<a href="#">
-											<i class="fa fa-pencil"></i> Edit </a>
-										</li>
-										<li>
-											<a href="#">
-											<i class="fa fa-trash-o"></i> Delete </a>
-										</li>
-										<li>
-											<a href="#">
-											<i class="fa fa-ban"></i> Ban </a>
-										</li>
-										<li class="divider">
-										</li>
-										<li>
-											<a href="#">
-											<i class="i"></i> Make admin </a>
-										</li>
-									</ul>
-								</div>
-								<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">
-								</a>
-							</div>
+				<!--<div class="actions">-->
+								<!--<div class="btn-group">-->
+									<!--<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">-->
+									<!--<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>-->
+									<!--</a>-->
+									<!--<ul class="dropdown-menu pull-right">-->
+										<!--<li>-->
+											<!--<a href="#">-->
+											<!--<i class="fa fa-pencil"></i> Edit </a>-->
+										<!--</li>-->
+										<!--<li>-->
+											<!--<a href="#">-->
+											<!--<i class="fa fa-trash-o"></i> Delete </a>-->
+										<!--</li>-->
+										<!--<li>-->
+											<!--<a href="#">-->
+											<!--<i class="fa fa-ban"></i> Ban </a>-->
+										<!--</li>-->
+										<!--<li class="divider">-->
+										<!--</li>-->
+										<!--<li>-->
+											<!--<a href="#">-->
+											<!--<i class="i"></i> Make admin </a>-->
+										<!--</li>-->
+									<!--</ul>-->
+								<!--</div>-->
+								<!--<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">-->
+								<!--</a>-->
+							<!--</div>-->
 			</div>
 			<div class="portlet-body">
 				<div class="table-scrollable table-scrollable-borderless">
@@ -184,199 +264,48 @@
 				<span class="glyphicon glyphicon-trash"></span> Remove all
 				</button>
 			</div>
+
 		</div>		
 		<!-- END: ACCORDION DEMO -->
 	</div>
-
-</div>
-
-<div class="row">
-	<div class="col-md-4">
+	<div class="col-md-3">
 		<!-- BEGIN: ACCORDION DEMO -->
 		<div class="portlet light">
 			<div class="portlet-title">
 				<div class="caption font-green-sharp">
 					<i class="icon-settings font-green-sharp"></i>
-					<span class="caption-subject bold uppercase">My Algo Models</span>
-					<span class="caption-helper">length: {{ models.length }}</span>
+					<span class="caption-subject bold uppercase">My Files</span>
+					<!--<span class="caption-helper">{{ files.length }}</span>-->
 				</div>
-				<div class="actions">
-					<div class="btn-group">
-						<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">
-							<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu pull-right">
-							<li>
-								<a href="#">
-									<i class="fa fa-pencil"></i> Edit </a>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-trash-o"></i> Delete </a>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-ban"></i> Ban </a>
-							</li>
-							<li class="divider">
-							</li>
-							<li>
-								<a href="#">
-									<i class="i"></i> Make admin </a>
-							</li>
-						</ul>
-					</div>
-					<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">
-					</a>
-				</div>
-			</div>
-			<div class="portlet-body">
-				<div class="table-scrollable table-scrollable-borderless">
-					<table class="table table-hover table-light">
-						<thead>
-						<tr class="uppercase">
-							<th width="50%">Name</th>
-
-
-						</tr>
-						</thead>
-						<tbody>
-						<tr ng-repeat="item in models">
-							<td><strong>{{ item.originalname }}</strong></td>
-
-
-							<td ng-show="uploader.isHTML5" nowrap>{{ item.media.grid.length/1024/1024|number:2 }} MB</td>
-
-							<td nowrap>
-								<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
-									<span class="glyphicon glyphicon-trash"></span> Remove
-								</button>
-							</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-
-
-
-				<button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
-					<span class="glyphicon glyphicon-trash"></span> Remove all
-				</button>
-			</div>
-		</div>
-		<!-- END: ACCORDION DEMO -->
-	</div>
-	<div class="col-md-4">
-		<!-- BEGIN: ACCORDION DEMO -->
-		<div class="portlet light">
-			<div class="portlet-title">
-				<div class="caption font-green-sharp">
-					<i class="icon-settings font-green-sharp"></i>
-					<span class="caption-subject bold uppercase">My dependencies</span>
-					<span class="caption-helper">length: {{ dependencies.length }}</span>
-				</div>
-				<div class="actions">
-					<div class="btn-group">
-						<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">
-							<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu pull-right">
-							<li>
-								<a href="#">
-									<i class="fa fa-pencil"></i> Edit </a>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-trash-o"></i> Delete </a>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-ban"></i> Ban </a>
-							</li>
-							<li class="divider">
-							</li>
-							<li>
-								<a href="#">
-									<i class="i"></i> Make admin </a>
-							</li>
-						</ul>
-					</div>
-					<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">
-					</a>
-				</div>
-			</div>
-			<div class="portlet-body">
-				<div class="table-scrollable table-scrollable-borderless">
-					<table class="table table-hover table-light">
-						<thead>
-						<tr class="uppercase">
-							<th width="50%">Name</th>
-
-
-						</tr>
-						</thead>
-						<tbody>
-						<tr ng-repeat="item in dependencies">
-							<td><strong>{{ item.originalname }}</strong></td>
-
-
-							<td nowrap>
-								<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
-									<span class="glyphicon glyphicon-trash"></span> Remove
-								</button>
-							</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-
-
-
-				<button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
-					<span class="glyphicon glyphicon-trash"></span> Remove all
-				</button>
-			</div>
-		</div>
-		<!-- END: ACCORDION DEMO -->
-	</div>
-	<div class="col-md-4">
-		<!-- BEGIN: ACCORDION DEMO -->
-		<div class="portlet light">
-			<div class="portlet-title">
-				<div class="caption font-green-sharp">
-					<i class="icon-settings font-green-sharp"></i>
-					<span class="caption-subject bold uppercase">My Multimedia Files</span>
-					<span class="caption-helper">Queue length: {{ files.length }}</span>
-				</div>
-				<div class="actions">
-					<div class="btn-group">
-						<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">
-							<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu pull-right">
-							<li>
-								<a href="#">
-									<i class="fa fa-pencil"></i> Edit </a>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-trash-o"></i> Delete </a>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-ban"></i> Ban </a>
-							</li>
-							<li class="divider">
-							</li>
-							<li>
-								<a href="#">
-									<i class="i"></i> Make admin </a>
-							</li>
-						</ul>
-					</div>
-					<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">
-					</a>
-				</div>
+				<!--<div class="actions">-->
+					<!--<div class="btn-group">-->
+						<!--<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">-->
+							<!--<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>-->
+						<!--</a>-->
+						<!--<ul class="dropdown-menu pull-right">-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-pencil"></i> Edit </a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-trash-o"></i> Delete </a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-ban"></i> Ban </a>-->
+							<!--</li>-->
+							<!--<li class="divider">-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="i"></i> Make admin </a>-->
+							<!--</li>-->
+						<!--</ul>-->
+					<!--</div>-->
+					<!--<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">-->
+					<!--</a>-->
+				<!--</div>-->
 			</div>
 			<div class="portlet-body">
 				<div class="table-scrollable table-scrollable-borderless">
@@ -414,6 +343,159 @@
 		</div>
 		<!-- END: ACCORDION DEMO -->
 	</div>
+
+</div>
+
+<div class="row">
+	<!--<div class="col-md-4">-->
+		<!--&lt;!&ndash; BEGIN: ACCORDION DEMO &ndash;&gt;-->
+		<!--<div class="portlet light">-->
+			<!--<div class="portlet-title">-->
+				<!--<div class="caption font-green-sharp">-->
+					<!--<i class="icon-settings font-green-sharp"></i>-->
+					<!--<span class="caption-subject bold uppercase">My Algo Models</span>-->
+					<!--<span class="caption-helper">length: {{ models.length }}</span>-->
+				<!--</div>-->
+				<!--<div class="actions">-->
+					<!--<div class="btn-group">-->
+						<!--<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">-->
+							<!--<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>-->
+						<!--</a>-->
+						<!--<ul class="dropdown-menu pull-right">-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-pencil"></i> Edit </a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-trash-o"></i> Delete </a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-ban"></i> Ban </a>-->
+							<!--</li>-->
+							<!--<li class="divider">-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="i"></i> Make admin </a>-->
+							<!--</li>-->
+						<!--</ul>-->
+					<!--</div>-->
+					<!--<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">-->
+					<!--</a>-->
+				<!--</div>-->
+			<!--</div>-->
+			<!--<div class="portlet-body">-->
+				<!--<div class="table-scrollable table-scrollable-borderless">-->
+					<!--<table class="table table-hover table-light">-->
+						<!--<thead>-->
+						<!--<tr class="uppercase">-->
+							<!--<th width="50%">Name</th>-->
+
+
+						<!--</tr>-->
+						<!--</thead>-->
+						<!--<tbody>-->
+						<!--<tr ng-repeat="item in models">-->
+							<!--<td><strong>{{ item.originalname }}</strong></td>-->
+
+
+							<!--<td ng-show="uploader.isHTML5" nowrap>{{ item.media.grid.length/1024/1024|number:2 }} MB</td>-->
+
+							<!--<td nowrap>-->
+								<!--<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">-->
+									<!--<span class="glyphicon glyphicon-trash"></span> Remove-->
+								<!--</button>-->
+							<!--</td>-->
+						<!--</tr>-->
+						<!--</tbody>-->
+					<!--</table>-->
+				<!--</div>-->
+
+
+
+				<!--<button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">-->
+					<!--<span class="glyphicon glyphicon-trash"></span> Remove all-->
+				<!--</button>-->
+			<!--</div>-->
+		<!--</div>-->
+		<!--&lt;!&ndash; END: ACCORDION DEMO &ndash;&gt;-->
+	<!--</div>-->
+	<!--<div class="col-md-4">-->
+		<!--&lt;!&ndash; BEGIN: ACCORDION DEMO &ndash;&gt;-->
+		<!--<div class="portlet light">-->
+			<!--<div class="portlet-title">-->
+				<!--<div class="caption font-green-sharp">-->
+					<!--<i class="icon-settings font-green-sharp"></i>-->
+					<!--<span class="caption-subject bold uppercase">My dependencies</span>-->
+					<!--<span class="caption-helper">length: {{ dependencies.length }}</span>-->
+				<!--</div>-->
+				<!--<div class="actions">-->
+					<!--<div class="btn-group">-->
+						<!--<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">-->
+							<!--<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>-->
+						<!--</a>-->
+						<!--<ul class="dropdown-menu pull-right">-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-pencil"></i> Edit </a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-trash-o"></i> Delete </a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-ban"></i> Ban </a>-->
+							<!--</li>-->
+							<!--<li class="divider">-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="i"></i> Make admin </a>-->
+							<!--</li>-->
+						<!--</ul>-->
+					<!--</div>-->
+					<!--<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">-->
+					<!--</a>-->
+				<!--</div>-->
+			<!--</div>-->
+			<!--<div class="portlet-body">-->
+				<!--<div class="table-scrollable table-scrollable-borderless">-->
+					<!--<table class="table table-hover table-light">-->
+						<!--<thead>-->
+						<!--<tr class="uppercase">-->
+							<!--<th width="50%">Name</th>-->
+
+
+						<!--</tr>-->
+						<!--</thead>-->
+						<!--<tbody>-->
+						<!--<tr ng-repeat="item in dependencies">-->
+							<!--<td><strong>{{ item.originalname }}</strong></td>-->
+
+
+							<!--<td nowrap>-->
+								<!--<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">-->
+									<!--<span class="glyphicon glyphicon-trash"></span> Remove-->
+								<!--</button>-->
+							<!--</td>-->
+						<!--</tr>-->
+						<!--</tbody>-->
+					<!--</table>-->
+				<!--</div>-->
+
+
+
+				<!--<button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">-->
+					<!--<span class="glyphicon glyphicon-trash"></span> Remove all-->
+				<!--</button>-->
+			<!--</div>-->
+		<!--</div>-->
+		<!--&lt;!&ndash; END: ACCORDION DEMO &ndash;&gt;-->
+	<!--</div>-->
+
 </div>
 </div>
 

@@ -30,38 +30,38 @@
 			<div class="portlet-title">
 				<div class="caption font-green-sharp">
 					<i class="icon-settings font-green-sharp"></i>
-					<span class="caption-subject bold uppercase">My Multimedia Files</span>
+					<span class="caption-subject bold uppercase">Multimedia Files</span>
 					<span class="caption-helper">Queue length: {{ files.length }}</span>
 				</div>
-				<div class="actions">
-					<div class="btn-group">
-						<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">
-							<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu pull-right">
-							<li>
-								<a href="#">
-									<i class="fa fa-pencil"></i> Edit </a>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-trash-o"></i> Delete </a>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-ban"></i> Ban </a>
-							</li>
-							<li class="divider">
-							</li>
-							<li>
-								<a href="#">
-									<i class="i"></i> Make admin </a>
-							</li>
-						</ul>
-					</div>
-					<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">
-					</a>
-				</div>
+				<!--<div class="actions">-->
+					<!--<div class="btn-group">-->
+						<!--<a class="btn btn-circle btn-default btn-sm" href="#" data-toggle="dropdown">-->
+							<!--<i class="fa fa-cogs"></i> Settings <i class="fa fa-angle-down"></i>-->
+						<!--</a>-->
+						<!--<ul class="dropdown-menu pull-right">-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-pencil"></i> Edit </a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-trash-o"></i> Delete </a>-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="fa fa-ban"></i> Ban </a>-->
+							<!--</li>-->
+							<!--<li class="divider">-->
+							<!--</li>-->
+							<!--<li>-->
+								<!--<a href="#">-->
+									<!--<i class="i"></i> Make admin </a>-->
+							<!--</li>-->
+						<!--</ul>-->
+					<!--</div>-->
+					<!--<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title="">-->
+					<!--</a>-->
+				<!--</div>-->
 			</div>
 			<div class="portlet-body">
 				<div class="table-scrollable table-scrollable-borderless">
@@ -72,7 +72,7 @@
 
 							<th ng-show="uploader.isHTML5">Write Access</th>
 							<th ng-show="uploader.isHTML5">Read Access</th>
-							<th ng-show="uploader.isHTML5">Size</th>
+							<th >Size</th>
 							<th>Actions</th>
 						</tr>
 						</thead>
@@ -80,20 +80,20 @@
 						<tr ng-click="select($index)" ng-repeat="item in files">
 							<td><strong>{{ item.originalname }}</strong></td>
 
-							<td><strong>{{item.writeaccess}}
-								<!--<select type="text" ng-model="item.file.writeaccess" value="{{item.writeaccess}}">
-									<option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;
-									<option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;
-									<option value="public">Public</option>
-								</select>--></strong>
-							</td>
-							<td><strong>{{item.readaccess}}
-								<!--<select type="text" ng-model="item.file.readaccess" value="{{item.readaccess}}">
-									<option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;
-									<option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;
-									<option value="public">Public</option>
-								</select>--></strong>
-							</td>
+							<!--<td><strong>{{item.writeaccess}}-->
+								<!--&lt;!&ndash;<select type="text" ng-model="item.file.writeaccess" value="{{item.writeaccess}}">-->
+									<!--<option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;-->
+									<!--<option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;-->
+									<!--<option value="public">Public</option>-->
+								<!--</select>&ndash;&gt;</strong>-->
+							<!--</td>-->
+							<!--<td><strong>{{item.readaccess}}-->
+								<!--&lt;!&ndash;<select type="text" ng-model="item.file.readaccess" value="{{item.readaccess}}">-->
+									<!--<option value="">Select...</option> &lt;!&ndash; not selected / blank option &ndash;&gt;-->
+									<!--<option value="pirvate">Private(only my algo's)</option> &lt;!&ndash; interpolation &ndash;&gt;-->
+									<!--<option value="public">Public</option>-->
+								<!--</select>&ndash;&gt;</strong>-->
+							<!--</td>-->
 							<td nowrap>{{ item.media.grid.length/1024/1024|number:2 }} MB</td>
 
 							<td nowrap>

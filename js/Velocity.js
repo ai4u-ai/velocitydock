@@ -900,8 +900,8 @@ VelocityModule.factory("videoService",function($sce,$rootScope,$http,$timeout,$f
 
       setVideo:function(index){
 
-          if(this.paused=true&&this.playList[index]===this.currentVideo){
-              this.API.pause();
+          if(this.paused&&this.playList[index]===this.currentVideo){
+              // this.API.play();
           }else{
               this.currentVideo=this.playList[index];
               if (this.currentVideo !== null && this.currentVideo !== undefined) {
@@ -913,7 +913,7 @@ VelocityModule.factory("videoService",function($sce,$rootScope,$http,$timeout,$f
                   //  this.config.plugins.poster = this.currentVideo.cover.url;
 
 
-                  $timeout(this.API.play.bind(this.API), 100);
+                  // $timeout(this.API.play.bind(this.API), 100);
 
 
               }
@@ -1131,11 +1131,19 @@ VelocityModule.factory("videoService",function($sce,$rootScope,$http,$timeout,$f
                     console.log(data);
                     if(data!=undefined){
                         data.map(function(media){
-                            var mediaFile={src:API_ENDPOINT.url+'/stream/video/'+media.media.id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length),type: "video/mp4" ,title:media.name,selections:[],timeFrames:[],_id:media._id}
+
+                            var method=media.filePath ==undefined ? '/stream/video/' : '/stream/video/frompath'
+                            var id=media.filePath == undefined ? media.media.id : '';
+                            var mediaFile={src:API_ENDPOINT.url+method+id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length)+'&'+'filePath='+media.filePath+'&'+'type='+"video/mp4",type: "video/mp4"  ,title:media.name,selections:[],timeFrames:[],_id:media._id};
+
+                            // var mediaFile={src:API_ENDPOINT.url+'/stream/video/'+media.media.id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length),type: "video/mp4" ,title:media.name,selections:[],timeFrames:[],_id:media._id}
+
                             this.config.sources.push(mediaFile);
 
                         });
                         this.API.mediaElement[0].src=  this.config.sources[0].src;
+                        this.setVideo(0)
+                        this.initTimeFrames()
                     }
 
                 }));
@@ -1155,6 +1163,7 @@ VelocityModule.factory("videoService",function($sce,$rootScope,$http,$timeout,$f
                 this.API.play();
 
             this.isCompleted = false;
+            this.setVideo(0);
             if (this.config.autoPlay) {
                 this.setVideo(0);
 
@@ -1180,6 +1189,21 @@ VelocityModule.factory("videoService",function($sce,$rootScope,$http,$timeout,$f
 
             }
 
+        },
+        pouseVideo(){
+            console.log(this.API.currentState)
+
+            if(this.paused){
+                this.paused=false;
+
+                this.API.play();
+
+
+            }
+            if(!this.paused){
+                this.paused=true;
+                this.API.pause()
+            }
         },
         pouseAll:function(){
                 this.API.pause();
@@ -1219,6 +1243,10 @@ VelocityModule.factory("videoService",function($sce,$rootScope,$http,$timeout,$f
         selectVideo:function(video){
            // this.cuePoints.console=[];
             this.currentVideo=video;
+            if(this.currentVideo.timeFrames.length===0){
+                this.initTimeFrames()
+            }
+
            /* for(var i=0;i<this.currentVideo.timeFrames.length;i++)
             {
                 this.currentVideo.timeFrames[i].onEnter= function(){console.log('brseeeeeee')};
@@ -1258,6 +1286,14 @@ VelocityModule.factory("videoService",function($sce,$rootScope,$http,$timeout,$f
             video.timeFrame=[]; video.type="video/mp4" ;video.title='';
             this.playList.push(video);
 
+        },
+        initTimeFrames:function() {
+            var timeFrame = {};
+            timeFrame.timeLapse = {
+                start: 0,
+                end: 1000
+            };
+            this.currentVideo.timeFrames[0]=timeFrame
         },
         addTimeFrames:function(){
             var timeFrame={};
@@ -2507,7 +2543,7 @@ var visualize$$=   rx.Observable.fromEvent(this.API.mediaElement, 'timeupdate').
 
         ,
         removeTimeFrames:function(index){
-            this.currentVideo.timeFrames.splice(index);
+            this.currentVideo.timeFrames.splice(index,1);
         },
         getTimeFramesOptions:function(video,timeFrame){
             var oldrzSliderModel;
@@ -2631,6 +2667,36 @@ VelocityModule.provider('deepQLearnService',
 
     });
 
+VelocityModule.directive('inputFieldSelection', function(){
+    return{
+        restrict: 'A',
+        scope:{
+            onSelected: '='
+        },
+        link:function(scope, elem, attrs){
+            var focusedElement;
+            elem.on('click', function () {
+                if (focusedElement != this) {
+                    scope.onSelected(elem.prop('selectionStart'));
+                    focusedElement = this;
+                }
+            });
+            elem.on('blur', function () {
+                focusedElement = null;
+            });
+
+            elem.on('select', function(){
+                var text = elem.val().substring(elem.prop('selectionStart'),
+                    elem.prop('selectionEnd'));
+                scope.onSelected(text);
+            });
+
+            // elem.on('blur', function(){ scope.onSelected('') });
+            // elem.on('keydown', function(){ scope.onSelected('')});
+            // elem.on('mousedown', function(){ scope.onSelected('')  });
+        }
+    }
+});
 
 VelocityModule.directive('drawing',['videoService', function(videoService){
     function offset(element) {

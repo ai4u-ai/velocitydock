@@ -3,7 +3,7 @@
  */
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var bcrypt = require('bcrypt');
+// var bcrypt = require('bcrypt');
 var  ObjectId = Schema.ObjectId;
 /*var GFS = mongoose.model("GFS", new Schema({}, {strict: false}), "fs.files" );*/
 var Schema = mongoose.Schema;

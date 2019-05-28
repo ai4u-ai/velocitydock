@@ -29,7 +29,7 @@ QueryParameter.name="query";
 
 passport.use(QueryParameter);
 
-opts.jwtFromRequest = ExtractJwt.fromAuthHeader();
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
 opts.secretOrKey = config.secret;
 passport.use(new AuthHeader(opts, function(jwt_payload, done) {
     User.findOne({_id: jwt_payload._id}, function(err, user) {

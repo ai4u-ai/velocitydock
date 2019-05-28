@@ -42,15 +42,20 @@ var youtubedl = require('youtube-dl');
 
 var config = require('../config/database');
 var mongoose = require('mongoose');
-console.log(mongoose.connection.db)
-if(mongoose.connection.db===undefined)mongoose.connect(config.database);
+console.log(mongoose.connection.name)
+if(mongoose.connection.name===undefined)
+{
+
+    mongoose.connect(config.database);
+    console.log(mongoose.connection.name)
+}
 var conn = mongoose.connection;
-var db=conn.db;
+var db=conn.name;
 
 
 var Grid = require('gridfs-stream');
 Grid.mongo = mongoose.mongo;
-var  gfs=Grid(conn.db);
+var  gfs=Grid(conn.name);
 
 //Call gPRC
 

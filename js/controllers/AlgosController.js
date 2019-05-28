@@ -38,24 +38,31 @@ MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthServ
 // anotations
     $scope.annotations=[];
     $scope.selectedAnnotation={};
-    $scope.selectAnnotation=function(index){
-        $scope.selectedAnnotation=$scope.annotations[index];
+    $scope.selectAnnotation=function(item){
+        $scope.selectedAnnotation=item;
     };
     $scope.loadAnnotations = function () {
-
+        $scope.mediafiles=[];
         $http.get('/api/anotations/loadAll').success(function (data) {
             console.log(data);
 
 
             $scope.annotations= data.map(function(obj){
-
-                return {_id:obj._id,uploadedBy:obj.uploadedBy,annotation:obj.annotation,mediaFile:{src:API_ENDPOINT.url+'/stream/video/'+obj.annotatedOnMedia.media.id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length),type: "video/mp4"}}
+                $scope.mediafiles.push(obj.annotatedOnMedia.name)
+                return {_id:obj._id,media_name:obj.annotatedOnMedia.name,uploadedBy:obj.uploadedBy,annotation:obj.annotation,mediaFile:{src:API_ENDPOINT.url+'/stream/video/'+obj.annotatedOnMedia.media.id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length),type: "video/mp4"}}
 
             });
            // $scope.select(0);
+            $scope.mediafiles=Array.from(new Set($scope.mediafiles))
+            $scope.mediafiles.unshift('all')
+            $scope.selectedMedia= $scope.mediafiles[0]
 
         });
     };
+    $scope.groupByMedia = function (media) {
+        $scope.selectedMedia=media;
+
+    }
     $scope.startInterval=function (interval) {
         $scope.promise = $interval($scope.updateTraining, 2000);
     };
@@ -243,8 +250,13 @@ MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthServ
             console.log(data);
             $scope.media=data;
             var media= $scope.media[0];
-            var mediaFile={src:API_ENDPOINT.url+'/stream/video/'+media.media.id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length),type: "video/mp4" ,title:media.name}
-    if(  $scope.api.mediaElement!=undefined)            $scope.api.mediaElement[0].src=mediaFile.src;
+            var method=media.filePath == undefined ? '/stream/video/' : '/stream/video/frompath/';
+            var id=media.filePath == undefined ? media.media.id : media.filePath;
+            var mediaFile={src:API_ENDPOINT.url+id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length),type: "video/mp4" ,title:media.name}
+
+
+
+            if(  $scope.api.mediaElement!=undefined)            $scope.api.mediaElement[0].src=mediaFile.src;
 
 
         });
@@ -261,7 +273,10 @@ MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthServ
         $scope.selectedMedia= $scope.media[index];
         $scope.selected.media=$scope.media[index];
         var media=$scope.media[index];
-        var mediaFile={src:API_ENDPOINT.url+'/stream/video/'+media.media.id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length),type: "video/mp4" ,title:media.name}
+
+        var method=media.filePath ==undefined ? '/stream/video/' : '/stream/video/frompath'
+        var id=media.filePath == undefined ? media.media.id : '';
+        var mediaFile={src:API_ENDPOINT.url+method+id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length)+'&'+'filePath='+media.filePath+'&'+'type='+"video/mp4",type: "video/mp4" ,title:media.name};
 
         $scope.api.mediaElement[0].src=mediaFile.src;
     };

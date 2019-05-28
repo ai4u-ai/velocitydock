@@ -37,7 +37,7 @@ import mongoclient as mongocl
 import retrainForServer as retrain
 import dockerManager as dockermanager
 import trainerServer_pb2
-
+import converter
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
@@ -205,15 +205,14 @@ class Trainer(trainerServer_pb2.TrainerServicer):
     )
 
     FLAGS, unparsed = parser.parse_known_args()
-    def TrainModel(self, request, context):
-        mongocl.downloadAnnotations(request.annotations,request.imagename)
-
-
-        self.FLAGS.model_dir, self.FLAGS.model_name= mongocl.downloadModel(request.model,request.imagename,request.retrain)
-        self.FLAGS.how_many_training_steps =int(request.steps)
-        self.FLAGS.bottleneck_dir=request.imagename+'/'+'bottleneck/'
-        self.FLAGS.image_dir=request.imagename+'/annotations';
-        self.FLAGS.summaries_dir=request.imagename+'/retrain_logs';
+    def prep_inception(self, request):
+        mongocl.downloadAnnotations(request.annotations, request.imagename)
+        self.FLAGS.model_dir, self.FLAGS.model_name = mongocl.downloadModel(request.model, request.imagename,
+                                                                            request.retrain)
+        self.FLAGS.how_many_training_steps = int(request.steps)
+        self.FLAGS.bottleneck_dir = request.imagename + '/' + 'bottleneck/'
+        self.FLAGS.image_dir = request.imagename + '/annotations';
+        self.FLAGS.summaries_dir = request.imagename + '/retrain_logs';
         # self.FLAGS.random_scale=5
         # self.FLAGS.random_crop=5
         # self.FLAGS.flip_left_right=0
@@ -221,11 +220,23 @@ class Trainer(trainerServer_pb2.TrainerServicer):
         trainagain = request.retrain
 
         retrain.train(trainagain)
-        mongocl.make_tarfile('exportmodel.tar.gz',retrain.FLAGS.model_dir, retrain.FLAGS.output_graph,retrain.FLAGS.output_labels)
-        zipid=mongocl.uploadtarmodel('exportmodel.tar.gz',request.trainingid)
+        mongocl.make_tarfile('exportmodel.tar.gz', retrain.FLAGS.model_dir, retrain.FLAGS.output_graph,
+                             retrain.FLAGS.output_labels)
+        zipid = mongocl.uploadtarmodel('exportmodel.tar.gz', request.trainingid)
         dockermanager.saveZipToContainer(request.imagename)
         # os.remove('exportmodel.tar.gz')
-        return trainerServer_pb2.TrainModelReply(trainingid=request.trainingid,zipmodelid=str(zipid))
+        return trainerServer_pb2.TrainModelReply(trainingid=request.trainingid, zipmodelid=str(zipid))
+
+    def prep_object_detection(self, request):
+        converter.convert_annotations_coco()
+    def TrainModel(self, request, context):
+        algo_type = 'INCEPTION'
+
+        if algo_type=='INCEPTION':
+            return self.prep_inception(request)
+        if algo_type=='OBJECT_DETECTION':
+            return self.prep_object_detection(request)
+
 
 
     def createDockerImage(self,request,context):

@@ -3,7 +3,7 @@
  */
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var bcrypt = require('bcrypt');
+// var bcrypt = require('bcrypt');
 var uniqueValidator = require('mongoose-unique-validator');
 var  ObjectId = Schema.ObjectId;
 var Dependency=require('./dependency');

@@ -91,8 +91,10 @@ MetronicApp.controller('VideoController',
     MetronicApp.controller('VideoEditorController', function( AuthService,$rootScope, $scope, API_ENDPOINT,$http, $timeout,$analytics, Idle, deepQLearnService,$cookies,$cookieStore,$sce,videoService,algoService,$modal,annotationService) {
 
         //VIDEO GULAR
+        $scope.isCollapsed = true;
 
         $scope.videoService=videoService;
+
         $scope.annotationService=annotationService;
 
         $scope.algoService=algoService;
@@ -107,7 +109,7 @@ MetronicApp.controller('VideoController',
             $scope.getSelectedClasses().classes.push({number: $scope.tempClassCollection.classes.length+1,name:'Fill in'});
         };
 
-    $scope.selectedClasses={};
+        $scope.selectedClasses={};
         $scope.selectedClass={};
 
 

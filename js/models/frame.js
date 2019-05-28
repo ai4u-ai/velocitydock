@@ -4,7 +4,7 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var bcrypt = require('bcrypt');
+// var bcrypt = require('bcrypt');
 
 var imgageFS = mongoose.model("imgageFS", new Schema({}, {strict: false}), "fs.files" );
 

@@ -247,7 +247,7 @@
 					<!-- end PROJECT HEAD -->
 					<div class="portlet-body">
 						<div class="row">
-							<div class="col-md-3 col-sm-3">
+							<div class="col-md-2 col-sm-3">
 								<div class="scroller" style="max-height: 600px;" data-always-visible="0" data-rail-visible="0" data-handle-color="#dae3e7">
 									<div class="todo-tasklist">
 										<div class="todo-tasklist-item todo-tasklist-item-border-green"  ng-class="{'todo-tasklist-badge todo-tasklist-item-border-red': selectedStep === 0}"  ng-click="selectStep(0)">
@@ -350,7 +350,7 @@
 							</div>
 							<div class="todo-tasklist-devider">
 							</div>
-							<div class="col-md-9 col-sm-9">
+							<div class="col-md-10 col-sm-9">
 								<div class="scroller" style="max-height: 600px;" data-always-visible="0" data-rail-visible="0" data-handle-color="#dae3e7">
 									<form action="#" class="form-horizontal">
 										<!-- TASK HEAD -->
@@ -540,7 +540,7 @@
 				<div class="caption font-green-sharp">
 					<i class="icon-settings font-green-sharp"></i>
 					<span class="caption-subject bold uppercase">Drop dependencies</span>
-					<span class="caption-helper"> {{ selected.dependencies.length}}</span>
+					<span class="caption-helper"> {{selected.dependencies.length}}</span>
 				</div>
 
 			</div>
@@ -614,7 +614,7 @@
 
 										<div class="row"  ng-show="selectedStep===6">
 
-											<div class="col-md-9 col-sm-6">
+											<div class="col-md-8 col-sm-6">
 												<div class="portlet light" >
 													<div class="portlet-title">
 														<div class="caption font-green-sharp">
@@ -729,12 +729,49 @@
 												</div>
 											</div>
 
-											<div class="col-md-3 col-sm-6">
+											<div class="col-md-4 col-sm-6">
+												<div class="actions">
+													<i class="icon-bar-chart font-green-haze hide"></i>
+
+													<div class="btn-group">
+														<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown"
+														   dropdown-menu-hover data-close-others="true">
+															Filter by Video :
+
+															{{selectedMedia}}
+
+
+															<i class="fa fa-angle-down"></i>
+														</a>
+
+														<ul class="dropdown-menu pull-right scrollspy-example">
+															<!--<li>-->
+															<!--<a data-target="#myModal_autocomplete" data-toggle="modal">-->
+															<!--<i class="i"></i> Add New </a>-->
+															<!--&lt;!&ndash;<a href="#" data-target="#myModal_autocomplete" role="button"  ng-click="annotationService.addNewClasses()" class="btn red" data-toggle="modal">-->
+															<!--View in Modal </a>&ndash;&gt;-->
+															<!--</li>-->
+
+															<li ng-repeat="video in mediafiles">
+
+																<a ng-click="groupByMedia(video)">
+																	<i class="i"></i> {{video}} </a>
+																<!--<span class="label label-sm label-success">play<i class="fa fa-play-circle-o"></i></span></a>-->
+																<!--</span>-->
+																<!--<a  ng-click="setSelectedClasses($index)">-->
+																<!--<i class="i"></i> {{video.title}} </a>-->
+
+															</li>
+
+														</ul>
+													</div>
+
+												</div>
 												<div class="portlet light" >
 													<div class="portlet-title">
 														<div class="caption font-green-sharp">
 															<i class="icon-settings font-green-sharp"></i>
-															<span class="caption-subject bold uppercase">My Annotations</span>
+															<span class="caption-subject bold uppercase">Annotations</span>
 															<span class="caption-helper"> {{ annotations.length }}</span>
 														</div>
 
@@ -743,16 +780,20 @@
 												<div class="row">
 														<div class="table-scrollable table-scrollable-borderless">
 															<table class="table table-hover table-light">
-																<!--<thead>
-																<tr class="uppercase">
-																	<th width="50%">Name</th>
+																<thead>
+																	<tr class="uppercase">
+																		<th width="50%">Id</th>
 
-																</tr>
-																</thead>-->
+																		<th width="50%">Media</th>
+
+																	</tr>
+
+																</thead>
 																<tbody>
-																<tr dnd-draggable="item" dnd-list="annotations"  ng-click="selectAnnotation($index)" dnd-drop="dropCallbackDependencies(event, index, item, external, type, 'itemType')" dnd-effect-allowed="move" ng-repeat="item in annotations">
+																<tr dnd-draggable="item" dnd-list="annotations"  ng-click="selectAnnotation(item)" dnd-drop="dropCallbackDependencies(event, index, item, external, type, 'itemType')" dnd-effect-allowed="move"
+																	ng-repeat="item in annotations| filter:(selectedMedia==='all' ? undefined : { media_name: selectedMedia })">
 																	<td><strong>{{ item._id }}</strong></td>
-
+																	<td><strong>{{ item.media_name }}</strong></td>
 
 
 

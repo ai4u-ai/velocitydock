@@ -29,7 +29,7 @@
 
 """The Python implementation of the GRPC helloworld.Greeter server."""
 
-from concurrent import futures
+
 import argparse
 import time
 import base64
@@ -38,12 +38,13 @@ import numpy as np
 import mongoclient as mongocl
 import dockerManager as dockermanager
 import os
-
+from concurrent.futures import ThreadPoolExecutor
 import docker
 import mongoclient as mongoclient
 import tarfile
 import io,os
 import dockerservice_pb2
+
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 
@@ -85,7 +86,7 @@ class DockerService(dockerservice_pb2.DockerServicer):
 
 
 def serve():
-  server = grpc.server(futures.ThreadPoolExecutor(max_workers=100))
+  server = grpc.server(ThreadPoolExecutor(max_workers=100))
   dockerservice_pb2.add_DockerServicer_to_server(DockerService(), server)
   server.add_insecure_port('[::]:50052')
   server.start()

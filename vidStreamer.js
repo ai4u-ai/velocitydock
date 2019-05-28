@@ -7,69 +7,88 @@ var vidStreamer = require("vid-streamer");
 var app = http.createServer(vidStreamer);
 app.listen(3000);
 console.log("VidStreamer.js up and running on port 3000");*/
+var path = require('path');
 var schedule = require('node-schedule');
 var async = require("async");
-var FilteredFramesCollection=require('./js/models/filteredframesCollection');
+var FilteredFramesCollection = require('./js/models/filteredframesCollection');
 var jsonfile = require('jsonfile')
 var fs = require('fs');
 var Grid = require('gridfs-stream');
-var multer  = require('multer');
+var multer = require('multer');
 var GridFsStorage = require('multer-gridfs-storage');
-var GridFsStream=require('./js/stream/gridfsstream');
-var ffmpegFrames=require('./js/stream/ffmpegFrames');
+var StreamFunctions = require('./js/stream/gridfsstream');
+var dir = require('node-dir');
+var ffmpegFrames = require('./js/stream/ffmpegFrames');
 var express = require("express");
 var connectDomain = require('connect-domain');
 var app = express();
-app.use(connectDomain());
+// app.use(connectDomain());
 var vidStreamer = require("vid-streamer");
 const videoStreamer = require('video-streamer');
-var User        = require('./js/models/user'); // get the mongoose model
-var Training=require('./js/models/training');
-var FramesCollection=require('./js/models/framesCollection');
-var Dependency=require('./js/models/dependency');
-var Media       =require('./js/models/media');
-var Classes=require('./js/models/classes');
-var Annotation       =require('./js/models/annotation');
-var AlgoModel       =require('./js/models/algomodel');
-var Algo        =require('./js/models/algo');
-var AlgoAnnoRun =require('./js/models/algoannorun');
-var AlgoService=require('./js/models/algoservice');
-var Algoannotation=require('./js/models/algoannotation');
-var port        = process.env.PORT || 3000;
-var jwt         = require('jwt-simple');
+var User = require('./js/models/user'); // get the mongoose model
+var Training = require('./js/models/training');
+var FramesCollection = require('./js/models/framesCollection');
+var Dependency = require('./js/models/dependency');
+var Media = require('./js/models/media');
+var Classes = require('./js/models/classes');
+var Mediafolderpath = require('./js/models/mediafolderpath');
+var Annotation = require('./js/models/annotation');
+var AlgoModel = require('./js/models/algomodel');
+var Algo = require('./js/models/algo');
+var AlgoAnnoRun = require('./js/models/algoannorun');
+var AlgoService = require('./js/models/algoservice');
+var Algoannotation = require('./js/models/algoannotation');
+var port = process.env.PORT || 3000;
+var jwt = require('jwt-simple');
 var spawn = require('child_process').spawn;
 // connect to database
-var docker=require('./js/docker/docker');
+var docker = require('./js/docker/docker');
 var config = require('./js/config/database');
 var mongoose = require('mongoose');
-if(mongoose.connection.db===undefined)mongoose.connect(config.database);
+if (mongoose.connection === undefined) mongoose.connect(config.database);
 Grid.mongo = mongoose.mongo;
 var GridStore = mongoose.mongo.GridStore;
+var GridFSBucket = mongoose.mongo.GridFSBucket;
 var ObjectID = require('mongodb').ObjectID;
 var conn = mongoose.connection;
-var db=conn.db;
-var gfs = Grid(conn.db);
-var storage = GridFsStorage({
-    gfs: gfs
+// console.log('vidstreamer connection' + conn);
+
+const MongoClient = require('mongodb').MongoClient;
+var db;
+var storage;
+var gfs;
+MongoClient.connect(config.database, function (err, database) {
+    if (err) {
+        console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+        process.exit(1);
+    }
+    db = database;
+    gfs = Grid(db);
+    storage = GridFsStorage({
+        gfs: gfs
+    });
+
 });
 
+var GridFsStream = StreamFunctions.gridfsStreamer;
+var StreamFromFile = StreamFunctions.streamFromFile;
 var cluster = require('cluster');
 
-var upload = multer({ storage: storage });
+var upload = multer({storage: storage});
 //authentication
-var bodyParser  = require('body-parser');
-var morgan      = require('morgan');
+var bodyParser = require('body-parser');
+var morgan = require('morgan');
 
 // pass passport for configuration
 
 
-var passport=require('./js/config/passport');
+var passport = require('./js/config/passport');
 
 
 //io +gRPC
 //Call gRPC
 
-var PROTO_PATH =__dirname +  '/js/protos/helloworld.proto';
+var PROTO_PATH = __dirname + '/js/protos/helloworld.proto';
 
 var grpc = require('grpc');
 var hello_proto = grpc.load(PROTO_PATH).helloworld;
@@ -77,105 +96,105 @@ var hello_proto = grpc.load(PROTO_PATH).helloworld;
 // var engine = require('engine.io');
 // var server = engine.listen(8090);
 
-var client = new hello_proto.Greeter('localhost:'+'30000',
+var client = new hello_proto.Greeter('localhost:' + '30000',
     grpc.credentials.createInsecure());
 var call = client.sayHelloAgain();
 // var io = require('socket.io')(8080);
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
-process.on('uncaughtException', function(err) {
-    console.log( " UNCAUGHT EXCEPTION " );
-    console.log( "[Inside 'uncaughtException' event] " + err.stack || err.message );
+process.on('uncaughtException', function (err) {
+    console.log(" UNCAUGHT EXCEPTION ");
+    console.log("[Inside 'uncaughtException' event] " + err.stack || err.message);
 });
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     res.end(err.message); // this catches the error!!
-   console.log(err.message)
+    console.log(err.message)
 });
 
 
 var socket;
 
-var sockets={};
+var sockets = {};
 var previous;
 
 io.on('connection', function (socket) {
 
-                Algo.find({},function(err,algos){
-                    if(err) console.log(err)
-                    algos.map(function (algo) {
-                        console.log(algo.name)
-                        docker.getAssignedPort(algo.name,function (port) {
+    Algo.find({}, function (err, algos) {
+        if (err) console.log(err)
+        algos.map(function (algo) {
+            // console.log(algo.name)
+            docker.getAssignedPort(algo.name, function (port) {
 
-                            socket.on(algo.name, function(data) {
-                                console.log(algo.name)
+                socket.on(algo.name, function (data) {
+                    // console.log(algo.name)
 
-                                var req = JSON.parse(data);
+                    var req = JSON.parse(data);
 
-                                console.log('sending message' + req.time + ' ' + req.index);
+                    // console.log('sending message' + req.time + ' ' + req.index);
 
-                                var client = new hello_proto.Greeter('localhost:' + port,
-                                    grpc.credentials.createInsecure());
-                                var call = client.sayHelloAgain();
-                                call.write({
-                                    name: new Buffer(req.blob, 'base64').toString('base64'),
-                                    frameid: req.time.toString(),
-                                    filteredframeid: req.index.toString()
-                                });
-                                call.on('error', function (error) {
-                                    //console.log(error)
-                                    return;
-                                })
-                                call.on('exit', function (error) {
-                                    console.log('exit')
-                                    return;
-                                })
-                                call.on('close', function (error) {
-                                    console.log('close')
-                                    return;
-                                })
-                                call.on('cancel', function (error) {
-                                    console.log('close')
-                                    return;
-                                })
-
-
-                                call.on('data', function (data) {
-                                    console.log('Got message ' + data.frameid + ' ' + data.filteredframeid + ' ' + data.label + ' ' + data.score);
-                                    socket.send(JSON.stringify({
-                                        label: data.label,
-                                        score: data.score,
-                                        time: data.frameid,
-                                        index: data.filteredframeid
-                                    }));
-                                    //  var diff=  new Date(new Date().getTime()-start.getTime())
-                                    // console.log(diff.getMinutes()+':'+diff.getSeconds()+':'+diff.getMilliseconds())
-                                    call.cancel();
-                                });
-                            })
-                        })
+                    var client = new hello_proto.Greeter('localhost:' + port,
+                        grpc.credentials.createInsecure());
+                    var call = client.sayHelloAgain();
+                    call.write({
+                        name: new Buffer(req.blob, 'base64').toString('base64'),
+                        frameid: req.time.toString(),
+                        filteredframeid: req.index.toString()
+                    });
+                    call.on('error', function (error) {
+                        //console.log(error)
+                        return;
                     })
-                })
-                    socket.emit('a message', {
-                        that: 'only'
-                        , '/chat': 'will get'
-                    });
-                    // chat.emit('my other event', {
-                    //     everyone: 'in'
-                    //     , '/chat': 'will get'
-                    // });
-                    socket.on('disconnect', function(){
-                        console.log('forceDisconnect')
-                        socket.disconnect();
-                    });
-                    var count=0;
+                    call.on('exit', function (error) {
+                        console.log('exit')
+                        return;
+                    })
+                    call.on('close', function (error) {
+                        console.log('close')
+                        return;
+                    })
+                    call.on('cancel', function (error) {
+                        console.log('close')
+                        return;
+                    })
 
+
+                    call.on('data', function (data) {
+                        console.log('Got message ' + data.frameid + ' ' + data.filteredframeid + ' ' + data.label + ' ' + data.score);
+                        socket.send(JSON.stringify({
+                            label: data.label,
+                            score: data.score,
+                            time: data.frameid,
+                            index: data.filteredframeid
+                        }));
+                        //  var diff=  new Date(new Date().getTime()-start.getTime())
+                        // console.log(diff.getMinutes()+':'+diff.getSeconds()+':'+diff.getMilliseconds())
+                        call.cancel();
+                    });
+                })
+            })
+        })
+    })
+    socket.emit('a message', {
+        that: 'only'
+        , '/chat': 'will get'
+    });
+    // chat.emit('my other event', {
+    //     everyone: 'in'
+    //     , '/chat': 'will get'
+    // });
+    socket.on('disconnect', function () {
+        console.log('forceDisconnect')
+        socket.disconnect();
+    });
+    var count = 0;
 
 
 })
 
-var reinintCallVars=function(port,_availiblenr,servicename){
+
+var reinintCallVars = function (port, _availiblenr, servicename) {
 //    // var server = engine.listen(port);
 //     availiblenr=_availiblenr;
 //     var  chunks=[];
@@ -368,12 +387,7 @@ var reinintCallVars=function(port,_availiblenr,servicename){
 //     }
 
 
-
-
 }
-
-
-
 
 
 //STREAMER
@@ -393,7 +407,7 @@ var apiRoutes = express.Router();
 
 // create a new user account (POST http://localhost:8080/api/signup)
 //CORS middleware
-var allowCrossDomain = function(req, res, next) {
+var allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', 'example.com');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -402,7 +416,7 @@ var allowCrossDomain = function(req, res, next) {
 }
 
 
-app.use(bodyParser.urlencoded({ extended: true,limit: '50mb'}));
+app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 app.use(bodyParser.json({limit: '50mb'}));
 app.use('/', express.static(__dirname + '/'));
 app.use(allowCrossDomain);
@@ -414,17 +428,17 @@ app.use(passport.initialize());
 
 
 // demo Route (GET http://localhost:8080)
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.send('Hello! The API is at http://localhost:' + port + '/api');
 });
 
-apiRoutes.post('/signup', function(req, res) {
+apiRoutes.post('/signup', function (req, res) {
     if (!req.body.userName || !req.body.password) {
         res.json({success: false, msg: 'Please pass name and password.'});
     } else {
         var newUser = new User(req.body);
         // save the user
-        newUser.save(function(err) {
+        newUser.save(function (err) {
             if (err) {
                 return res.json({success: false, msg: 'Username already exists.'});
             }
@@ -434,10 +448,10 @@ apiRoutes.post('/signup', function(req, res) {
 });
 
 // route to authenticate a user (POST http://localhost:8080/api/authenticate)
-apiRoutes.post('/authenticate', function(req, res) {
+apiRoutes.post('/authenticate', function (req, res) {
     User.findOne({
         name: req.body.userName
-    }, function(err, user) {
+    }, function (err, user) {
         if (err) throw err;
 
         if (!user) {
@@ -449,7 +463,7 @@ apiRoutes.post('/authenticate', function(req, res) {
                     // if user is found and password is right create a token
                     var token = jwt.encode(user, config.secret);
                     // return the information including token as JSON
-                    res.json({success: true, token: 'JWT ' + token,user:user});
+                    res.json({success: true, token: 'JWT ' + token, user: user});
                 } else {
                     res.send({success: false, msg: 'Authentication failed. Wrong password.'});
                 }
@@ -458,13 +472,13 @@ apiRoutes.post('/authenticate', function(req, res) {
     });
 });
 // route to a restricted info (GET http://localhost:8080/api/memberinfo)
-apiRoutes.get('/memberinfo', passport.authenticate('jwt', { session: false}), function(req, res) {
+apiRoutes.get('/memberinfo', passport.authenticate('jwt', {session: false}), function (req, res) {
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -477,25 +491,92 @@ apiRoutes.get('/memberinfo', passport.authenticate('jwt', { session: false}), fu
         return res.status(403).send({success: false, msg: 'No token provided.'});
     }
 });
-apiRoutes.delete('/delete/:id', function(req, res) {
+apiRoutes.delete('/delete/:id', function (req, res) {
     console.log('delete')
 });
-apiRoutes.get('/load/allmedia', passport.authenticate('jwt', { session: false}),upload.single('file'), function(req, res) {
+apiRoutes.get('/load/allmedia', passport.authenticate('jwt', {session: false}), upload.single('file'), function (req, res) {
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                Media.find({uploadedBy:user._id}).exec(function (err, docs) {
+                console.log(user._id)
+
+                Mediafolderpath.find({createdBy: user._id}, function (err, folders)
+                {
+                    console.dir(folders)
+                    extensions = [".mp4", ".flv", ".avi", ".mov", ".mpg"];
+                    folders.forEach(function (folder) {
+                        fs.readdir(folder.path, function (err, items)
+                        {
+                            console.log(items);
+
+
+                            items.filter(function (file) {
+                                console.log(path.extname(file))
+                                if (extensions.indexOf(path.extname(file)) > -1) {
+                                    return true;
+                                }
+                            }
+                            ).forEach(function (file) {
+
+                                Media.find({uploadedBy: user._id, name: file}).exec(function (err, docs) {
+
+                                    foundfiles=docs;
+
+                                    if (foundfiles === undefined || foundfiles.length == 0) {
+                                        console.log(file,folder.path)
+                                        var media = new Media();
+                                        media.media = {id:file};
+                                        media.contentType = "video/mp4";
+                                        media.name = file;
+                                        media.originalname = file;
+                                        media.readaccess = 'public';
+                                        media.writeaccess = 'public';
+                                        media.filePath=folder.path+"/"+file;
+                                        media.uploadedBy = user._id;
+
+                                        media.save(function (err, media) {
+                                            if (err) {
+                                                return res.json({success: false, msg: 'Username already exists.'});
+                                            }
+                                            var startTime = new Date(Date.now() + 500);
+                                            // var j = schedule.scheduleJob(startTime, function(media,db){
+                                            //     ffmpegFrames.saveMetaFrames(media);
+                                            //     var scale=30;
+                                            //     var sceneFilter=0.005;
+                                            //    var filteredFrCollection =new FilteredFramesCollection();
+                                            //     filteredFrCollection.status='started';
+                                            //     ffmpegFrames.savefilteredFrames(media,scale,sceneFilter,false,filteredFrCollection,null,null);
+                                            // }.bind(null,media,db));
+
+                                        });
+                                    }
+                                });
+
+
+
+                            });
+                        });
+
+
+                    });
+                });
+
+                //res.setHeader('Content-Type', 'application/json');
+                // res.send();
+
+
+                Media.find({uploadedBy: user._id}).exec(function (err, docs) {
                     if (err) return handleError(err);
                     //console.log('The stories are an array: ', docs);
-                    res.files=docs;
+                    res.files = docs;
                     res.send(docs);
                 })
 
@@ -504,26 +585,26 @@ apiRoutes.get('/load/allmedia', passport.authenticate('jwt', { session: false}),
     }
 });
 
-apiRoutes.get('/anotations/loadAll', passport.authenticate('jwt', { session: false}), function(req, res) {
+apiRoutes.get('/anotations/loadAll', passport.authenticate('jwt', {session: false}), function (req, res) {
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                Annotation.find({uploadedBy:user._id}).populate('annotatedOnMedia').exec(function (err, docs) {
+                Annotation.find({uploadedBy: user._id}).populate('annotatedOnMedia').exec(function (err, docs) {
                     if (err) return handleError(err);
                     //console.log('The stories are an array: ', docs);
 
-                    docs=docs.filter(function(doc){
-                       return doc.annotatedOnMedia!=undefined
+                    docs = docs.filter(function (doc) {
+                        return doc.annotatedOnMedia != undefined
                     });
-                    res.files=docs;
+                    res.files = docs;
                     console.log(docs)
                     res.send(docs);
                 })
@@ -532,21 +613,21 @@ apiRoutes.get('/anotations/loadAll', passport.authenticate('jwt', { session: fal
         });
     }
 });
-apiRoutes.get('/load/algos', passport.authenticate('jwt', { session: false}),upload.single('file'), function(req, res) {
+apiRoutes.get('/load/algos', passport.authenticate('jwt', {session: false}), upload.single('file'), function (req, res) {
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                Algo.find({createdBy:user._id}).populate('model').populate('dependencies').populate('media').populate('annotations').exec(function (err, docs) {
+                Algo.find({createdBy: user._id}).populate('model').populate('dependencies').populate('media').populate('annotations').exec(function (err, docs) {
                     if (err) return handleError(err);
-                  //  console.log('The stories are an array: ', docs);
+                    //  console.log('The stories are an array: ', docs);
                     //res.files=docs;
                     res.send(docs);
                 })
@@ -555,22 +636,22 @@ apiRoutes.get('/load/algos', passport.authenticate('jwt', { session: false}),upl
         });
     }
 });
-apiRoutes.get('/load/algomodels', passport.authenticate('jwt', { session: false}),upload.single('file'), function(req, res) {
+apiRoutes.get('/load/algomodels', passport.authenticate('jwt', {session: false}), upload.single('file'), function (req, res) {
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                AlgoModel.find({uploadedBy:user._id}).exec(function (err, docs) {
+                AlgoModel.find({uploadedBy: user._id}).exec(function (err, docs) {
                     if (err) return handleError(err);
-                  //  console.log('The stories are an array: ', docs);
-                    res.files=docs;
+                    //  console.log('The stories are an array: ', docs);
+                    res.files = docs;
                     res.send(docs);
                 })
 
@@ -580,25 +661,29 @@ apiRoutes.get('/load/algomodels', passport.authenticate('jwt', { session: false}
 });
 
 
-apiRoutes.all('/user/upload/avatar', passport.authenticate('jwt', { session: false}),upload.single('file'), function(req, res) {
+apiRoutes.all('/user/upload/avatar', passport.authenticate('jwt', {session: false}), upload.single('file'), function (req, res) {
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
-        User.findByIdAndUpdate(decoded._id,{$set:{avatar:req.file}} ,{new: true},function(err,user){
-            if(err){ return res.json({success: false, msg: err});}
-            res.json({success: true, msg: 'Successful added avatar.',user:user});
+        User.findByIdAndUpdate(decoded._id, {$set: {avatar: req.file}}, {new: true}, function (err, user) {
+            if (err) {
+                return res.json({success: false, msg: err});
+            }
+            res.json({success: true, msg: 'Successful added avatar.', user: user});
         });
     } else {
         return res.status(403).send({success: false, msg: 'No token provided.'});
     }
 });
-apiRoutes.all('/user/get/avatar', passport.authenticate('jwt', { session: false}),upload.single('file'), function(req, res) {
+apiRoutes.all('/user/get/avatar', passport.authenticate('jwt', {session: false}), upload.single('file'), function (req, res) {
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
-        User.findOne({_id: decoded._id},function(err,user){
-            if(err){ return res.json({success: false, msg: err});}
-            res.set("Content-Type",user.avatar.mimetype);
+        User.findOne({_id: decoded._id}, function (err, user) {
+            if (err) {
+                return res.json({success: false, msg: err});
+            }
+            res.set("Content-Type", user.avatar.mimetype);
             res.send(user.avatar);
         });
     } else {
@@ -606,30 +691,30 @@ apiRoutes.all('/user/get/avatar', passport.authenticate('jwt', { session: false}
     }
 });
 
-apiRoutes.all('/upload', passport.authenticate('jwt', { session: false}),upload.single('file'), function(req, res) {
+apiRoutes.all('/upload', passport.authenticate('jwt', {session: false}), upload.single('file'), function (req, res) {
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
                 console.log(req.file);
-                if(req.body.type==='multimedia'){
-                    var media=new Media();
-                    media.media=req.file;
-                    media.contentType=req.file.mimetype;
-                    media.name=req.file.originalname;
-                    media.originalname=req.file.originalname;
-                    media.readaccess=req.body.readaccess;
-                    media.writeaccess=req.body.writeaccess;
-                    media.uploadedBy=user._id;
+                if (req.body.type === 'multimedia') {
+                    var media = new Media();
+                    media.media = req.file;
+                    media.contentType = req.file.mimetype;
+                    media.name = req.file.originalname;
+                    media.originalname = req.file.originalname;
+                    media.readaccess = req.body.readaccess;
+                    media.writeaccess = req.body.writeaccess;
+                    media.uploadedBy = user._id;
 
-                    media.save(function(err,media) {
+                    media.save(function (err, media) {
                         if (err) {
                             return res.json({success: false, msg: 'Username already exists.'});
                         }
@@ -642,46 +727,52 @@ apiRoutes.all('/upload', passport.authenticate('jwt', { session: false}),upload.
                         //     filteredFrCollection.status='started';
                         //     ffmpegFrames.savefilteredFrames(media,scale,sceneFilter,false,filteredFrCollection,null,null);
                         // }.bind(null,media,db));
-                        res.json({success: true, msg: 'Successful added media.'
-                        +media._id});
+                        res.json({
+                            success: true, msg: 'Successful added media.'
+                                + media._id
+                        });
                     });
                 }
-                if(req.body.type==='dependency'){
-                    var dependency=new Dependency();
-                    dependency.dependency=req.file;
-                    dependency.contentType=req.file.mimetype;
-                    dependency.name=req.file.originalname;
-                    dependency.originalname=req.file.originalname;
-                    dependency.readaccess=req.body.readaccess;
-                    dependency.writeaccess=req.body.writeaccess;
-                    dependency.uploadedBy=user._id;
-                    dependency.save(function(err) {
+                if (req.body.type === 'dependency') {
+                    var dependency = new Dependency();
+                    dependency.dependency = req.file;
+                    dependency.contentType = req.file.mimetype;
+                    dependency.name = req.file.originalname;
+                    dependency.originalname = req.file.originalname;
+                    dependency.readaccess = req.body.readaccess;
+                    dependency.writeaccess = req.body.writeaccess;
+                    dependency.uploadedBy = user._id;
+                    dependency.save(function (err) {
                         if (err) {
                             return res.json({success: false, msg: 'Username already exists.'});
                         }
                         res.json({success: true, msg: 'Successful added media.'});
                     });
                 }
-                if(req.body.type==='algomodel'){
-                    var algoModel=new AlgoModel();
-                    algoModel.model=req.file;
-                    algoModel.name=req.file.originalname;
-                    algoModel.originalname=req.file.originalname;
-                    algoModel.readaccess=req.body.readaccess;
-                    algoModel.writeaccess=req.body.writeaccess;
-                    algoModel.uploadedBy=user._id;
-                    algoModel.save(function(err) {
+                if (req.body.type === 'algomodel') {
+                    var algoModel = new AlgoModel();
+                    algoModel.model = req.file;
+                    algoModel.name = req.file.originalname;
+                    algoModel.originalname = req.file.originalname;
+                    algoModel.readaccess = req.body.readaccess;
+                    algoModel.writeaccess = req.body.writeaccess;
+                    algoModel.uploadedBy = user._id;
+                    algoModel.save(function (err) {
                         if (err) {
-                            return res.json({success: false, msg: 'Username already exists.',modelid:algoModel._id});
+                            return res.json({
+                                success: false,
+                                msg: 'Username already exists.',
+                                modelid: algoModel._id
+                            });
                         }
                         res.json({success: true, msg: 'Successful added media.'});
                     });
                 }
 
-              /*  req.pipe(gfs.createWriteStream({
-                    filename: 'test'
-                }));*/
-               // res.json({success: true, msg: 'Welcome in the member area ' + user.name + '!'});
+                /*  req.pipe(gfs.createWriteStream({
+                      filename: 'test'
+                  }));*/
+                // res.json({success: true, msg: 'Welcome in the member area ' + user.name + '!'});
             }
         });
     } else {
@@ -690,13 +781,13 @@ apiRoutes.all('/upload', passport.authenticate('jwt', { session: false}),upload.
 });
 
 
-apiRoutes.all('/annotations/save', passport.authenticate('jwt', { session: false}), function(req, res) {
+apiRoutes.all('/annotations/save', passport.authenticate('jwt', {session: false}), function (req, res) {
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -705,32 +796,41 @@ apiRoutes.all('/annotations/save', passport.authenticate('jwt', { session: false
 
 
 
-                  /*  media.media=req.file;
-                    media.contentType=req.file.mimetype;
-                    media.name=req.file.originalname;
-                    media.originalname=req.file.originalname;
-                    media.readaccess=req.body.readaccess;
-                    media.writeaccess=req.body.writeaccess;*/
+                /*  media.media=req.file;
+                  media.contentType=req.file.mimetype;
+                  media.name=req.file.originalname;
+                  media.originalname=req.file.originalname;
+                  media.readaccess=req.body.readaccess;
+                  media.writeaccess=req.body.writeaccess;*/
 
-                  if(req.body._id!=undefined){
-                      Annotation.findByIdAndUpdate(req.body._id,{$set:req.body}, {new: true},function(err,annotation){
-                          if(err){ return res.json({success: false, msg: err});}
-                          res.json({success: true, msg: 'Successful added annotation.',_id:annotation._id,annotation:annotation.annotation});
-                      });
+                if (req.body._id != undefined) {
+                    Annotation.findByIdAndUpdate(req.body._id, {$set: req.body}, {new: true}, function (err, annotation) {
+                        if (err) {
+                            return res.json({success: false, msg: err});
+                        }
+                        res.json({
+                            success: true,
+                            msg: 'Successful added annotation.',
+                            _id: annotation._id,
+                            annotation: annotation.annotation
+                        });
+                    });
 
-                  }else{
-                      var annotation=new Annotation(req.body);
-                      annotation.uploadedBy=user._id;
-                      annotation.save(function(err) {
-                          if (err) {
-                              return res.json({success: false, msg: 'Username already exists.'});
-                          }
-                          res.json({success: true, msg: 'Successful added annotation.',_id:annotation._id,annotation:annotation.annotation});
-                      });
-                  }
-
-
-
+                } else {
+                    var annotation = new Annotation(req.body);
+                    annotation.uploadedBy = user._id;
+                    annotation.save(function (err) {
+                        if (err) {
+                            return res.json({success: false, msg: 'Username already exists.'});
+                        }
+                        res.json({
+                            success: true,
+                            msg: 'Successful added annotation.',
+                            _id: annotation._id,
+                            annotation: annotation.annotation
+                        });
+                    });
+                }
 
 
                 /*  req.pipe(gfs.createWriteStream({
@@ -755,27 +855,63 @@ getToken = function (headers) {
         return null;
     }
 };
-apiRoutes.get('/stream/video/:id',/*passport.authenticate('bearer', { session: false }), */passport.authenticate('query', { session: false}),function(req,res){
+
+apiRoutes.get('/stream/video/frompath/', passport.authenticate('query', {session: false}), function (req, res) {
+    var token = req.query.access_token;
+    var path = req.query.filePath;
+
+    if (token) {
+        var decoded = jwt.decode(token, config.secret);
+        User.findOne(
+            {
+                _id: decoded._id
+            },
+            function (err, user) {
+                if (err) throw err;
+
+                if (!user) {
+                    return res.status(403).send({
+                        success: false,
+                        msg: 'Authentication failed. User not found.'
+                    });
+                }
+                else {
+
+                    StreamFromFile(req, res, path);
+
+                }
+            });
+
+    }
+    else {
+        return res.status(403).send({success: false, msg: 'No token provided.'});
+    }
+
+
+});
+
+apiRoutes.get('/stream/video/:id', /*passport.authenticate('bearer', { session: false }), */passport.authenticate('query', {session: false}), function (req, res) {
     var token = req.query.access_token;
 
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                    new GridStore(db, new ObjectID(req.params.id), null, 'r').open(function(err, GridFile) {
-                    if(!GridFile) {
-                        res.send(404,'Not Found');
+
+                new GridStore(db, new ObjectID(req.params.id), null, 'r').open(function (err, GridFile) {
+                    if (!GridFile) {
+                        res.send(404, 'Not Found');
                         return;
                     }
 
-                        GridFsStream(req, res, GridFile,db);
-                    });
+                    GridFsStream(req, res, GridFile, db);
+                });
             }
         });
     } else {
@@ -784,20 +920,79 @@ apiRoutes.get('/stream/video/:id',/*passport.authenticate('bearer', { session: f
 
 });
 
-apiRoutes.get('/classes/get/',/*passport.authenticate('bearer', { session: false }), */passport.authenticate('jwt', { session: false}),function(req,res){
+app.delete('/api/mediafolder/delete', passport.authenticate('jwt', {session: false}), function (req, res) {
+
+    var token = getToken(req.headers);
+    if (token) {
+        var decoded = jwt.decode(token, config.secret);
+        User.findOne({
+            _id: decoded._id
+        }, function (err, user) {
+            if (err) throw err;
+
+            if (!user) {
+                return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
+            } else {
+
+
+                Mediafolderpath.remove({_id: req.query.id}, function (err) {
+                    if (err) return handleError(err);
+                    // removed!
+
+                    res.json({success: true, msg: 'removed !'});
+                });
+
+            }
+        });
+    } else {
+        return res.status(403).send({success: false, msg: 'No token provided.'});
+    }
+
+
+});
+
+apiRoutes.get('/mediafolders/get/', /*passport.authenticate('bearer', { session: false }), */passport.authenticate('jwt', {session: false}), function (req, res) {
     var token = req.query.access_token;
 
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                Classes.find({createdBy:user._id},function(err,classes){
+                Mediafolderpath.find({createdBy: user._id}, function (err, folders) {
+                    console.dir(folders)
+                    res.json(folders);
+                    //res.setHeader('Content-Type', 'application/json');
+                    // res.send();
+                });
+
+            }
+        });
+    } else {
+        return res.status(403).send({success: false, msg: 'No token provided.'});
+    }
+
+});
+
+apiRoutes.get('/classes/get/', /*passport.authenticate('bearer', { session: false }), */passport.authenticate('jwt', {session: false}), function (req, res) {
+    var token = req.query.access_token;
+
+    if (token) {
+        var decoded = jwt.decode(token, config.secret);
+        User.findOne({
+            _id: decoded._id
+        }, function (err, user) {
+            if (err) throw err;
+
+            if (!user) {
+                return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
+            } else {
+                Classes.find({createdBy: user._id}, function (err, classes) {
                     console.dir(classes)
                     res.json(classes);
                     //res.setHeader('Content-Type', 'application/json');
@@ -811,20 +1006,20 @@ apiRoutes.get('/classes/get/',/*passport.authenticate('bearer', { session: false
     }
 
 });
-apiRoutes.get('/dependencies/get/',passport.authenticate('jwt', { session: false}),function(req,res){
-    var token =  getToken(req.headers);
+apiRoutes.get('/dependencies/get/', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var token = getToken(req.headers);
 
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                Dependency.find({uploadedBy:user._id},function(err,dependencies){
+                Dependency.find({uploadedBy: user._id}, function (err, dependencies) {
 
                     res.json(dependencies);
                     //res.setHeader('Content-Type', 'application/json');
@@ -841,7 +1036,7 @@ apiRoutes.get('/dependencies/get/',passport.authenticate('jwt', { session: false
 
 
 //STREAMING
-app.get('/video/:videoName', videoStreamer( { videoPath: 'js/data/' } ));
+app.get('/video/:videoName', videoStreamer({videoPath: 'js/data/'}));
 /*var Schema = mongoose.Schema,
 ObjectId = Schema.ObjectId;
 mongoose.model('Algo',
@@ -864,27 +1059,24 @@ var Algo =mongoose.model('Algo');*/
     });*/
 
 
-
-
-apiRoutes.get('/myannotatioruns/',passport.authenticate('jwt', { session: false}),function(req,res){
-    var token =  getToken(req.headers);
+apiRoutes.get('/myannotatioruns/', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var token = getToken(req.headers);
 
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-              
-                AlgoAnnoRun.find({runnedBy:user._id}
 
-                   ).populate('annotatedOnMedia').exec(
-                    function(err,algoannoruns){
-                        if(err)console.log('err in algoanntations get'+err)
+                AlgoAnnoRun.find({runnedBy: user._id}
+                ).populate('annotatedOnMedia').exec(
+                    function (err, algoannoruns) {
+                        if (err) console.log('err in algoanntations get' + err)
                         res.json({success: true, algoannoruns: algoannoruns});
                         //res.setHeader('Content-Type', 'application/json');
                         // res.send();
@@ -900,14 +1092,14 @@ apiRoutes.get('/myannotatioruns/',passport.authenticate('jwt', { session: false}
 });
 
 
-apiRoutes.get('/algoannotations/getfast/',passport.authenticate('jwt', { session: false}),function(req,res){
-    var token =  getToken(req.headers);
+apiRoutes.get('/algoannotations/getfast/', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var token = getToken(req.headers);
 
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -915,13 +1107,12 @@ apiRoutes.get('/algoannotations/getfast/',passport.authenticate('jwt', { session
             } else {
                 console.log(req.query.algoannorun)
 
-                AlgoAnnoRun.findOne({_id:req.query.algoannorun}).populate('filteredframecollection').exec(
-                    function(err,algoannorun){
-                        if(err)console.log('err in algoanntations get'+err)
+                AlgoAnnoRun.findOne({_id: req.query.algoannorun}).populate('filteredframecollection').exec(
+                    function (err, algoannorun) {
+                        if (err) console.log('err in algoanntations get' + err)
 
 
-
-                        res.json({success: true,algoannorun:algoannorun});
+                        res.json({success: true, algoannorun: algoannorun});
                         //res.setHeader('Content-Type', 'application/json');
                         // res.send();
                     });
@@ -935,15 +1126,14 @@ apiRoutes.get('/algoannotations/getfast/',passport.authenticate('jwt', { session
 });
 
 
-
-apiRoutes.get('/refreshtraining/',passport.authenticate('jwt', { session: false}),function(req,res){
-    var token =  getToken(req.headers);
+apiRoutes.get('/refreshtraining/', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var token = getToken(req.headers);
 
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -951,13 +1141,13 @@ apiRoutes.get('/refreshtraining/',passport.authenticate('jwt', { session: false}
             } else {
 
 
-                Training.findOne({_id:req.query.training},
-                    function(err,training){
-                        if(err)console.log('err in algoanntations get'+err)
+                Training.findOne({_id: req.query.training},
+                    function (err, training) {
+                        if (err) console.log('err in algoanntations get' + err)
 
 
-                        console.log('foun'+training)
-                        res.json({success: true,training:training});
+                        console.log('foun' + training)
+                        res.json({success: true, training: training});
                         //res.setHeader('Content-Type', 'application/json');
                         // res.send();
                     });
@@ -969,30 +1159,30 @@ apiRoutes.get('/refreshtraining/',passport.authenticate('jwt', { session: false}
     }
 
 });
-apiRoutes.get('/algoannotations/get/',passport.authenticate('jwt', { session: false}),function(req,res){
-    var token =  getToken(req.headers);
+apiRoutes.get('/algoannotations/get/', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var token = getToken(req.headers);
 
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
                 console.log(req.query.algoannorun)
-                
-                Algoannotation.find({algoannorun:req.query.algoannorun}).populate('frame').populate(
+
+                Algoannotation.find({algoannorun: req.query.algoannorun}).populate('frame').populate(
                     'filteredframe'
-                    ).exec(
-                    function(err,algoannotations){
-                    if(err)console.log('err in algoanntations get'+err)
-                    res.json({success: true, algoannotations: algoannotations});
-                    //res.setHeader('Content-Type', 'application/json');
-                    // res.send();
-                });
+                ).exec(
+                    function (err, algoannotations) {
+                        if (err) console.log('err in algoanntations get' + err)
+                        res.json({success: true, algoannotations: algoannotations});
+                        //res.setHeader('Content-Type', 'application/json');
+                        // res.send();
+                    });
 
             }
         });
@@ -1003,28 +1193,24 @@ apiRoutes.get('/algoannotations/get/',passport.authenticate('jwt', { session: fa
 });
 
 
-
-app.get('/api/getnumberofinstances/',  passport.authenticate('jwt', { session: false}),function(req, res) {
+app.get('/api/getnumberofinstances/', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
-
-
 
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                docker.getNumberOfContainers( req.query.servicename,function(number){
+                docker.getNumberOfContainers(req.query.servicename, function (number) {
 
-                    res.json({success: true, msg: 'success change port',instances:number})
+                    res.json({success: true, msg: 'success change port', instances: number})
                 });
-
 
 
             }
@@ -1033,118 +1219,117 @@ app.get('/api/getnumberofinstances/',  passport.authenticate('jwt', { session: f
 })
 
 
-
-app.post('/api/scaleservice/',  passport.authenticate('jwt', { session: false}),function(req, res) {
+app.post('/api/scaleservice/', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
-
-
 
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                docker.scaleService( req.body.params.servicename,req.body.params.instances,function(number){
-                    res.json({success: true, msg: 'success change port',instances:req.body.params.instances})
+                docker.scaleService(req.body.params.servicename, req.body.params.instances, function (number) {
+                    res.json({success: true, msg: 'success change port', instances: req.body.params.instances})
                 });
-
 
 
             }
         })
     }
 });
-app.post('/api/changeserviceport/',  passport.authenticate('jwt', { session: false}),function(req, res) {
+app.post('/api/changeserviceport/', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
-
-
 
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                docker.getNumberOfContainers( req.body.params.servicename,function(number){
-                    docker.getAssignedPort(req.body.params.servicename,function (port) {
-                        reinintCallVars(port,number,req.body.params.servicename);
-                        res.json({success: true, msg: 'success change port',instances:number})
+                docker.getNumberOfContainers(req.body.params.servicename, function (number) {
+                    docker.getAssignedPort(req.body.params.servicename, function (port) {
+                        reinintCallVars(port, number, req.body.params.servicename);
+                        res.json({success: true, msg: 'success change port', instances: number})
                     })
 
                 });
 
-                
 
             }
         })
     }
 })
 
-app.post('/api/searchinmedia/',  passport.authenticate('jwt', { session: false}),function(req, res) {
+app.post('/api/searchinmedia/', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
-
 
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                var algoAnnoRun=new AlgoAnnoRun();
+                var algoAnnoRun = new AlgoAnnoRun();
 
-                Media.findOne({_id:req.body.params.media},function(err,media){
-                    AlgoModel.findOne({_id:req.body.params.model},function (err,algomodel) {
-                        var scale=req.body.params.scale;
-                        var sceneFilter=req.body.params.sceneFilter;
-                        FilteredFramesCollection.findOne({scene:sceneFilter,scale:scale,media:media._id},function (err,filteredFrCollection) {
-
-
-                            var filterFrames=true;
-
-                                if(err) {
-                                    console.log('Err did not find'+err);
+                Media.findOne({_id: req.body.params.media}, function (err, media) {
+                    AlgoModel.findOne({_id: req.body.params.model}, function (err, algomodel) {
+                        var scale = req.body.params.scale;
+                        var sceneFilter = req.body.params.sceneFilter;
+                        FilteredFramesCollection.findOne({
+                            scene: sceneFilter,
+                            scale: scale,
+                            media: media._id
+                        }, function (err, filteredFrCollection) {
 
 
-                                }
+                            var filterFrames = true;
 
-                              if(filteredFrCollection===null)
-                              {
-                                  filteredFrCollection=  new FilteredFramesCollection();
-                              }else{
-                                  filterFrames=false;
-                              }
+                            if (err) {
+                                console.log('Err did not find' + err);
 
 
+                            }
 
-                            filteredFrCollection.scene=sceneFilter;
-                            filteredFrCollection.scale=scale;
-                            filteredFrCollection.status='started';
-                            algoAnnoRun.algo= req.body.params.algo;
-                            algoAnnoRun.annotatedOnMedia=media._id;
-                            algoAnnoRun.runnedBy=user._id;
-                            algoAnnoRun.filteredframecollection=filteredFrCollection._id;
-                            algoAnnoRun.status='started';
-                            algoAnnoRun.startDate=+ new Date();
-                            algoAnnoRun.save(function(err,algorun){
-                                    if(err) {
-                                        console.log('error saving algo run'+err)
-                                        res.json({success: false, msg: ' err saving algo run', _id:algoAnnoRun._id,err:err })
+                            if (filteredFrCollection === null) {
+                                filteredFrCollection = new FilteredFramesCollection();
+                            } else {
+                                filterFrames = false;
+                            }
+
+
+                            filteredFrCollection.scene = sceneFilter;
+                            filteredFrCollection.scale = scale;
+                            filteredFrCollection.status = 'started';
+                            algoAnnoRun.algo = req.body.params.algo;
+                            algoAnnoRun.annotatedOnMedia = media._id;
+                            algoAnnoRun.runnedBy = user._id;
+                            algoAnnoRun.filteredframecollection = filteredFrCollection._id;
+                            algoAnnoRun.status = 'started';
+                            algoAnnoRun.startDate = +new Date();
+                            algoAnnoRun.save(function (err, algorun) {
+                                    if (err) {
+                                        console.log('error saving algo run' + err)
+                                        res.json({
+                                            success: false,
+                                            msg: ' err saving algo run',
+                                            _id: algoAnnoRun._id,
+                                            err: err
+                                        })
 
                                     }
                                     console.log(algorun._id)
@@ -1153,24 +1338,24 @@ app.post('/api/searchinmedia/',  passport.authenticate('jwt', { session: false})
                                 }
                             )
                             var startTime = new Date(Date.now() + 500);
-                            var j = schedule.scheduleJob(startTime, function(media,db){
-                            var fc=    FramesCollection.findOne({"framesOfMedia" :media._id},function(err,collection){
-                                    if(collection){
+                            var j = schedule.scheduleJob(startTime, function (media, db) {
+                                var fc = FramesCollection.findOne({"framesOfMedia": media._id}, function (err, collection) {
+                                    if (collection) {
                                         return;
-                                    }else{
-                                        ffmpegFrames.saveMetaFrames(media,null);
+                                    } else {
+                                        ffmpegFrames.saveMetaFrames(media, null);
                                     }
                                 })
 
 
-                                if(filterFrames){
-                                    ffmpegFrames.savefilteredFrames(media,scale,sceneFilter,false,filteredFrCollection,null,algoAnnoRun);
-                                    ffmpegFrames.analyze(media,filteredFrCollection,'localhost:'+req.body.params.port,algoAnnoRun);
+                                if (filterFrames) {
+                                    ffmpegFrames.savefilteredFrames(media, scale, sceneFilter, false, filteredFrCollection, null, algoAnnoRun);
+                                    ffmpegFrames.analyze(media, filteredFrCollection, 'localhost:' + req.body.params.port, algoAnnoRun);
                                 }
-                                if(!filterFrames){
-                                    ffmpegFrames.analyze(media,filteredFrCollection,'localhost:'+req.body.params.port,algoAnnoRun);
+                                if (!filterFrames) {
+                                    ffmpegFrames.analyze(media, filteredFrCollection, 'localhost:' + req.body.params.port, algoAnnoRun);
                                 }
-                            }.bind(null,media,db));
+                            }.bind(null, media, db));
 
                         });
 
@@ -1178,203 +1363,207 @@ app.post('/api/searchinmedia/',  passport.authenticate('jwt', { session: false})
                     })
                 })
 
-                res.json({success: true, msg: 'success saving algo run', algoannorun:algoAnnoRun,err:err })
+                res.json({success: true, msg: 'success saving algo run', algoannorun: algoAnnoRun, err: err})
 
             }
         })
     }
 })
-var callback=function(cc){
+var callback = function (cc) {
     console.log(cc)
 };
-app.post('/api/searchinmediaNew/',  passport.authenticate('jwt', { session: false}),function(req, res) {
+app.post('/api/searchinmediaNew/', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
-
 
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-                var algoAnnoRun=new AlgoAnnoRun();
+                var algoAnnoRun = new AlgoAnnoRun();
 
-                Media.findOne({_id:req.body.params.media},function(err,media){
-                    AlgoModel.findOne({_id:req.body.params.model},function (err,algomodel) {
-                        var scale=req.body.params.scale;
-                        var sceneFilter=req.body.params.sceneFilter;
-                        var algoAnnoRun=new AlgoAnnoRun();
-                        algoAnnoRun.algo= req.body.params.algo;
-                        algoAnnoRun.annotatedOnMedia=media._id;
-                        algoAnnoRun.runnedBy=user._id;
-                        algoAnnoRun.save(function(err,algoAnnoRun){
-                            if(err) {
-                                console.log('error saving algo run'+err)
-                                res.json({success: false, msg: ' err saving algo run', _id:algoAnnoRun._id,err:err })
+                Media.findOne({_id: req.body.params.media}, function (err, media) {
+                    AlgoModel.findOne({_id: req.body.params.model}, function (err, algomodel) {
+                        var scale = req.body.params.scale;
+                        var sceneFilter = req.body.params.sceneFilter;
+                        var algoAnnoRun = new AlgoAnnoRun();
+                        algoAnnoRun.algo = req.body.params.algo;
+                        algoAnnoRun.annotatedOnMedia = media._id;
+                        algoAnnoRun.runnedBy = user._id;
+                        algoAnnoRun.save(function (err, algoAnnoRun) {
+                            if (err) {
+                                console.log('error saving algo run' + err)
+                                res.json({
+                                    success: false,
+                                    msg: ' err saving algo run',
+                                    _id: algoAnnoRun._id,
+                                    err: err
+                                })
 
                             }
                             console.log(algoAnnoRun._id)
 
                             var startTime = new Date(Date.now() + 500);
-                            var j = schedule.scheduleJob(startTime, function(media,db){
+                            var j = schedule.scheduleJob(startTime, function (media, db) {
                                 async.waterfall([
-                                    function(callback){
+                                    function (callback) {
 
-                                        FramesCollection.findOne({"framesOfMedia" :media._id},function(err,collection){
-                                            if(collection){
-                                                callback(null,collection)
-                                            }else{
-                                                ffmpegFrames.saveMetaFrames(media,callback);
+                                        FramesCollection.findOne({"framesOfMedia": media._id}, function (err, collection) {
+                                            if (collection) {
+                                                callback(null, collection)
+                                            } else {
+                                                ffmpegFrames.saveMetaFrames(media, callback);
                                             }
                                         })
 
-                                    },function(arg,callback){
-                                        FilteredFramesCollection.findOne({scene:sceneFilter,scale:scale,media:media._id},function (err,filteredFrCollection) {
-                                            if(filteredFrCollection){
-                                                callback(null,filteredFrCollection)
-                                            }else{
+                                    }, function (arg, callback) {
+                                        FilteredFramesCollection.findOne({
+                                            scene: sceneFilter,
+                                            scale: scale,
+                                            media: media._id
+                                        }, function (err, filteredFrCollection) {
+                                            if (filteredFrCollection) {
+                                                callback(null, filteredFrCollection)
+                                            } else {
                                                 console.log('starting filtering splitting')
-                                                filteredFrCollection=  new FilteredFramesCollection();
-                                                filteredFrCollection.scene=sceneFilter;
-                                                filteredFrCollection.scale=scale;
-                                                filteredFrCollection.status='started';
+                                                filteredFrCollection = new FilteredFramesCollection();
+                                                filteredFrCollection.scene = sceneFilter;
+                                                filteredFrCollection.scale = scale;
+                                                filteredFrCollection.status = 'started';
 
-                                                ffmpegFrames.savefilteredFrames(media,scale,sceneFilter,false,filteredFrCollection,null,algoAnnoRun,callback)
+                                                ffmpegFrames.savefilteredFrames(media, scale, sceneFilter, false, filteredFrCollection, null, algoAnnoRun, callback)
                                             }
 
                                         })
 
                                     },
-                                    function(filteredFrCollection,callback) {
+                                    function (filteredFrCollection, callback) {
 
-                                        algoAnnoRun.filteredframecollection=filteredFrCollection._id;
-                                        algoAnnoRun.status='started';
-                                        algoAnnoRun.startDate=+ new Date();
+                                        algoAnnoRun.filteredframecollection = filteredFrCollection._id;
+                                        algoAnnoRun.status = 'started';
+                                        algoAnnoRun.startDate = +new Date();
                                         AlgoAnnoRun.update({_id: algoAnnoRun._id}, algoAnnoRun, {upsert: true}, function (err, algorun) {
-                                            if(err) {
-                                                console.log('error saving algo run'+err)
-                                                res.json({success: false, msg: ' err saving algo run', _id:algoAnnoRun._id,err:err })
+                                            if (err) {
+                                                console.log('error saving algo run' + err)
+                                                res.json({
+                                                    success: false,
+                                                    msg: ' err saving algo run',
+                                                    _id: algoAnnoRun._id,
+                                                    err: err
+                                                })
 
                                             }
                                             console.log(algorun._id)
 
-                                            ffmpegFrames.movingObjects(media,filteredFrCollection._id,callback,algoAnnoRun)
+                                            ffmpegFrames.movingObjects(media, filteredFrCollection._id, callback, algoAnnoRun)
 
                                         });
 
 
-
-
-
-                                    },function(arg,callback){
-                                        ffmpegFrames.analyzeChained(arg,callback,'localhost:'+req.body.params.port)
+                                    }, function (arg, callback) {
+                                        ffmpegFrames.analyzeChained(arg, callback, 'localhost:' + req.body.params.port)
                                     }
 
                                 ], function (err, result) {
                                     console.log('done')
                                 });
 
-                            }.bind(null,media,db));
-
-
-
-
-
-
+                            }.bind(null, media, db));
 
 
                         })
                     })
-                        })
-                        
+                })
 
 
-                res.json({success: true, msg: 'success saving algo run', algoannorun:algoAnnoRun,err:err })
+                res.json({success: true, msg: 'success saving algo run', algoannorun: algoAnnoRun, err: err})
 
             }
         })
     }
 })
 
-app.get('/api/get/trainings/',  passport.authenticate('jwt', { session: false}),function(req, res) {
+app.get('/api/get/trainings/', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
-            Training.find({trainedBy:user._id,algo:req.query.algo,status:'end'}).populate('algo').populate('endModel').exec(function(err,trainings){
-                if(err) console.log(err)
-                if(trainings.length>0){
-                    res.json({success: true, msg: 'trainigs', trainings:trainings,err:err });
+            Training.find({
+                trainedBy: user._id,
+                algo: req.query.algo,
+                status: 'end'
+            }).populate('algo').populate('endModel').exec(function (err, trainings) {
+                if (err) console.log(err)
+                if (trainings.length > 0) {
+                    res.json({success: true, msg: 'trainigs', trainings: trainings, err: err});
                 }
             })
-
 
 
         })
     }
 });
 
-app.post('/api/deploymodel/',  passport.authenticate('jwt', { session: false}),function(req, res) {
+app.post('/api/deploymodel/', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
-            AlgoModel.findOne({_id:req.body.params.endModel},function (erer,algo) {
-                if(err) console.log(err)
-                var servicename=req.body.params.name;
-                var apipath=req.body.params.apipath;
+            AlgoModel.findOne({_id: req.body.params.endModel}, function (erer, algo) {
+                if (err) console.log(err)
+                var servicename = req.body.params.name;
+                var apipath = req.body.params.apipath;
 
-                docker.createDockerImage(algo.modelZipped,apipath,function () {
+                docker.createDockerImage(algo.modelZipped, apipath, function () {
 
 
-                    var dockerSpown = spawn('docker', ['service','rm',servicename]);
-                    dockerSpown.on('data',function(data)
-                    {
+                    var dockerSpown = spawn('docker', ['service', 'rm', servicename]);
+                    dockerSpown.on('data', function (data) {
                         console.log(data)
                     })
-                    dockerSpown.on('error',function(err){
-                        console.log('err creating service'+err)
+                    dockerSpown.on('error', function (err) {
+                        console.log('err creating service' + err)
                     })
-                    dockerSpown.on('exit',function(err){
+                    dockerSpown.on('exit', function (err) {
                         console.log('service started')
                     })
-                    dockerSpown.on('close',function(err){
+                    dockerSpown.on('close', function (err) {
                         console.log('service started')
-                        docker.getNextAvailiblePort(servicename,function (port) {
-                            port=port+':443';
-                            var dockerSpownCreateS = spawn('docker', ['service','create','--name',servicename,'--publish',port,apipath]);
-                            dockerSpownCreateS.on('data',function(data)
-                            {
+                        docker.getNextAvailiblePort(servicename, function (port) {
+                            port = port + ':443';
+                            var dockerSpownCreateS = spawn('docker', ['service', 'create', '--name', servicename, '--publish', port, apipath]);
+                            dockerSpownCreateS.on('data', function (data) {
                                 console.log(data)
                             })
-                            dockerSpownCreateS.on('error',function(err){
-                                console.log('err creating service'+err)
+                            dockerSpownCreateS.on('error', function (err) {
+                                console.log('err creating service' + err)
                             })
-                            dockerSpownCreateS.on('exit',function(err){
+                            dockerSpownCreateS.on('exit', function (err) {
                                 console.log('service created  exit started')
                             })
-                            dockerSpownCreateS.on('close',function(err){
+                            dockerSpownCreateS.on('close', function (err) {
                                 console.log('service created close started')
 
-                                docker.getAssignedPort(algo.name,function(port){
-                                    algo.port=port;
+                                docker.getAssignedPort(algo.name, function (port) {
+                                    algo.port = port;
 
-                                    Algo.findOneAndUpdate({_id: req.body.params.algo},{$set:{"port":port}},function (err,model) {
-                                        if(err) console.log(err);
+                                    Algo.findOneAndUpdate({_id: req.body.params.algo}, {$set: {"port": port}}, function (err, model) {
+                                        if (err) console.log(err);
                                         //console.log(model)
                                     })
 
@@ -1385,8 +1574,6 @@ app.post('/api/deploymodel/',  passport.authenticate('jwt', { session: false}),f
                         })
 
                     })
-
-
 
 
                 });
@@ -1401,185 +1588,192 @@ app.post('/api/deploymodel/',  passport.authenticate('jwt', { session: false}),f
 })
 
 
-app.post('/api/trainmodel/',  passport.authenticate('jwt', { session: false}),function(req, res) {
+app.post('/api/trainmodel/', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
-                
-                AlgoModel.findOne({_id:req.body.params.model},function(err,model) {
-                 if(err) console.log(err)
-                    var training=new Training();
-                    var newModel=new AlgoModel();
-                    training.startDate=+new Date();
-                    training.status='started';
-                    training.startModel=model._id;
-                    training.endModel=newModel._id;
-                    training.trainedBy=user._id;
-                    training.algo=req.body.params.algo;
-                    training.save(function(err,training){
-                        if(err) console.log(err)
-                        console.log(training)
-                    });
 
-                    newModel.name=model.name;
-                    newModel.version=req.body.params.version;
-                    newModel.save(function (err,model) {
-                        if(err)console.log(err)
-                        console.log(model)
-                    });
+            AlgoModel.findOne({_id: req.body.params.model}, function (err, model) {
+                if (err) console.log(err)
+                var training = new Training();
+                var newModel = new AlgoModel();
+                training.startDate = +new Date();
+                training.status = 'started';
+                training.startModel = model._id;
+                training.endModel = newModel._id;
+                training.trainedBy = user._id;
+                training.algo = req.body.params.algo;
+                training.save(function (err, training) {
+                    if (err) console.log(err)
+                    console.log(training)
+                });
+
+                newModel.name = model.name;
+                newModel.version = req.body.params.version;
+                newModel.save(function (err, model) {
+                    if (err) console.log(err)
+                    console.log(model)
+                });
 
 
+                var hello_proto = grpc.load(PROTO_PATH).helloworld;
+                var client = new hello_proto.Trainer('localhost:50051',
+                    grpc.credentials.createInsecure());
+                var servicename = req.body.params.name;
+                var apipath = req.body.params.apipath;
+                console.log(training._id);
+                client.trainModel({
+                    annotations: req.body.params.annotations,
+                    model: req.body.params.model,
+                    steps: req.body.params.steps.toString(),
+                    retrain: req.body.params.retrain,
+                    trainingid: training._id.toString(),
+                    imagename: req.body.params.apipath
+                }, function (err, response) {
 
-                    var hello_proto = grpc.load(PROTO_PATH).helloworld;
-                    var client = new hello_proto.Trainer('localhost:50051',
-                        grpc.credentials.createInsecure());
-                    var servicename=req.body.params.name;
-                    var apipath=req.body.params.apipath;
-                    console.log(training._id);
-                    client.trainModel({annotations:req.body.params.annotations,model:req.body.params.model,steps:req.body.params.steps.toString(),retrain:req.body.params.retrain,trainingid:training._id.toString(),imagename:req.body.params.apipath}, function(err, response) {
+                    if (response != undefined) {
+                        AlgoModel.findOneAndUpdate({_id: training.endModel}, {$set: {"modelZipped": response.zipmodelid}}, function (err, model) {
+                            if (err) console.log(err);
+                            //console.log(model)
+                        })
+                        training.endDate = +new Date();
+                        training.status = 'end';
+                        Training.update({_id: training._id}, training, {upsert: true}, function (err, collection) {
+                            if (err) console.log(err);
+                            //console.log(collection)
+                        });
 
-                        if(response!=undefined){
-                            AlgoModel.findOneAndUpdate({_id:training.endModel},{$set:{"modelZipped":response.zipmodelid}},function (err,model) {
-                                if(err) console.log(err);
-                                //console.log(model)
+                        //Create Docker Service
+                        Algo.findOne({_id: training.algo}, function (erer, algo) {
+                            if (err) console.log(err)
+
+                            var dockerSpown = spawn('docker', ['service', 'rm', servicename]);
+                            dockerSpown.on('data', function (data) {
+                                console.log(data)
                             })
-                            training.endDate=+new Date();
-                            training.status='end';
-                            Training.update({_id: training._id}, training, {upsert: true},function(err,collection){
-                                if(err)console.log(err);
-                                //console.log(collection)
-                            });
+                            dockerSpown.on('error', function (err) {
+                                console.log('err creating service' + err)
+                            })
+                            dockerSpown.on('exit', function (err) {
+                                console.log('service started')
+                            })
+                            dockerSpown.on('close', function (err) {
+                                console.log('service started')
+                                docker.getNextAvailiblePort(servicename, function (port) {
+                                    port = port + ':443';
+                                    var dockerSpownCreateS = spawn('docker', ['service', 'create', '--name', servicename, '--publish', port, apipath]);
+                                    dockerSpownCreateS.on('data', function (data) {
+                                        console.log(data)
+                                    })
+                                    dockerSpownCreateS.on('error', function (err) {
+                                        console.log('err creating service' + err)
+                                    })
+                                    dockerSpownCreateS.on('exit', function (err) {
+                                        console.log('service created  exit started')
+                                    })
+                                    dockerSpownCreateS.on('close', function (err) {
+                                        console.log('service created close started')
 
-                            //Create Docker Service
-                            Algo.findOne({_id:training.algo},function (erer,algo) {
-                                if(err) console.log(err)
-
-                                var dockerSpown = spawn('docker', ['service','rm',servicename]);
-                                dockerSpown.on('data',function(data)
-                                {
-                                    console.log(data)
-                                })
-                                dockerSpown.on('error',function(err){
-                                    console.log('err creating service'+err)
-                                })
-                                dockerSpown.on('exit',function(err){
-                                    console.log('service started')
-                                })
-                                dockerSpown.on('close',function(err){
-                                    console.log('service started')
-                                    docker.getNextAvailiblePort(servicename,function (port) {
-                                        port=port+':443';
-                                        var dockerSpownCreateS = spawn('docker', ['service','create','--name',servicename,'--publish',port,apipath]);
-                                        dockerSpownCreateS.on('data',function(data)
-                                        {
-                                            console.log(data)
-                                        })
-                                        dockerSpownCreateS.on('error',function(err){
-                                            console.log('err creating service'+err)
-                                        })
-                                        dockerSpownCreateS.on('exit',function(err){
-                                            console.log('service created  exit started')
-                                        })
-                                        dockerSpownCreateS.on('close',function(err){
-                                            console.log('service created close started')
-
-                                            docker.getAssignedPort(algo.name,function(port){
-                                                algo.port=port;
-                                                Algo.update({_id: algo._id}, algo, {upsert: true},function(err,algo){
-                                                    if(err)console.log(err);
-                                                    //console.log(collection)
-                                                });
-                                            })
-
+                                        docker.getAssignedPort(algo.name, function (port) {
+                                            algo.port = port;
+                                            Algo.update({_id: algo._id}, algo, {upsert: true}, function (err, algo) {
+                                                if (err) console.log(err);
+                                                //console.log(collection)
+                                            });
                                         })
 
                                     })
 
                                 })
 
-
-
-
-
                             })
 
-                            // var dockerSpown = spawn('docker', ['service','update','--env-add','UPDATE=1',servicename]);
+
+                        })
+
+                        // var dockerSpown = spawn('docker', ['service','update','--env-add','UPDATE=1',servicename]);
 
 
+                    } else {
+                        console.log(response)
+                        res.json({success: false, msg: 'training error', training: training, err: err})
 
-                        }else{
-                            console.log(response)
-                            res.json({success: false, msg: 'training error', training:training,err:err })
-
-                        }
-
+                    }
 
 
-                        console.log('Greeting:', response);
-                    });
-                    res.json({success: true, msg: 'success saving algo run', training:training,err:err })
+                    console.log('Greeting:', response);
+                });
+                res.json({success: true, msg: 'success saving algo run', training: training, err: err})
 
-                })
-
+            })
 
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
-               
+
             }
         })
     }
 })
 
 
-app.post('/api/algo/save',  passport.authenticate('jwt', { session: false}),function(req, res) {
+app.post('/api/algo/save', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
 
-                if(req.body.params.algo._id!=undefined){
-                  /*  Algo.findByIdAndUpdate(req.body.params.algo._id,{$set:req.body.params.algo} ,{new: true},function(err,algo){
-                        if(err){ return res.json({success: false, msg: err});}
-                        res.json({success: true, msg: 'Successful added annotation.',_id:algo._id,algo:algo});
-                    });*/
-                    Algo.findByIdAndUpdate(req.body.params.algo._id,{$set:req.body.params.algo} ,{new: true}).populate('dependencies').populate('annotations').populate('model').populate('media').exec(
-                        function(err,algo) {
+                if (req.body.params.algo._id != undefined) {
+                    /*  Algo.findByIdAndUpdate(req.body.params.algo._id,{$set:req.body.params.algo} ,{new: true},function(err,algo){
+                          if(err){ return res.json({success: false, msg: err});}
+                          res.json({success: true, msg: 'Successful added annotation.',_id:algo._id,algo:algo});
+                      });*/
+                    Algo.findByIdAndUpdate(req.body.params.algo._id, {$set: req.body.params.algo}, {new: true}).populate('dependencies').populate('annotations').populate('model').populate('media').exec(
+                        function (err, algo) {
                             if (err) {
                                 return res.json({success: false, msg: err});
                             }
-                            res.json({success: true, msg: 'Successful added annotation.', _id: algo._id, algo: algo})
+                            res.json({
+                                success: true,
+                                msg: 'Successful added annotation.',
+                                _id: algo._id,
+                                algo: algo
+                            })
                         }
                     );
 
-                }else{
-                    var algoInstance=new Algo(req.body.params.algo);
+                } else {
+                    var algoInstance = new Algo(req.body.params.algo);
 
-                    algoInstance.createdBy=user._id;
-                    algoInstance.save(function(err){
+                    algoInstance.createdBy = user._id;
+                    algoInstance.save(function (err) {
                         'use strict';
-                        if(err){
+                        if (err) {
                             if (err) {
                                 //throw err;
-                                return res.status(500).send({ succes: false, message: 'Algo already exist!' });
+                                return res.status(500).send({succes: false, message: 'Algo already exist!'});
                                 console.log(err);
                             }
-                        }else{
-                            res.json({success: true,algo:algoInstance, msg: 'Algoritm is Saved to your member area ' + user.userName + '!'});
+                        } else {
+                            res.json({
+                                success: true,
+                                algo: algoInstance,
+                                msg: 'Algoritm is Saved to your member area ' + user.userName + '!'
+                            });
                             console.log('woo!');
                         }
 
@@ -1610,42 +1804,148 @@ app.post('/api/algo/save',  passport.authenticate('jwt', { session: false}),func
         });*!/
     });*/
 
-   /* request.on('end', function (){
+    /* request.on('end', function (){
 
-            respond.end();
+             respond.end();
 
-    });*/
+     });*/
 });
-app.post('/api/classes/save',  passport.authenticate('jwt', { session: false}),function(req, res) {
+
+
+app.post('/api/mediafolders/save', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
+            if (err) throw err;
+
+            if (!user) {
+                return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
+            } else {
+                returnmediaFolders = []
+                req.body.mediafolders.forEach(function (mediafolder) {
+                    if (mediafolder != undefined) {
+                        /*  Algo.findByIdAndUpdate(req.body.params.algo._id,{$set:req.body.params.algo} ,{new: true},function(err,algo){
+                         if(err){ return res.json({success: false, msg: err});}
+                         res.json({success: true, msg: 'Successful added annotation.',_id:algo._id,algo:algo});
+                         });*/
+
+                        if (mediafolder._id != undefined) {
+                            Mediafolderpath.findByIdAndUpdate(mediafolder._id, {$set: mediafolder}, {new: true}).populate('dependencies').populate('model').populate('media').exec(
+                                function (err, mediafolder) {
+                                    if (err) {
+
+                                    }
+                                    returnmediaFolders.push(mediafolder)
+                                }
+                            );
+                        }
+
+                        else {
+                            var mediafolders = new Mediafolderpath({
+                                path: mediafolder.path,
+                                name: mediafolder.name,
+                                createdBy: user._id
+                            });
+
+
+                            mediafolders.save(function (err) {
+                                'use strict';
+                                if (err) {
+                                    if (err.name === 'MongoError' && err.code === 11000) {
+                                        //throw err;
+                                        return res.status(500).send({
+                                            succes: false,
+                                            message: 'Algo already exist!'
+                                        });
+                                        console.log(err);
+                                    }
+                                } else {
+
+                                    returnmediaFolders.push(mediafolders)
+                                }
+
+
+                            });
+                        }
+                    }
+                })
+                res.json({
+                    success: true,
+                    msg: 'Successful added folders.',
+
+                    mediafolders: returnmediaFolders
+                })
+                //respond.end("yes");
+
+            }
+        });
+    } else {
+        return res.status(403).send({success: false, msg: 'No token provided.'});
+    }
+
+    var body = '';
+
+    console.log(req.body);
+
+    // your JSON
+    //response.send(request.body);    // echo the result back
+    /*request.on('data', function(data) {
+     var file = './tmp/data.json';
+
+     /!*jsonfile.writeFile(file, data, function (err) {
+     console.error(err)
+     });*!/
+     });*/
+
+    /* request.on('end', function (){
+
+     respond.end();
+
+     });*/
+});
+app.post('/api/classes/save', passport.authenticate('jwt', {session: false}), function (req, res) {
+
+    var token = getToken(req.headers);
+    if (token) {
+        var decoded = jwt.decode(token, config.secret);
+        User.findOne({
+            _id: decoded._id
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
 
-                if(req.body.classes._id!=undefined){
+                if (req.body.classes._id != undefined) {
                     /*  Algo.findByIdAndUpdate(req.body.params.algo._id,{$set:req.body.params.algo} ,{new: true},function(err,algo){
                      if(err){ return res.json({success: false, msg: err});}
                      res.json({success: true, msg: 'Successful added annotation.',_id:algo._id,algo:algo});
                      });*/
-                    Classes.findByIdAndUpdate(req.body.classes._id,{$set:req.body.classes} ,{new: true}).populate('dependencies').populate('model').populate('media').exec(
-                        function(err,classes) {
+                    Classes.findByIdAndUpdate(req.body.classes._id, {$set: req.body.classes}, {new: true}).populate('dependencies').populate('model').populate('media').exec(
+                        function (err, classes) {
                             if (err) {
                                 return res.json({success: false, msg: err});
                             }
-                            res.json({success: true, msg: 'Successful added annotation.', _id: classes._id, classes: classes})
+                            res.json({
+                                success: true,
+                                msg: 'Successful added annotation.',
+                                _id: classes._id,
+                                classes: classes
+                            })
                         }
                     );
 
-                }else {
-                    var clasess = new Classes({classes: req.body.classes.classes, name: req.body.classes.name, createdBy: user._id});
+                } else {
+                    var clasess = new Classes({
+                        classes: req.body.classes.classes,
+                        name: req.body.classes.name,
+                        createdBy: user._id
+                    });
 
 
                     clasess.save(function (err) {
@@ -1659,7 +1959,7 @@ app.post('/api/classes/save',  passport.authenticate('jwt', { session: false}),f
                         } else {
                             res.json({
                                 success: true,
-                                clasess:clasess,
+                                clasess: clasess,
                                 msg: 'Classes is Saved to your member area ' + user.userName + '!'
                             });
 
@@ -1696,14 +1996,14 @@ app.post('/api/classes/save',  passport.authenticate('jwt', { session: false}),f
 
      });*/
 });
-app.get('/api/algo',  passport.authenticate('jwt', { session: false}),function(req, res){
+app.get('/api/algo', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -1711,11 +2011,11 @@ app.get('/api/algo',  passport.authenticate('jwt', { session: false}),function(r
             } else {
 
 
-                Algo.findOne({createdBy:user._id},function(err,doc){
+                Algo.findOne({createdBy: user._id}, function (err, doc) {
                         console.dir(doc)
                         res.json(doc);
                         //res.setHeader('Content-Type', 'application/json');
-                       // res.send();
+                        // res.send();
                     }
                 );
 
@@ -1726,9 +2026,6 @@ app.get('/api/algo',  passport.authenticate('jwt', { session: false}),function(r
     }
 
 
-
-
-
     /*jsonfile.readFile(file, function(err, obj) {
 
 
@@ -1737,14 +2034,14 @@ app.get('/api/algo',  passport.authenticate('jwt', { session: false}),function(r
 
 });
 
-app.get('/api/myAlgos',  passport.authenticate('jwt', { session: false}),function(req, res){
+app.get('/api/myAlgos', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -1752,7 +2049,7 @@ app.get('/api/myAlgos',  passport.authenticate('jwt', { session: false}),functio
             } else {
 
 
-                Algo.find({createdBy:user._id}).populate('postedBy').exec(function(err,algos){
+                Algo.find({createdBy: user._id}).populate('postedBy').exec(function (err, algos) {
 
                         res.json(algos);
                         //res.setHeader('Content-Type', 'application/json');
@@ -1767,9 +2064,6 @@ app.get('/api/myAlgos',  passport.authenticate('jwt', { session: false}),functio
     }
 
 
-
-
-
     /*jsonfile.readFile(file, function(err, obj) {
 
 
@@ -1778,41 +2072,40 @@ app.get('/api/myAlgos',  passport.authenticate('jwt', { session: false}),functio
 
 });
 
-app.delete('/api/algo/delete',  passport.authenticate('jwt', { session: false}),function(req, res){
+app.delete('/api/algo/delete', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
                 return res.status(403).send({success: false, msg: 'Authentication failed. User not found.'});
             } else {
 
-                Algo.findOne({_id:req.query.id},function(err,algo){
-                    if(algo){
-                        var dockerSpown = spawn('docker', ['service','rm',algo.name]);
-                        dockerSpown.on('data',function(data)
-                        {
+                Algo.findOne({_id: req.query.id}, function (err, algo) {
+                    if (algo) {
+                        var dockerSpown = spawn('docker', ['service', 'rm', algo.name]);
+                        dockerSpown.on('data', function (data) {
                             console.log(data)
                         })
-                        dockerSpown.on('error',function(err){
-                            console.log('err creating service'+err)
+                        dockerSpown.on('error', function (err) {
+                            console.log('err creating service' + err)
                         })
-                        dockerSpown.on('exit',function(err){
+                        dockerSpown.on('exit', function (err) {
                             console.log('service started')
                         })
-                        dockerSpown.on('close',function(err){
+                        dockerSpown.on('close', function (err) {
 
                         })
                     }
 
                 })
 
-                Algo.remove({_id:req.query.id}, function (err) {
+                Algo.remove({_id: req.query.id}, function (err) {
                     if (err) return handleError(err);
                     // removed!
 
@@ -1824,9 +2117,6 @@ app.delete('/api/algo/delete',  passport.authenticate('jwt', { session: false}),
     } else {
         return res.status(403).send({success: false, msg: 'No token provided.'});
     }
-
-
-
 
 
     /*jsonfile.readFile(file, function(err, obj) {
@@ -1836,14 +2126,14 @@ app.delete('/api/algo/delete',  passport.authenticate('jwt', { session: false}),
      })*/
 
 });
-app.delete('/api/annotation/delete',  passport.authenticate('jwt', { session: false}),function(req, res){
+app.delete('/api/annotation/delete', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -1851,7 +2141,7 @@ app.delete('/api/annotation/delete',  passport.authenticate('jwt', { session: fa
             } else {
 
 
-                Annotation.remove({_id:req.query.id}, function (err) {
+                Annotation.remove({_id: req.query.id}, function (err) {
                     if (err) return handleError(err);
                     // removed!
 
@@ -1863,21 +2153,17 @@ app.delete('/api/annotation/delete',  passport.authenticate('jwt', { session: fa
     } else {
         return res.status(403).send({success: false, msg: 'No token provided.'});
     }
-
-
-
-
 
 
 });
-app.delete('/api/annotation/deleteAll',  passport.authenticate('jwt', { session: false}),function(req, res){
+app.delete('/api/annotation/deleteAll', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -1885,7 +2171,7 @@ app.delete('/api/annotation/deleteAll',  passport.authenticate('jwt', { session:
             } else {
 
 
-                Annotation.remove({uploadedBy:user._id}, function (err) {
+                Annotation.remove({uploadedBy: user._id}, function (err) {
                     if (err) return handleError(err);
                     // removed!
 
@@ -1897,22 +2183,18 @@ app.delete('/api/annotation/deleteAll',  passport.authenticate('jwt', { session:
     } else {
         return res.status(403).send({success: false, msg: 'No token provided.'});
     }
-
-
-
-
 
 
 });
 
-app.delete('/api/media/delete',  passport.authenticate('jwt', { session: false}),function(req, res){
+app.delete('/api/media/delete', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -1920,7 +2202,7 @@ app.delete('/api/media/delete',  passport.authenticate('jwt', { session: false})
             } else {
 
 
-                Media.remove({_id:req.query.id}, function (err) {
+                Media.remove({_id: req.query.id}, function (err) {
                     if (err) return handleError(err);
                     // removed!
 
@@ -1932,21 +2214,17 @@ app.delete('/api/media/delete',  passport.authenticate('jwt', { session: false})
     } else {
         return res.status(403).send({success: false, msg: 'No token provided.'});
     }
-
-
-
-
 
 
 });
-app.delete('/api/media/deleteAll',  passport.authenticate('jwt', { session: false}),function(req, res){
+app.delete('/api/media/deleteAll', passport.authenticate('jwt', {session: false}), function (req, res) {
 
     var token = getToken(req.headers);
     if (token) {
         var decoded = jwt.decode(token, config.secret);
         User.findOne({
             _id: decoded._id
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -1954,7 +2232,7 @@ app.delete('/api/media/deleteAll',  passport.authenticate('jwt', { session: fals
             } else {
 
 
-                Media.remove({uploadedBy:user._id}, function (err) {
+                Media.remove({uploadedBy: user._id}, function (err) {
                     if (err) return handleError(err);
                     // removed!
 
@@ -1966,10 +2244,6 @@ app.delete('/api/media/deleteAll',  passport.authenticate('jwt', { session: fals
     } else {
         return res.status(403).send({success: false, msg: 'No token provided.'});
     }
-
-
-
-
 
 
 });
