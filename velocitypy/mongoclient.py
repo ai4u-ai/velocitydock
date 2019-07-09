@@ -55,14 +55,14 @@ def downloadModel(_model,imagename,retrain):
                 tar.extractall(imagename);
                 tar.close();
             except Exception as e:
-                print str(e)
+                print (str(e))
 
 
 
 
 
     with open(os.path.join(os.path.join(imagename,path),model['name']), "wb") as fh:
-            print ObjectId(model["model"]["id"])
+            print (ObjectId(model["model"]["id"]))
             fh.write(fs.get(ObjectId(model["model"]["id"])).read())
             modelname=model['name']
 
@@ -81,11 +81,12 @@ def getMedia(_id):
     fsBuck.download_to_stream(ObjectId(media["media"]["id"]), file)
 
     return media["media"]["originalname"]
-def zipdir(path, ziph):
+def zipdir(path, ziph,to_ignore=None):
     # ziph is zipfile handle
     for root, dirs, files in os.walk(path):
         for file in files:
-            ziph.write(os.path.join(root, file))
+            if file != to_ignore:
+                ziph.write(os.path.join(root, file))
 def make_tarfile(output_filename,model_dir,output_graph,output_labels):
     with tarfile.open(output_filename, mode='w:gz') as tar:
     #     tar.addfile(tarfile.TarInfo('imagenet/'+output_labels), file(model_dir+'/'+output_labels))
@@ -94,24 +95,36 @@ def make_tarfile(output_filename,model_dir,output_graph,output_labels):
                 recursive=False)
         tar.add(model_dir+'/'+output_graph, arcname='imagenet/' + output_graph,
                 recursive=False)
-        tar.close
+        tar.close()
         #tar.add(os.path.join(model_dir,output_labels))
         #tar.add(os.path.join(model_dir, output_graph))
-    print output_filename
+    print (output_filename)
 
 def uploadtarmodel(output_filename,model):
     _id=fs.put(open(output_filename),modelowner=model)
-    print _id
+    print (_id)
     return _id
+def save_conversion(conversion):
+    return db.conversion.save(conversion)
 
+def update_training(training,obj,value):
+    db.trainings.find_and_modify(query={"_id": training['_id']},update={"$set": {obj:value}}, upsert=False)
 
+def find_training(trainingid):
+    training=db.trainings.find_and_modify(query={"_id": ObjectId(trainingid)}, update={"$set": {'status':'started'}}, upsert=False)
+    #training=db.trainings.find_one({'_id':ObjectId(trainingid)})
+    training['startModel']=db.algomodels.find_one({'_id':ObjectId(training['startModel'])})
+    training['endModel'] = db.algomodels.find_one({'_id': ObjectId(training['endModel'])})
+    training['algo'] = db.algos.find_one({'_id': ObjectId(training['algo'])})
+    training['dataSet'] = db.datasets.find_one({'_id': ObjectId(training['dataSet'])})
+    return training
 def insertTraining():
     zipf = zipfile.ZipFile('exportmodel.tar.gz', 'w', zipfile.ZIP_DEFLATED)
     zipdir('exportmodel/', zipf)
     zipf.close()
     file=fs.put(open( 'exportmodel.tar.gz', 'rb'),filename='exportmodel.tar.gz',
          content_type='zip')
-    print file
+    print (file)
     result= db.trainings.insert(
         {
             "name":
@@ -127,6 +140,7 @@ def insertTraining():
     print(result)
 
 if __name__ == '__main__':
-    with tarfile.open('exportmodel.tar.gz', mode='w:gz') as tar:
-        tar.add('imagenet/ivanjacobs/testing'+ '/' + 'output_labels.txt',arcname='imagenet/' + 'output_labels.txt',recursive=False)
-        tar.close
+    print('main mongoclient')
+    # with tarfile.open('exportmodel.tar.gz', mode='w:gz') as tar:
+    #     tar.add('imagenet/ivanjacobs/testing'+ '/' + 'output_labels.txt',arcname='imagenet/' + 'output_labels.txt',recursive=False)
+    #     tar.close()

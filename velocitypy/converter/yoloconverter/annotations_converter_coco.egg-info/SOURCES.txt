@@ -1,0 +1,5 @@
+annotations_converter_coco.egg-info/PKG-INFO
+annotations_converter_coco.egg-info/SOURCES.txt
+annotations_converter_coco.egg-info/dependency_links.txt
+annotations_converter_coco.egg-info/requires.txt
+annotations_converter_coco.egg-info/top_level.txt

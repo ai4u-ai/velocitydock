@@ -1,0 +1,25 @@
+syntax ="proto3";
+
+service AnnotationsConverter
+{
+   rpc ConvertAnnotations(ConversionRequest) returns (ConversionsReply) {}
+}
+
+message ConversionRequest
+{
+    string destpath = 1;
+    string record_name = 2;
+    string img_w = 3;
+    string img_h = 4;
+    string dataset_id = 5;
+    repeated string annotations_list = 6;
+    string conversion_type = 7;
+    string train_percentage=8;
+    string test_train_split= 9;
+}
+
+message ConversionsReply
+{
+    string status =1;
+    string conversion_id=2;
+}

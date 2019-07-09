@@ -1,0 +1,6 @@
+2. go to model/research and run the following:
+`pip install -e .`
+
+Am using Anaconda virtual environment (Tensorflow-GPU)
+
+python -m grpc_tools.protoc -I.  --python_out=. --grpc_python_out=. annotations_converter.proto

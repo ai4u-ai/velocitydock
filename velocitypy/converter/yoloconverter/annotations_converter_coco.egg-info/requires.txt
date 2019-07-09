@@ -1,0 +1,6 @@
+Pillow
+opencv-contrib-python
+scipy
+tensorflow
+numpy
+protobuf

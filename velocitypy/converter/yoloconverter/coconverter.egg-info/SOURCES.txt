@@ -1,0 +1,5 @@
+coconverter.egg-info/PKG-INFO
+coconverter.egg-info/SOURCES.txt
+coconverter.egg-info/dependency_links.txt
+coconverter.egg-info/requires.txt
+coconverter.egg-info/top_level.txt

@@ -28,15 +28,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """The Python implementation of the GRPC helloworld.Greeter server."""
-
+import datetime
+import os
 from concurrent import futures
 import argparse
 import time
 import grpc
+
+import trainer_service.dynamic_import
 import mongoclient as mongocl
 import retrainForServer as retrain
-import dockerManager as dockermanager
+from nets import inception_resnet_v2
 import trainerServer_pb2
+from converter.conversion_service.annotations_converter_coco import split_train_test, convert_annotations_coco, convert_annotation_yolo, \
+    convert_inception
 
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
@@ -44,7 +49,41 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 class Trainer(trainerServer_pb2.TrainerServicer):
     def __init__(self):
-        print 'init trainer service'
+        print ('init trainer service')
+        self.obj_det_models=[
+{'name':'ssd_mobilenet_v1_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz'},
+{'name':'ssd_mobilenet_v1_0.75_depth_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_0.75_depth_300x300_coco14_sync_2018_07_03.tar.gz'},
+{'name':'ssd_mobilenet_v1_quantized_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_quantized_300x300_coco14_sync_2018_07_18.tar.gz'},
+{'name':'ssd_mobilenet_v1_0.75_depth_quantized_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_0.75_depth_quantized_300x300_coco14_sync_2018_07_18.tar.gz'},
+{'name':'ssd_mobilenet_v1_ppn_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_ppn_shared_box_predictor_300x300_coco14_sync_2018_07_03.tar.gz'},
+{'name':'ssd_mobilenet_v1_fpn_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.tar.gz'},
+
+{'name':'ssd_resnet_50_fpn_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.tar.gz'},
+{'name':'ssd_mobilenet_v2_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz'},
+{'name':'ssd_mobilenet_v2_quantized_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_quantized_300x300_coco_2019_01_03.tar.gz'},
+{'name':'ssdlite_mobilenet_v2_coco','url':'http://download.tensorflow.org/models/object_detection/ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz'},
+{'name':'ssd_inception_v2_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2018_01_28.tar.gz'},
+{'name':'faster_rcnn_inception_v2_coco','url':'http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz'},
+{'name':'faster_rcnn_resnet50_coco','url':'http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet50_coco_2018_01_28.tar.gz'},
+{'name':'faster_rcnn_resnet50_lowproposals_coco','url':'http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet50_lowproposals_coco_2018_01_28.tar.gz'},
+{'name':'rfcn_resnet101_coco','url':'http://download.tensorflow.org/models/object_detection/rfcn_resnet101_coco_2018_01_28.tar.gz'},
+{'name':'faster_rcnn_resnet101_coco','url':'http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet101_coco_2018_01_28.tar.gz'},
+{'name':'faster_rcnn_resnet101_lowproposals_coco','url':'http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet101_lowproposals_coco_2018_01_28.tar.gz'},
+{'name':'faster_rcnn_inception_resnet_v2_atrous_coco','url':'http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_resnet_v2_atrous_coco_2018_01_28.tar.gz'},
+{'name':'faster_rcnn_inception_resnet_v2_atrous_lowproposals_coco','url':'http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_resnet_v2_atrous_lowproposals_coco_2018_01_28.tar.gz'},
+{'name':'faster_rcnn_nas','url':'http://download.tensorflow.org/models/object_detection/faster_rcnn_nas_coco_2018_01_28.tar.gz'},
+{'name':'faster_rcnn_nas_lowproposals_coco','url':'http://download.tensorflow.org/models/object_detection/faster_rcnn_nas_lowproposals_coco_2018_01_28.tar.gz'},
+{'name':'mask_rcnn_inception_resnet_v2_atrous_coco','url':'http://download.tensorflow.org/models/object_detection/mask_rcnn_inception_resnet_v2_atrous_coco_2018_01_28.tar.gz'},
+{'name':'mask_rcnn_inception_v2_coco','url':'http://download.tensorflow.org/models/object_detection/mask_rcnn_inception_v2_coco_2018_01_28.tar.gz'},
+{'name':'mask_rcnn_resnet101_atrous_coco','url':'http://download.tensorflow.org/models/object_detection/mask_rcnn_resnet101_atrous_coco_2018_01_28.tar.gz'},
+{'name':'mask_rcnn_resnet50_atrous_coco','url':'http://download.tensorflow.org/models/object_detection/mask_rcnn_resnet50_atrous_coco_2018_01_28.tar.gz'},]
+
+
+
+
+
+
+
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -205,7 +244,7 @@ class Trainer(trainerServer_pb2.TrainerServicer):
     )
 
     FLAGS, unparsed = parser.parse_known_args()
-    def TrainModel(self, request, context):
+    def TrainModel_old(self, request, context):
         mongocl.downloadAnnotations(request.annotations,request.imagename)
 
 
@@ -226,6 +265,174 @@ class Trainer(trainerServer_pb2.TrainerServicer):
         dockermanager.saveZipToContainer(request.imagename)
         # os.remove('exportmodel.tar.gz')
         return trainerServer_pb2.TrainModelReply(trainingid=request.trainingid,zipmodelid=str(zipid))
+
+    def prep_conversion(self,training):
+        exceptions = []
+        conversion = {}
+        conversion['record_name'] = training['dataSet']['name']
+        conversion['img_w'] = training['conversionSettings']['image_width']
+        conversion['img_h'] = training['conversionSettings']['image_height']
+        conversion['dataset_id'] = training['dataSet']['_id']
+
+        conversion['conversion_type'] = training['algoType']
+        conversion['test_train_split'] = training['conversionSettings']['test_train_split']
+
+        # conversion['annotation_ids'] = request.annotations_list
+        conversion['status'] = 'STARTED'
+
+        conversion['create_date'] = datetime.datetime.now().isoformat()
+        conversion['exceptions'] = []
+        conversion_id = mongocl.save_conversion(conversion)
+        homeDir = os.path.expanduser('~')
+        destPath = os.path.join(homeDir,training['conversionSettings']['dest_path'],training['algoType'],str(training['_id']) )
+        if not os.path.isdir(destPath):
+            os.makedirs(destPath)
+        return conversion,destPath
+    def convert(self,training,conversion,destPath):
+        train, test,classes = split_train_test(training['dataSet']['annotations'],
+                                       float(training['conversionSettings']['test_train_split']))
+        type_path = os.path.join(destPath, 'data')
+        training['classes']=classes
+        mongocl.update_training(training,'classes',classes)
+        dest_path = type_path
+        mongocl.update_training(training,'data_path',dest_path)
+        conversion['data_set_path'] = dest_path
+        if not os.path.isdir(dest_path):
+            os.mkdir(dest_path)
+        train_path=os.path.join(dest_path,'train')
+        test_path = os.path.join(dest_path, 'test')
+        if not os.path.isdir(test_path):
+            os.mkdir(test_path)
+        if not os.path.isdir(train_path):
+            os.mkdir(train_path)
+        if training['algoType'] in [model['name'] for model in self.obj_det_models]:
+
+            print('__--------------------------------------------------------------------------Call')
+            print('__--------------------------------------------------------------------------DEV DATASET START')
+            returnstate, conversion = convert_annotations_coco(
+                dataset_id=training['dataSet']['_id'],
+                annotations_list=train,
+                destpath=train_path,
+                record_name=training['dataSet']['name'] + '_train',
+                img_w=int(training['conversionSettings']['image_width']),
+                img_h=int(training['conversionSettings']['image_height']),conversion=conversion)
+
+            conversion['status'] = 'converted_train'
+            training['train_data_set']=os.path.join(train_path,training['dataSet']['name'] + '_train')
+            mongocl.save_conversion(conversion)
+            training['conversion'] = conversion
+            mongocl.update_training(training,'conversion',conversion["_id"])
+
+            print('__--------------------------------------------------------------------------DEV DATASET END')
+            print('__--------------------------------------------------------------------------TEST DATASET START')
+            if returnstate=="ERROR":
+                training['exceptions_conversion']=conversion['exceptions']
+                training['state']='error_conversion'
+                mongocl.update_training(training,'status','error_conversion')
+                return
+            mongocl.update_training(training, 'status', 'CONVERTED_TRAIN')
+            returnstate, conversion = convert_annotations_coco(
+                dataset_id=training['dataSet']['_id'],
+                annotations_list=test,
+                destpath=test_path,
+                record_name=training['dataSet']['name'] + '_test',
+                img_w=int(training['conversionSettings']['image_width']),
+                img_h=int(training['conversionSettings']['image_height']),conversion=conversion)
+            conversion['status'] = 'converted_test'
+            mongocl.save_conversion(conversion)
+            mongocl.update_training(training, 'conversion', conversion["_id"])
+            training['conversion'] = conversion
+            if returnstate=="ERROR":
+                training['exceptions_conversion']=conversion['exceptions']
+                training['state']='error_conversion'
+                mongocl.update_training(training,'status','error_conversion')
+                return
+            conversion['status'] = 'end'
+            mongocl.save_conversion(conversion)
+            training['test_data_set'] = os.path.join(train_path, training['dataSet']['name'] + '_test')
+            mongocl.update_training(training, 'status', 'CONVERTED_TEST')
+
+
+            print('__--------------------------------------------------------------------------TEST DATASET END')
+            return train_path, test_path
+        elif training['algoType'] == 'Yolo':
+
+            convert_annotation_yolo(train, train_path, int(training['conversionSettings']['image_width']),
+                                                               int(training['conversionSettings']['imgage_height']))
+
+            conversion['status'] = 'converted_test'
+            mongocl.save_conversion(conversion)
+            convert_annotation_yolo(train, test_path, int(training['conversionSettings']['image_width']),
+                                    int(training['conversionSettings']['image_height']))
+            conversion['status'] = 'end'
+            mongocl.save_conversion(conversion)
+            return train_path, test_path
+        else:
+
+
+            returnstate,conversion=convert_inception(train, train_path, int(training['conversionSettings']['image_width']), int(training['conversionSettings']['image_height']),conversion)
+            if returnstate=="ERROR":
+                training['exceptions_conversion']=conversion['exceptions']
+                training['state']='error_conversion'
+                mongocl.update_training(training,'status', 'error_conversion')
+                return
+            conversion['status'] = 'CONVERTED_TRAIN'
+            training['status']='CONVERTED_TRAIN'
+            training['conversion']=conversion
+            mongocl.update_training(training, 'conversion', conversion["_id"])
+            mongocl.save_conversion(conversion)
+            mongocl.update_training(training, 'status','CONVERTED_TRAIN')
+            returnstate,conversion=convert_inception(test, test_path, int(training['conversionSettings']['image_width']), int(training['conversionSettings']['image_height']),conversion)
+
+            if returnstate=="ERROR":
+                training['exceptions_conversion']=conversion['exceptions']
+                training['state']='error_conversion'
+                mongocl.update_training(training,'status','error_conversion')
+                return
+            conversion['status'] = 'end'
+            training['status'] = 'CONVERTED_TEST'
+            mongocl.save_conversion(conversion)
+            mongocl.update_training(training, 'conversion', conversion["_id"])
+            mongocl.update_training(training, 'status','CONVERTED_TEST')
+            return train_path,test_path
+
+    def TrainModel(self, request, context):
+        import annotations_converter_coco as annotations_converter_yolo
+        training=mongocl.find_training(request.trainingid)
+        conversion,destPath=self.prep_conversion(training)
+        train_path,test_path=self.convert(training,conversion,destPath)
+        include_top=training['trainingMode']!='Transfer Learning'
+        mongocl.update_training(training,'dest_path',destPath)
+        try:
+            if training['algoType'] in [model['name'] for model in self.obj_det_models]:
+                include_top = training['trainingMode'] == 'Transfer Learning'
+                dynamic_import.train_object_det_model(training,destPath,training['algoType'],train_path,test_path,training['classes'],int(training['conversionSettings']['image_width']),int(training['conversionSettings']['image_height']),include_top,int(training['epochs']),int(training['steps']),
+                                   training['conversionSettings']['classMode'])
+            else:
+                dynamic_import.train_model(training,destPath,training['algoType'],train_path,test_path,int(training['conversionSettings']['image_width']),int(training['conversionSettings']['image_height']),include_top,int(training['epochs']),int(training['steps']),
+                                   training['conversionSettings']['classMode'])
+        except Exception as exc:
+            training['status']='error'
+            mongocl.update_training(training,'status','error')
+            print(exc)
+       # mongocl.downloadAnnotations(request.annotations,request.imagename)
+        #
+        #
+        # model_dir, model_name= mongocl.downloadModel(request.model,request.imagename,request.retrain)
+        # how_many_training_steps =int(request.steps)
+        #
+        # annotations_dir=request.imagename+'/'+request.trainingid+'/annotations';
+        # summaries_dir=request.imagename+'/'+request.trainingid+'/train_logs';
+        #
+        # trainagain = request.retrain
+        #
+        # retrain.train(trainagain)
+        # mongocl.make_tarfile('exportmodel.tar.gz',model_dir, output_graph,output_labels)
+        # zipid=mongocl.uploadtarmodel('exportmodel.tar.gz',request.trainingid)
+        # dockermanager.saveZipToContainer(request.imagename)
+        # # os.remove('exportmodel.tar.gz')
+        return trainerServer_pb2.TrainModelReply(trainingid=request.trainingid,zipmodelid=str(""))
+
 
 
     def createDockerImage(self,request,context):
