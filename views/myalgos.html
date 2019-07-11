@@ -1,0 +1,1344 @@
+<!-- BEGIN PAGE BREADCRUMB -->
+<ul class="page-breadcrumb breadcrumb">
+	<li>
+		<a href="#/dashboard.html">Home</a><i class="fa fa-circle"></i>
+	</li>
+	<li class="active" data-ng-bind="$state.current.data.pageTitle">
+	</li>
+</ul>
+<style>
+	[dnd-list] {
+		min-height: 300px;
+		min-width: 300px;
+		margin: 0px;
+		padding-left: 0px;
+	}
+</style>
+
+
+<div ng-controller="AlgosController">
+
+
+<div class="row">
+	<div class="col-md-12">
+		<!-- BEGIN TODO SIDEBAR -->
+		<div class="todo-ui margin-top-10">
+			<div class="todo-sidebar">
+				<div class="portlet light">
+					<div class="portlet-title">
+						<div class="caption" data-toggle="collapse" data-target=".todo-project-list-content">
+							<span class="caption-subject font-green-sharp bold uppercase">ALGO'S </span>
+							<span class="caption-helper visible-sm-inline-block visible-xs-inline-block">click to view project list</span>
+						</div>
+
+					</div>
+					<div class="portlet-body todo-project-list-content">
+						<div class="todo-project-list">
+							<ul   ng-repeat="algo in algos" class="nav nav-pills nav-stacked">
+								<li  ng-class="{'active': algo._id === selected._id}">
+								<a ng-click="selectAlgo($index)">{{algo.name}}
+
+								</a>
+
+
+
+
+
+								</li>
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- END TODO SIDEBAR -->
+			<!-- BEGIN TODO CONTENT -->
+			<div class="todo-content" >
+				<div class="portlet light">
+					<!-- PROJECT HEAD -->
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="icon-bar-chart font-green-sharp hide"></i>
+							<span class="caption-helper">ALGO:</span> &nbsp; <span class="caption-subject font-green-sharp bold uppercase">{{selected.name}}</span>&nbsp; <span class="caption-subject font-green-sharp bold uppercase">{{selected.version}}</span>
+						</div>
+
+						<div class="actions" >
+
+
+
+
+
+
+
+
+
+							<div class="btn-group">
+								<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown" dropdown-menu-hover data-close-others="true">
+									MANAGE <i class="fa fa-angle-down"></i>
+								</a>
+								<ul class="dropdown-menu pull-right">
+									<li>
+										<a ng-click="createAlgo()">
+											<i class="i"></i> New Algo </a>
+									</li>
+									<li class="divider">
+									</li>
+
+									<li class="divider">
+									</li>
+									<li>
+										<a  ng-click="removeOne(selected._id)">
+											<span  class="fa fa-trash-o"> </span>	<i class="i"></i> Delete algo </a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- end PROJECT HEAD -->
+					<div class="portlet-body">
+						<div class="row">
+							<div class="col-md-2 col-sm-3">
+								<div class="scroller" style="max-height: 600px;" data-always-visible="0" data-rail-visible="0" data-handle-color="#dae3e7">
+									<div class="todo-tasklist">
+										<div class="todo-tasklist-item todo-tasklist-item-border-green"  ng-class="{'todo-tasklist-badge todo-tasklist-item-border-red': selectedStep === 0}"  ng-click="selectStep(0)">
+										<!--	<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar4.jpg" width="27px" height="27px">-->
+											<div   class="todo-tasklist-item-title">
+												Name and Description
+											</div>
+
+										</div>
+
+
+										<div class="todo-tasklist-item todo-tasklist-item-border-blue"   ng-class="{'todo-tasklist-badge todo-tasklist-item-border-red': selectedStep === 6}" ng-click="selectStep(6)">
+											<!--<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar6.jpg" width="27px" height="27px">-->
+											<div class="todo-tasklist-item-title">
+												Train Model
+											</div>
+
+										</div>
+										<div class="todo-tasklist-item todo-tasklist-item-border-blue"   ng-class="{'todo-tasklist-badge todo-tasklist-item-border-red': selectedStep === 8}" ng-click="selectStep(8)">
+											<!--<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar6.jpg" width="27px" height="27px">-->
+											<div class="todo-tasklist-item-title">
+												Training Jobs
+											</div>
+
+										</div>
+										<div  class="todo-tasklist-item todo-tasklist-item-border-purple"   ng-class="{'todo-tasklist-badge todo-tasklist-item- todo-tasklist-item-border-red': selectedStep === 7}" ng-click="selectStep(7)">
+											<!--<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar7.jpg" width="27px" height="27px">-->
+											<div class="todo-tasklist-item-title">
+												Publish
+											</div>
+
+										</div>
+
+									</div>
+								</div>
+							</div>
+							<div class="todo-tasklist-devider">
+							</div>
+							<div class="col-md-10 col-sm-9">
+								<div class="scroller" data-always-visible="0" data-rail-visible="0" data-handle-color="#dae3e7">
+									<form action="#" class="form-horizontal">
+										<!-- TASK HEAD -->
+										<div class="form" ng-show="selectedStep===0">
+											<!--<div class="form-group">
+												<div class="col-md-8 col-sm-8">
+													<div class="todo-taskbody-user">
+
+														<span class="todo-username pull-left">/{{getUser().userName| lowercase}}/{{selected.name|removeSpaces| lowercase}}/</span>
+
+													</div>
+												</div>
+
+											</div>-->
+											<!-- END TASK HEAD -->
+											<!-- TASK TITLE -->
+											<div class="form-group">
+												<div class="col-md-6">
+													<input type="text" ng-model="selected.name" class="form-control todo-taskbody-tasktitle" placeholder="Algo Title...">
+												</div>
+												<div class="col-md-6">
+													<input type="text" ng-model="selected.version" class="form-control todo-taskbody-tasktitle" placeholder="Algo Version...">
+												</div>
+											</div>
+											<div class="form-group">
+												<div class="col-md-6">
+													<ui-select ng-model="algotype.selected" theme="bootstrap" on-select="algoTypeSelected($item)">
+														<ui-select-match placeholder="Select type of algorithm">{{$select.selected}}</ui-select-match>
+														<ui-select-choices repeat="type in algotype">
+															<div ng-bind-html="type"></div>
+
+														</ui-select-choices>
+													</ui-select>
+
+												</div>
+												<div class="col-md-6">
+												<ui-select ng-model="training_mode.selected" theme="bootstrap">
+													<ui-select-match placeholder="Select or search a mode in the list...">{{$select.selected}}</ui-select-match>
+													<ui-select-choices repeat="mode in training_modes ">
+														<div ng-bind-html="mode"></div>
+
+													</ui-select-choices>
+												</ui-select>
+
+											</div>
+
+
+											</div>
+
+											<!-- TASK DESC -->
+											<div class="form-group">
+												<div class="col-md-12">
+													<textarea class="form-control todo-taskbody-taskdesc" ng-model="selected.description"  rows="8" placeholder="Algo Description..."></textarea>
+												</div>
+											</div>
+
+											<!-- TASK TAGS -->
+											<div class="form-actions right todo-form-actions">
+												<button ng-click="saveAlgo()"class="btn btn-circle btn-sm green-haze">Save Changes</button>
+												<button class="btn btn-circle btn-sm btn-default">Cancel</button>
+											</div>
+										</div>
+
+
+
+<div class="row"  ng-show="selectedStep===2">
+
+	<div class="col-md-6 col-sm-6">
+		<div class="portlet light" >
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-settings font-green-sharp"></i>
+					<span class="caption-subject bold uppercase">Drop dependencies</span>
+					<span class="caption-helper"> {{selected.dependencies.length}}</span>
+				</div>
+
+			</div>
+			<div class="portlet-body">
+		<div class="file-drop-zone margin-bottom-20 ">
+
+			<ul dnd-list="selected.dependencies"   dnd-drop="dropCallback(event, index, item, external, type, 'itemType')">
+
+				<li ng-repeat="item  in selected.dependencies track by $index"
+					dnd-draggable="item"
+					dnd-moved="dependencies.push( selected.dependencies[$index]); "
+					dnd-effect-allowed="move" >
+
+				{{item.name}}<a ng-click="removeFromSelectedDep($index)">
+					<span class="fa fa-trash-o"> </span>
+					<i class="i"></i>
+				</a>
+				</li>
+
+
+			</ul >
+		</div>
+				</div>
+
+	</div>
+		</div>
+	<div class="col-md-6 col-sm-6">
+		<div class="portlet light" >
+			<div class="portlet-title">
+				<div class="caption font-green-sharp">
+					<i class="icon-settings font-green-sharp"></i>
+					<span class="caption-subject bold uppercase">My dependencies</span>
+					<span class="caption-helper"> {{ dependencies.length }}</span>
+				</div>
+
+			</div>
+			<div class="portlet-body">
+
+				<div class="table-scrollable table-scrollable-borderless">
+					<table class="table table-hover table-light">
+						<thead>
+						<tr class="uppercase">
+							<th width="50%">Name</th>
+
+						</tr>
+						</thead>
+						<tbody>
+						<tr dnd-draggable="item" dnd-list="dependencies"  dnd-drop="dropCallbackDependencies(event, index, item, external, type, 'itemType')" dnd-effect-allowed="move" ng-repeat="item in dependencies">
+							<td><strong>{{ item.originalname }}</strong></td>
+
+
+
+
+
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+
+
+			</div>
+		</div>
+	</div>
+	<div class="form-actions right todo-form-actions">
+		<button ng-click="saveAlgo()"class="btn btn-circle btn-sm green-haze">Save Changes</button>
+		<button class="btn btn-circle btn-sm btn-default">Cancel</button>
+	</div>
+</div>
+
+
+										<div class="row"  ng-show="selectedStep===6">
+											<div class="col-md-12 col-sm-10">
+
+												<div class="portlet light" >
+
+													<!--<div class="portlet-body">
+
+
+														<div class="row">
+															<div class="table-scrollable table-scrollable-borderless">
+																<table class="table table-hover table-light">
+																	<thead>
+																	<tr class="uppercase">
+
+
+
+
+																	</tr>
+
+																	</thead>
+																	<tbody>
+																	<tr  ng-click="selectDataset(item)"
+																		 ng-repeat="item in datasets" ng-class="{'active':item._id == selectedDataSet._id}">
+
+																		<td ><strong>{{ item.name }}</strong></td>
+
+
+
+
+																	</tr>
+																	</tbody>
+																</table>
+															</div>
+
+														</div>
+
+													</div>-->
+
+													<div class="portlet-body">
+														<form action="#" class="form-horizontal form-row-seperated">
+															<div class="form-group">
+																<label class="col-sm-2 control-label">Type Algo</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																		<span class="input-group-addon">
+
+																		</span>
+																		<ui-select ng-model="algotype.selected" theme="bootstrap" on-select="algoTypeSelected($item)" >
+																			<ui-select-match placeholder="Select type of algorithm">{{$select.selected}}</ui-select-match>
+																			<ui-select-choices repeat="type in algotype">
+																				<div ng-bind-html="type"></div>
+
+																			</ui-select-choices>
+																		</ui-select>
+
+																	</div>
+
+																</div>
+
+															</div>
+															<div class="form-group">
+																<label class="col-sm-2 control-label">Images Height</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																		<span class="input-group-addon">
+																			px
+																		</span>
+																		<input type="text" ng-model="conversionSettings.image_height"
+																			   ng-value="conversionSettings.image_height"
+																			   id="typeahead_example_modal_1"
+																			   name="typeahead_example_modal_1" class="form-control"/>
+
+																	</div>
+
+																</div>
+
+															</div>
+															<div class="form-group">
+																<label class="col-sm-2 control-label">Images Width</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																			<span class="input-group-addon">
+																				px
+																			</span>
+																		<input type="text" ng-model="conversionSettings.image_width"
+																			   ng-value="conversionSettings.image_width"
+																			   id="typeahead_example_modal_3"
+																			   name="typeahead_example_modal_1" class="form-control"/>
+
+																	</div>
+
+																</div>
+
+															</div>
+															<div class="form-group">
+																<label class="col-sm-2 control-label">Test Train Split</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+												<span class="input-group-addon">
+														%
+												</span>
+																		<input type="text" ng-model="conversionSettings.test_train_split"
+																			   ng-value="conversionSettings.test_train_split*100"
+																			   id="typeahead_example_modal_5"
+																			   name="typeahead_example_modal_1" class="form-control"/>
+
+																	</div>
+
+																</div>
+
+															</div>
+															<div class="form-group">
+																<label class="col-sm-2 control-label">Destination Path</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																	<span class="input-group-addon">
+																			{{conversionSettings.dest_path}}
+																	</span>
+																		<input type="text" ng-model="conversionSettings.dest_path"
+																			   ng-value="conversionSettings.dest_path"
+																			   id="typeahead_example_modal_6"
+																			   name="typeahead_example_modal_1" class="form-control"/>
+
+																	</div>
+
+																</div>
+
+															</div>
+															<div class="form-group">
+																<label class="col-sm-2 control-label">Data Set</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																				<span class="input-group-addon">
+																						<i class="icon-bag font-green-sharp"></i>
+																				</span>
+
+																			<ui-select ng-model="selected.selectedDataSet" theme="bootstrap">
+																				<ui-select-match placeholder="Select a training in the list...">{{$select.selected.name}}</ui-select-match>
+																				<ui-select-choices repeat="dataset in datasets">
+																					<div ng-bind-html="dataset.name"></div>
+
+
+																				</ui-select-choices>
+																			</ui-select>
+
+																	</div>
+
+
+																</div>
+
+															</div>
+															<div class="form-group">
+
+																<label class="col-sm-2 control-label"> Training Epochs:</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																			<span class="input-group-addon">
+																				<i class="icon-settings font-green-sharp"></i>
+																			</span>
+																		<input class="form-control" type="text" ng-model="trainingEpochs">
+
+																	</div>
+
+																</div>
+
+															</div>
+															<div class="form-group">
+
+																<label class="col-sm-2 control-label"> Steps per Epoch:</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																			<span class="input-group-addon">
+																				<i class="icon-settings font-green-sharp"></i>
+																			</span>
+																		<input class="form-control" type="text" ng-model="trainingSteps">
+
+																	</div>
+
+																</div>
+
+															</div>
+
+
+															<div class="form-group">
+																<label class="col-sm-2 control-label">Start from previous training:</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																				<span class="input-group-addon">
+																						<i class="icon-bag font-green-sharp"></i>
+																				</span>
+
+																		<ui-select ng-model="selected.selectedModelToTrain" on-select="previousTrainingSelected($item)" theme="bootstrap">
+																			<ui-select-match placeholder="Select a training in the list...">{{$select.selected.startDate|date}}</ui-select-match>
+																			<ui-select-choices repeat="training in trainings| filter: $select.search | filter:{ status: 'end'}">
+																				<div ng-bind-html="training.startDate|date| highlight: $select.search"></div>
+																				<small>
+																					version: {{training.endModel.version}}
+																					status: {{training.status}}
+
+																				</small>
+
+																			</ui-select-choices>
+																		</ui-select>
+
+																	</div>
+
+
+																</div>
+
+															</div>
+															<div class="form-group">
+																<label class="col-sm-2 control-label">Training Type:</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																				<span class="input-group-addon">
+																						<i class="icon-bag font-green-sharp"></i>
+																				</span>
+
+																		<ui-select on-select="onSelectedMode($mode)" ng-model="training_mode.selected" theme="bootstrap">
+																			<ui-select-match placeholder="Select or search a mode in the list...">{{$select.selected}}</ui-select-match>
+																			<ui-select-choices repeat="mode in training_modes ">
+																				<div ng-bind-html="mode"></div>
+
+																			</ui-select-choices>
+																		</ui-select>
+
+																	</div>
+
+
+																</div>
+
+															</div>
+															<div class="form-group">
+																<label class="col-sm-2 control-label">Class mode:</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																				<span class="input-group-addon">
+																						<i class="icon-bag font-green-sharp"></i>
+																				</span>
+
+																		<ui-select ng-model="class_mode.selected" theme="bootstrap">
+																		<ui-select-match placeholder="Select or search a mode in the list...">{{$select.selected}}</ui-select-match>
+																		<ui-select-choices repeat="mode in class_modes">
+																			<div ng-bind-html="mode"></div>
+
+																		</ui-select-choices>
+																		</ui-select>
+
+																	</div>
+
+
+																</div>
+
+															</div>
+
+														</form>
+														<!--<div class="form-group">
+															<div class="col-sm-2">
+																<i class="icon-settings font-green-sharp"></i>
+																<span class="caption-subject bold uppercase">Training Epochs:</span>
+																<input class="input"  ng-model="trainingSteps">
+															</div>
+															<div class="col-sm-2">
+																<i class="icon-settings font-green-sharp"></i>
+																<span class="caption-subject bold uppercase">Start from previous training: </span>
+																<ui-select ng-model="selected.selectedModelToTrain" theme="bootstrap">
+																	<ui-select-match placeholder="Select a training in the list...">{{$select.selected.startDate|date}}</ui-select-match>
+																	<ui-select-choices repeat="training in trainings| filter: $select.search | filter:{ status: 'end'}">
+																		<div ng-bind-html="training.startDate|date| highlight: $select.search"></div>
+																		<small>
+																			version: {{training.endModel.version}}
+																			status: {{training.status}}
+
+																		</small>
+
+																	</ui-select-choices>
+																</ui-select>
+
+															</div>
+															<div class="col-md-2">
+																<i class="icon-settings font-green-sharp"></i>
+																<span class="caption-subject bold uppercase">Training type: </span>
+																<ui-select ng-model="training_mode.selected" theme="bootstrap">
+																	<ui-select-match placeholder="Select or search a mode in the list...">{{$select.selected.name}}</ui-select-match>
+																	<ui-select-choices repeat="mode in algotype.selected.mode ">
+																		<div ng-bind-html="mode.name"></div>
+
+																	</ui-select-choices>
+																</ui-select>
+															</div>
+
+														</div>-->
+														<div class="col-md-offset-6">
+
+															<span class="alert alert-error"  ng-show="selected.selectedDataSet.name===undefined" >
+																<i class="fa fa-exclamation-triangle"  aria-hidden="true"></i>
+																Select a data set </span>
+															<span class="alert info"  ng-show="training.startDate!=undefined" >
+																<i class="fa fa-info-circle"  aria-hidden="true"></i>
+																Training Session started at: {{training.startDate|date:'dd/MM/yyyy HH:mm:ss '}}</span>
+
+
+															<a href="" ng-click="trainModel()" ng-disabled="selected.selectedDataSet.name===undefined"  class="btn btn-circle btn-large green-haze align-right">Train model</a>
+
+														<a href="" class="btn btn-circle btn-large btn-default  align-right">Cancel</a>
+														</div>
+
+
+													</div>
+													<div class="col-md-10">
+														<div class="table-scrollable table-scrollable-borderless">
+															<table class="table table-hover table-light">
+																<thead>
+																<tr class="uppercase">
+																	<th width="80%">Start Date</th>
+																	<th width="20%">State</th>
+
+																</tr>
+																</thead>
+																<tbody>
+																<tr  ng-repeat="iter_training in trainings| orderBy: '-startDate'"  ng-class="{'active':iter_training._id == training._id}" >
+																	<td><strong>{{iter_training.startDate|date:'dd/MM/yyyy HH:mm:ss '}}</strong></td>
+																	<td><strong>{{iter_training.status}}</strong></td>
+
+
+
+
+
+																</tr>
+																</tbody>
+															</table>
+														</div>
+
+													</div>
+
+<!--													<div class="col-md-8 col-sm-6">-->
+
+
+<!--														<div  class="todo-content">-->
+<!--															<div class="portlet light">-->
+<!--																&lt;!&ndash; PROJECT HEAD &ndash;&gt;-->
+
+<!--																&lt;!&ndash; end PROJECT HEAD &ndash;&gt;-->
+<!--																<div class="portlet-body">-->
+<!--																	<div class="row">-->
+<!--																		<div class="col-md-12 col-sm-10">-->
+<!--																			<div class="col-md-12 col-sm-10">-->
+<!--																				<div class="scroller" style="max-height: 100%; min-height: 700px;" data-always-visible="1" data-rail-visible="1" data-handle-color="#dae3e7">-->
+<!--																					<div class="todo-tasklist">-->
+<!--																						<div  ng-click=""   ng-repeat="selection in selectedAnnotation " class="todo-tasklist-item todo-tasklist-item-border-green">-->
+<!--																							<img  class="todo-userpic pull-left" ng-src="{{selection.objectSelector.dataUrl}}" width="75px" height="75px">-->
+
+<!--																							<div class="todo-tasklist-controls pull-left">-->
+<!--																								<span class="todo-tasklist-date"><i class="fa fa-calendar"></i>  {{selection.currentTime| date:'mm:ss' }}</span>-->
+<!--																								<span class="todo-tasklist-badge badge badge-roundless">Class:{{selection.objectSelector.class.name}}</span>-->
+<!--																								<span>x1:{{selection.objectSelector.x1}} x2:{{selection.objectSelector.x2}} y1:{{selection.objectSelector.y1}} y2:{{selection.objectSelector.y2}}</span>-->
+<!--																							</div>-->
+
+<!--																						</div>-->
+<!--																						<div ng-show="false"class="todo-tasklist-item todo-tasklist-item-border-red">-->
+
+<!--																						</div>-->
+
+<!--																					</div>-->
+<!--																				</div>-->
+<!--																			</div>-->
+
+<!--																		</div>-->
+<!--																	</div>-->
+<!--																</div>-->
+<!--															</div>-->
+<!--														</div>-->
+
+
+
+
+
+
+
+
+
+
+<!--													</div>-->
+											</div>
+
+
+											</div>
+										</div>
+									</form>
+
+									<div class="row" ng-show="selectedStep===8">
+										<div class="col-md-12">
+											<!-- BEGIN PORTLET-->
+											<div class="portlet box red-sunglo">
+												<div class="portlet-title">
+													<div class="caption">
+														<!--<i class="fa fa-gift"></i>-->
+													</div>
+
+												</div>
+												<div class="portlet-body form">
+
+													<form  id="form-username" class="form-horizontal form-bordered">
+														<div class="todo-tasklist-devider">
+														</div>
+														<div class="form-group" style="padding-top:15px">
+															<label class="col-sm-3 control-label">Name</label>
+															<div class="col-sm-2">
+																<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-user"></i>
+															</span>
+																	<input type="text"  ng-disabled="1" id="typeahead_example_1" name="typeahead_example_1" class="form-control" ng-value="selected.name"/>
+																</div>
+																<!--<p class="help-block">
+                                                                    Path:<br>
+                                                                    <span class="label label-success label-sm">
+                                                                            GET </span>
+                                                                    <a target="_blank" href="selected.apipath">
+                                                                    {{selected.apipath}} </a>
+                                                                </p>-->
+															</div>
+														</div>
+														<div class="form-group">
+															<label class="col-sm-3 control-label">Select Training</label>
+															<div class="col-sm-2">
+
+																<ui-select ng-model="stats.selectedTraining" theme="bootstrap" on-select="trainingSelected($item)">
+																	<ui-select-match placeholder="Select a training in the list...">{{$select.selected.startDate | date:'dd/MM/yyyy HH:mm:ss '}}</ui-select-match>
+																	<ui-select-choices repeat="training in trainings | orderBy: '-startDate'  ">
+																		<div ng-bind-html="training.startDate | date:'dd/MM/yyyy HH:mm:ss '| highlight: $select.search"></div>
+																		<small>
+
+
+																			type: {{training.algoType}}
+																			status: {{training.status}}
+
+																		</small>
+
+																	</ui-select-choices>
+																</ui-select>
+
+															</div>
+
+														</div>
+														<div class="form-group">
+															<label class="col-sm-3 control-label">Select Metric</label>
+															<div class="col-sm-2">
+
+																<ui-select ng-model="selectedMetric" theme="bootstrap" on-select="metricSelected($item)">
+																	<ui-select-match placeholder="Select a training in the list...">{{$select.selected }}</ui-select-match>
+																	<ui-select-choices repeat="metric in metrics ">
+																		<div ng-bind-html="metric"></div>
+
+
+																	</ui-select-choices>
+																</ui-select>
+
+															</div>
+
+														</div>
+														<div class="form-group">
+															<label class="col-sm-3 control-label">Monitor in Tensorboard</label>
+															<div class="col-sm-2">
+																<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-cogs"></i>
+															</span>
+
+																	<a ng-show="stats.selectedTraining!=undefined" ng-disabled="stats.selectedTraining==undefined" ng-href="http://localhost:5000/stats/path:{{stats.selectedTraining.logdir_path}}"  class="form-control" download="fileName" target="_blank">Tensorboard</a>
+																</div>
+																<p ng-show="selected.selectedTraining==undefined" class="help-block red-title">
+																<span class="badge badge-danger">
+										   											To see select a training first</span>
+																</p>
+																<p ng-show="selected.selectedTraining!=undefined" class="help-block red-title">
+																	Path:
+																	{{selected.selectedTraining.checkpoint_path}}
+																</p>
+															</div>
+														</div>
+
+
+													</form>
+
+												</div>
+											</div>
+
+											<!-- END PORTLET-->
+										</div>
+
+									</div>
+
+									<div class="row" ng-show="selectedStep===8">
+										<div class="col-md-12" >
+											<!-- BEGIN PORTLET-->
+											<div class="portlet light">
+												<div class="portlet-title">
+													<div class="caption">
+
+														Status: {{stats.selectedTraining.status}}
+													</div>
+												</div>
+												<div class="portlet-title">
+												<div class="caption">
+
+														Type: {{stats.selectedTraining.algoType}}
+													</div>
+												</div>
+												<div class="portlet-title">
+													<div class="caption">
+
+														Class mode: {{stats.selectedTraining.conversionSettings.classMode}}
+													</div>
+												</div>
+												<div class="portlet-title">
+													<div class="caption">
+
+														Epochs: {{stats.selectedTraining.epochs}}
+													</div>
+												</div>
+												<div class="portlet-title">
+													<div class="caption">
+
+														Steps per epoch: {{stats.selectedTraining.steps}}
+													</div>
+												</div>
+
+												</div>
+
+												<div class="portlet-body">
+															<div id="chartdiv" style="min-height: 500px"></div>
+												</div>
+											</div>
+										</div>
+
+
+
+										<div class="row" ng-show="selectedStep===7">
+										<div class="col-md-12  col-sm-10">
+		<!-- BEGIN PORTLET-->
+										<div class="portlet light" >
+											<div class="portlet-title">
+												<div class="caption">
+													<!--<i class="fa fa-gift"></i>-->
+												</div>
+
+											</div>
+											<div class="portlet-body form">
+
+												<form  id="form-username" class="form-horizontal form-bordered">
+													<div class="todo-tasklist-devider">
+													</div>
+													<div class="form-group" style="padding-top:15px">
+														<label class="col-sm-3 control-label">Name</label>
+														<div class="col-sm-2">
+															<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-user"></i>
+															</span>
+															<input type="text"  ng-disabled="1" id="typeahead_example_1" name="typeahead_example_1" class="form-control" ng-value="selected.name"/>
+															</div>
+															<!--<p class="help-block">
+																Path:<br>
+																<span class="label label-success label-sm">
+																		GET </span>
+																<a target="_blank" href="selected.apipath">
+																{{selected.apipath}} </a>
+															</p>-->
+														</div>
+													</div>
+
+													<div class="form-group">
+														<label class="col-sm-3 control-label">
+															<span ng-show="selected.selectedTraining==undefined"  class="badge badge-danger">
+										   											Select Training</span>
+															Select Training
+															</label>
+
+														<div class="col-sm-2">
+
+															<ui-select ng-model="selected.selectedTraining" theme="bootstrap">
+																<ui-select-match placeholder="Select a training in the list...">{{$select.selected.startDate | date:'dd/MM/yyyy HH:mm:ss '}}</ui-select-match>
+																<ui-select-choices repeat="training in trainings| orderBy: '-startDate' ">
+																	<div ng-bind-html="training.startDate | date:'dd/MM/yyyy HH:mm:ss '| highlight: $select.search"></div>
+																	<small>
+																		version: {{training.endModel.version}}
+																		status: {{training.status}}
+
+																	</small>
+
+																</ui-select-choices>
+															</ui-select>
+
+														</div>
+
+													</div>
+
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Download Model</label>
+														<div class="col-sm-2">
+															<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-cogs"></i>
+															</span>
+
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.model_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+															</div>
+															<p ng-show="selected.selectedTraining==undefined" class="alert-block red">
+																<span class="badge badge-danger">
+										   											To download select a training first</span>
+															</p>
+															<p ng-show="selected.selectedTraining!=undefined" class="help-block red-title">
+																Path:
+																{{selected.selectedTraining.model_path}}
+															</p>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Download labels</label>
+														<div class="col-sm-2">
+															<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-cogs"></i>
+															</span>
+
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.labels_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+															</div>
+															<p ng-show="selected.selectedTraining==undefined" class="alert-block red">
+																<span class="badge badge-danger">
+										   											To download select a training first</span>
+															</p>
+															<p ng-show="selected.selectedTraining!=undefined" class="help-block red-title">
+																Path:
+																{{selected.selectedTraining.labels_path}}
+															</p>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Download all in model dir</label>
+														<div class="col-sm-2">
+															<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-cogs"></i>
+															</span>
+
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.model_dir_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+															</div>
+															<p ng-show="selected.selectedTraining==undefined" class="alert-block red">
+																<span class="badge badge-danger">
+										   											To download select a training first</span>
+															</p>
+															<p ng-show="selected.selectedTraining!=undefined" class="help-block red-title">
+																Path:
+																{{selected.selectedTraining.model_dir_path}}
+															</p>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Download Checkpoints</label>
+														<div class="col-sm-2">
+															<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-cogs"></i>
+															</span>
+
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.checkpoint_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+															</div>
+															<p ng-show="selected.selectedTraining==undefined" class="help-block red-title">
+																<span class="badge badge-danger">
+										   											To download select a training first</span>
+															</p>
+															<p ng-show="selected.selectedTraining!=undefined" class="help-block red-title">
+																Path:
+																{{selected.selectedTraining.checkpoint_path}}
+															</p>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Download data set</label>
+														<div class="col-sm-2">
+															<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-cogs"></i>
+															</span>
+
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.data_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+															</div>
+															<p ng-show="selected.selectedTraining==undefined" class="help-block red-title">
+																<span class="badge badge-danger">
+										   											To download select a training first</span>
+															</p>
+															<p ng-show="selected.selectedTraining!=undefined" class="help-block red-title">
+																Path:
+																{{selected.selectedTraining.data_path}}
+															</p>
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Download all</label>
+														<div class="col-sm-2">
+															<div class="input-group">
+															<span class="input-group-addon">
+															<i class="fa fa-cogs"></i>
+															</span>
+
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.dest_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+															</div>
+															<p ng-show="selected.selectedTraining==undefined" class="help-block red-title">
+																<span class="badge badge-danger">
+										   											To download select a training first</span>
+															</p>
+															<p ng-show="selected.selectedTraining!=undefined" class="help-block red-title">
+																Path:
+																{{selected.selectedTraining.dest_path}}
+															</p>
+														</div>
+													</div>
+
+													<!--<div class="form-group">
+														<label class="control-label col-md-3">Use</label>
+														<div class="col-md-9">
+															<input type="checkbox" class="make-switch"
+																   data-on-text="&nbsp;Public&nbsp;"
+																   data-off-text="&nbsp;Private&nbsp;">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="control-label col-md-3">Internet Access</label>
+														<div class="col-md-9">
+															<input type="checkbox" class="make-switch"
+																   data-on-text="Yes" data-off-text="No">
+
+														</div>
+													</div>-->
+
+													<!--<div class="form-group">
+														<label class="col-sm-3 control-label">Custom Template</label>
+														<div class="col-sm-2">
+															<div class="input-group">
+								<span class="input-group-addon">
+								<i class="fa fa-cogs"></i>
+								</span>
+																<input type="text" id="typeahead_example_3" name="typeahead_example_3" class="form-control"/>
+															</div>
+															<p class="help-block">
+																Uses a precompiled template to customize look of suggestion.</code>
+															</p>
+														</div>
+													</div>
+													<div class="form-group ">
+														<label class="col-sm-3 control-label">Multiple Sections with Headers</label>
+														<div class="col-sm-2">
+															<div class="input-group">
+								<span class="input-group-addon">
+								<i class="fa fa-check"></i>
+								</span>
+																<input type="text" id="typeahead_example_4" name="typeahead_example_4" class="form-control"/>
+															</div>
+															<p class="help-block">
+																Two datasets that are prefetched, stored, and searched on the client. Highlighting is enabled.
+															</p>
+														</div>
+													</div>
+													<div class="form-group last">
+														<label class="control-label col-md-3">Modal</label>
+														<div class="col-md-4">
+															<a href="#" data-target="#myModal_autocomplete" role="button" class="btn red" data-toggle="modal">
+																View in Modal </a>
+														</div>
+													</div>-->
+													<div class="form-actions">
+														<div class="row">
+															<div class="col-md-offset-3 col-md-9">
+																<button ng-click="saveAndPublish()" class="btn purple"><i class="fa fa-check"></i> Submit</button>
+																<button type="button" class="btn default">Cancel</button>
+															</div>
+														</div>
+													</div>
+												</form>
+												<div id="myModal_autocomplete" class="modal fade" role="dialog" aria-hidden="true">
+													<div class="modal-dialog">
+														<div class="modal-content">
+															<div class="modal-header">
+																<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+																<h4 class="modal-title">Radio Switch in Modal</h4>
+															</div>
+															<div class="modal-body form">
+																<form action="#" class="form-horizontal form-row-seperated">
+																	<div class="form-group">
+																		<label class="col-sm-2 control-label">Basic Auto Complete</label>
+																		<div class="col-sm-8">
+																			<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-user"></i>
+												</span>
+																				<input type="text" id="typeahead_example_modal_1" name="typeahead_example_modal_1" class="form-control"/>
+																			</div>
+																			<p class="help-block">
+																				E.g: metronic, keenthemes.<br>
+																				<span class="label label-success label-sm">
+												Learn more: </span>
+																				<a target="_blank" href="http://twitter.github.io/typeahead.js/">
+																					http://twitter.github.io/typeahead.js/ </a>
+																			</p>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-sm-2 control-label">Country Auto Complete</label>
+																		<div class="col-sm-8">
+																			<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-search"></i>
+												</span>
+																				<input type="text" id="typeahead_example_modal_2" name="typeahead_example_modal_2" class="form-control"/>
+																			</div>
+																			<p class="help-block">
+																				</code>
+																			</p>
+																		</div>
+																	</div>
+																	<div class="form-group">
+																		<label class="col-sm-2 control-label">Custom Template</label>
+																		<div class="col-sm-8">
+																			<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-cogs"></i>
+												</span>
+																				<input type="text" id="typeahead_example_modal_3" name="typeahead_example_modal_3" class="form-control"/>
+																			</div>
+																			<p class="help-block">
+																				Uses a precompiled template to customize look of suggestion.</code>
+																			</p>
+																		</div>
+																	</div>
+																	<div class="form-group last">
+																		<label class="col-sm-2 control-label">Multiple Sections with Headers</label>
+																		<div class="col-sm-8">
+																			<div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-check"></i>
+												</span>
+																				<input type="text" id="typeahead_example_modal_4" name="typeahead_example_modal_4" class="form-control"/>
+																			</div>
+																			<p class="help-block">
+																				Two datasets that are prefetched, stored, and searched on the client. Highlighting is enabled.
+																			</p>
+																		</div>
+																	</div>
+																</form>
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+																<button type="button" class="btn btn-primary"><i class="fa fa-check"></i> Save changes</button>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- END PORTLET-->
+								</div>
+							</div>
+										<!--<div class="row"  ng-show="selectedStep===2">
+                                        <div class="col-md-12 col-sm-10">
+                                            <div class="portlet light" >
+                                                <div class="portlet-title">
+                                                    <div class="caption font-green-sharp">
+                                                        <i class="icon-settings font-green-sharp"></i>
+                                                        <span class="caption-subject bold uppercase">Drop to remove from selected</span>
+                                                        <span class="caption-helper"> {{ selectedDependencies.length-1 }}</span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="portlet-body">
+                                                    <div class="file-drop-zone margin-bottom-20">
+                                                        Drop to remove
+                                                        <ul dnd-list="delete" dnd-horizontal-list="true">
+
+                                                            <li ng-repeat="item  in delete"
+                                                                dnd-dragend="logEvent('Drag operation ended', event)"
+                                                                dnd-moved="delete.splice($index, 1); logEvent('Item moved', event)"
+                                                                >
+                                                                {{item.name}}
+                                                            </li>
+
+
+                                                        </ul >
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        </div>-->
+
+
+
+										<div ng-show="0" class="tabbable-line">
+											<ul class="nav nav-tabs ">
+												<li class="active">
+													<a href="#" data-target="#tab_1" data-toggle="tab">
+														Comments </a>
+												</li>
+												<li>
+													<a href="#" data-target="#tab_2" data-toggle="tab">
+														History </a>
+												</li>
+											</ul>
+											<div class="tab-content">
+												<div class="tab-pane active" id="tab_1">
+													<!-- TASK COMMENTS -->
+													<div class="form-group">
+														<div class="col-md-12">
+															<ul class="media-list">
+																<li class="media">
+																	<a class="pull-left" href="#">
+																		<img class="todo-userpic" src="../../../assets/admin/layout/img/avatar8.jpg" width="27px" height="27px">
+																	</a>
+																	<div class="media-body todo-comment">
+																		<button type="button" class="todo-comment-btn btn btn-circle btn-default btn-xs">&nbsp; Reply &nbsp;</button>
+																		<p class="todo-comment-head">
+																			<span class="todo-comment-username">Christina Aguilera</span> &nbsp; <span class="todo-comment-date">17 Sep 2014 at 2:05pm</span>
+																		</p>
+																		<p class="todo-text-color">
+																			Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
+																		</p>
+																		<!-- Nested media object -->
+																		<div class="media">
+																			<a class="pull-left" href="#">
+																				<img class="todo-userpic" src="../../../assets/admin/layout/img/avatar4.jpg" width="27px" height="27px">
+																			</a>
+																			<div class="media-body">
+																				<p class="todo-comment-head">
+																					<span class="todo-comment-username">Carles Puyol</span> &nbsp; <span class="todo-comment-date">17 Sep 2014 at 4:30pm</span>
+																				</p>
+																				<p class="todo-text-color">
+																					Thanks so much my dear!
+																				</p>
+																			</div>
+																		</div>
+																	</div>
+																</li>
+																<li class="media">
+																	<a class="pull-left" href="#">
+																		<img class="todo-userpic" src="../../../assets/admin/layout/img/avatar5.jpg" width="27px" height="27px">
+																	</a>
+																	<div class="media-body todo-comment">
+																		<button type="button" class="todo-comment-btn btn btn-circle btn-default btn-xs">&nbsp; Reply &nbsp;</button>
+																		<p class="todo-comment-head">
+																			<span class="todo-comment-username">Andres Iniesta</span> &nbsp; <span class="todo-comment-date">18 Sep 2014 at 9:22am</span>
+																		</p>
+																		<p class="todo-text-color">
+																			Cras sit amet nibh libero, in gravida nulla. Scelerisque ante sollicitudin commodo Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. <br>
+																		</p>
+																	</div>
+																</li>
+																<li class="media">
+																	<a class="pull-left" href="#">
+																		<img class="todo-userpic" src="../../../assets/admin/layout/img/avatar6.jpg" width="27px" height="27px">
+																	</a>
+																	<div class="media-body todo-comment">
+																		<button type="button" class="todo-comment-btn btn btn-circle btn-default btn-xs">&nbsp; Reply &nbsp;</button>
+																		<p class="todo-comment-head">
+																			<span class="todo-comment-username">Olivia Wilde</span> &nbsp; <span class="todo-comment-date">18 Sep 2014 at 11:50am</span>
+																		</p>
+																		<p class="todo-text-color">
+																			Cras sit amet nibh libero, in gravida nulla. Scelerisque ante sollicitudin commodo Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. <br>
+																		</p>
+																	</div>
+																</li>
+															</ul>
+														</div>
+													</div>
+													<!-- END TASK COMMENTS -->
+													<!-- TASK COMMENT FORM -->
+													<div class="form-group">
+														<div class="col-md-12">
+															<ul class="media-list">
+																<li class="media">
+																	<img class="todo-userpic pull-left" src="../../../assets/admin/layout/img/avatar4.jpg" width="27px" height="27px">
+																	<div class="media-body">
+																		<textarea class="form-control todo-taskbody-taskdesc" rows="4" placeholder="Type comment..."></textarea>
+																	</div>
+																</li>
+															</ul>
+															<button type="button" class="pull-right btn btn-sm btn-circle green-haze"> &nbsp; Submit &nbsp; </button>
+														</div>
+													</div>
+													<!-- END TASK COMMENT FORM -->
+												</div>
+												<div class="tab-pane" id="tab_2">
+													<ul class="todo-task-history">
+														<li>
+															<div class="todo-task-history-date">
+																20 Jun, 2014 at 11:35am
+															</div>
+															<div class="todo-task-history-desc">
+																Task created
+															</div>
+														</li>
+														<li>
+															<div class="todo-task-history-date">
+																21 Jun, 2014 at 10:35pm
+															</div>
+															<div class="todo-task-history-desc">
+																Task category status changed to "Top Priority"
+															</div>
+														</li>
+														<li>
+															<div class="todo-task-history-date">
+																22 Jun, 2014 at 11:35am
+															</div>
+															<div class="todo-task-history-desc">
+																Task owner changed to "Nick Larson"
+															</div>
+														</li>
+														<li>
+															<div class="todo-task-history-date">
+																30 Jun, 2014 at 8:09am
+															</div>
+															<div class="todo-task-history-desc">
+																Task completed by "Nick Larson"
+															</div>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			<!-- END TODO CONTENT -->
+		</div>
+	</div>
+	<!-- END PAGE CONTENT-->
+
+	<!--<div class="row">
+
+		<div class="col-md-6">
+			&lt;!&ndash; BEGIN: ACCORDION DEMO &ndash;&gt;
+
+			&lt;!&ndash; END: ACCORDION DEMO &ndash;&gt;
+		</div>
+
+	</div>-->
+</div>
+<!-- END PAGE CONTENT-->
+</div>
+
+<!-- END MAIN CONTENT -->
+
+<!-- BEGIN MAIN JS-->
+<script>
+//	Todo.init(); // init todo page
+</script>
+<!-- BEGIN MAIN JS -->

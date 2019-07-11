@@ -1,0 +1,697 @@
+<!-- BEGIN PAGE BREADCRUMB -->
+<ul class="page-breadcrumb breadcrumb">
+	<li>
+		<a href="#/dashboard.html">Home</a><i class="fa fa-circle"></i>
+	</li>
+	<li class="active" data-ng-bind="$state.current.data.pageTitle">
+	</li>
+</ul>
+<style>
+	[dnd-list] {
+		min-height: 250px;
+		min-width: 250px;
+		margin: 0px;
+		padding-left: 0px;
+	}
+</style>
+<!-- END PAGE BREADCRUMB -->
+
+<!-- BEGIN MAIN CONTENT -->
+<!--<div class="note note-success note-bordered">
+	<h3>Angular File Upload</h3>
+	<p>
+		Angular File Upload is a module for the AngularJS framework. Supports drag-n-drop upload, upload progress, validation filters and a file upload queue. It supports native HTML5 uploads, but degrades to a legacy iframe upload method for older browsers. Works with any server side platform which supports standard HTML form uploads.
+	</p>
+	<p><span class="label label-danger">File upload is disabled in the demo only!</span></p>
+	<p>
+		For more info please check the <a href="https://github.com/nervgh/angular-file-upload">official github page</a>
+	</p>
+</div>-->
+<div ng-controller="DataSetsController">
+	<div class="row">
+			<div class="col-sm-2">
+				<div class="portlet light" >
+					<div class="portlet-title">
+						<div class="caption font-green-sharp">
+							<i class="icon-settings font-green-sharp"></i>
+							<span class="caption-subject bold uppercase">My Data Sets </span>
+							<span class="caption-helper"> {{ selected.datasets.length}}</span>
+						</div>
+						<div class="caption pull-right" >
+							<div class="actions">
+								<i class="icon-bar-chart font-green-haze hide"></i>
+
+
+
+							</div>
+
+						</div>
+					</div>
+					<div class="table-scrollable table-scrollable-borderless">
+						<table class="table table-hover table-light">
+							<thead>
+							<tr class="uppercase">
+
+								<th>Data Set Name</th>
+								<th>Actions</th>
+
+							</tr>
+							</thead>
+							<tbody>
+
+							<tr ng-class="{'active':item._id == selectedDataSet._id}"
+									dnd-draggable="item"  	 ng-repeat="item in datasets">
+
+
+								<td ng-click="selectDataset(item)">{{ item.name }} <strong>
+
+								<td nowrap>
+									<button type="button" class="btn btn-danger btn-xs" ng-click="deleteDataSet(item._id)">
+										<span class="glyphicon glyphicon-trash"></span> Remove
+									</button>
+								</td>
+								</strong>
+								</td>
+
+								<!--<td ng-show="uploader.isHTML5" nowrap>&lt;!&ndash;{{ item.media.grid.length/1024/1024|number:2 }}&ndash;&gt; MB</td>-->
+
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="portlet light" >
+					<div class="portlet-title">
+						<div class="caption font-green-sharp">
+							<i class="icon-settings font-green-sharp"></i>
+							<span class="caption-subject bold uppercase">Conversions for data set {{selectedDataSet.name}} </span>
+							<span class="caption-helper"> {{ selected.conversions.length}}</span>
+						</div>
+						<div class="caption pull-right" >
+							<div class="actions">
+								<i class="icon-bar-chart font-green-haze hide"></i>
+
+
+
+							</div>
+
+						</div>
+					</div>
+					<div class="table-scrollable table-scrollable-borderless">
+						<table class="table table-hover table-light">
+							<thead>
+							<tr class="uppercase">
+
+								<th>Conversion </th>
+								<th>Actions</th>
+
+							</tr>
+							</thead>
+							<tbody>
+
+							<tr
+
+										 ng-repeat="item in conversions | orderBy: '-create_date'">
+
+
+								<td>{{ item.create_date |date:'dd/MM/yyyy HH:mm:ss ' }} <strong>
+									<!--{{item.conversion_type}} dims:{{item.img_w}}x{{item.img_h}} path: {{item.output_filebase}}-->
+								<td nowrap>
+
+								<a data-target="#myModal_conversions" ng-click="selectConversion(item)"  data-toggle="modal">
+									<button type="button" class="btn btn-info btn-small">
+									<span class="glyphicon glyphicon-book"></span> Details
+								</button></a>
+								<span ng-show="item.status!='end'" class="badge badge-danger">
+										   											{{item.status}}</span>
+								<a ng-show="item.status=='end'" ng-disabled="item.status!='end'" ng-href="http://localhost:5000/downloads{{item.data_set_path}}"   download="fileName" target="_blank">
+									<button type="button" class="btn btn-info btn-small" >
+										<span class="glyphicon glyphicon-download"></span> Download
+									</button>
+								</a>
+								</td>
+								</strong>
+								</td>
+
+								<!--<td ng-show="uploader.isHTML5" nowrap>&lt;!&ndash;{{ item.media.grid.length/1024/1024|number:2 }}&ndash;&gt; MB</td>-->
+
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="portlet light" >
+					<div class="portlet-title">
+						<div class="caption font-green-sharp">
+							<i class="icon-settings font-green-sharp"></i>
+							<i class="icon-settings font-green-sharp"></i>
+							<span class="caption-subject bold uppercase">Drop annotations and data sets</span>
+							<span class="caption-helper"> {{ selected.annotations.length}}</span>
+						</div>
+						<div class="caption pull-right" >
+							<div class="actions">
+								<i class="icon-bar-chart font-green-haze hide"></i>
+
+								<div class="btn-group">
+									<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown"
+									   dropdown-menu-hover data-close-others="true">
+										Filter by Video :
+
+										{{selectedMediaDataSet}}
+
+
+										<i class="fa fa-angle-down"></i>
+									</a>
+
+									<ul class="dropdown-menu pull-right scrollspy-example">
+										<!--<li>-->
+										<!--<a data-target="#myModal_autocomplete" data-toggle="modal">-->
+										<!--<i class="i"></i> Add New </a>-->
+										<!--&lt;!&ndash;<a href="#" data-target="#myModal_autocomplete" role="button"  ng-click="annotationService.addNewClasses()" class="btn red" data-toggle="modal">-->
+										<!--View in Modal </a>&ndash;&gt;-->
+										<!--</li>-->
+
+										<li ng-repeat="video in mediafiles">
+
+											<a ng-click="groupByMediaDataSet(video)">
+												<i class="i"></i> {{video}} </a>
+											<!--<span class="label label-sm label-success">play<i class="fa fa-play-circle-o"></i></span></a>-->
+											<!--</span>-->
+											<!--<a  ng-click="setSelectedClasses($index)">-->
+											<!--<i class="i"></i> {{video.title}} </a>-->
+
+										</li>
+
+									</ul>
+								</div>
+
+							</div>
+							<!--<span class="caption-helper font-green-sharp bold uppercase">State:</span>  &nbsp; -->
+							<!--<span class="caption-subject font-red-thunderbird bold uppercase">{{training.status}}</span> &nbsp; -->
+							<!--<span class="caption-helper font-green-sharp bold uppercase">Duration:</span>   -->
+							<!--<span class="caption-subject font-red-thunderbird bold uppercase">{{getDuration(training.startDate,training.endDate) | date :'mm:ss.sss'}}</span>-->
+
+						</div>
+					</div>
+					<div class="portlet-title">
+						<div class="caption font-green-sharp">
+
+							<span class="caption-subject">Name:</span>
+
+							<span class="caption-subject bold "><input type="text" placeholder="Data Set Name" class="form-control" ng-model="showNameDataSet().name"/></span>
+						</div>
+
+
+					</div>
+					<div class="portlet-title pull-right">
+
+
+
+							<button type="button" class="btn btn-danger btn-lg" ng-show="selected.annotations.length>0" ng-click="createNewDataSet()">
+								<span class="glyphicon glyphicon-briefcase"></span> Create New
+							</button>
+							<a data-target="#myModal_autocomplete"  ng-show="selected.annotations.length>0" data-toggle="modal">
+								<i class="i"></i>
+								<button type="button" class="btn btn-danger btn-lg" ng-show="selected.annotations.length>0" data-toggle="modal">
+									<span class="glyphicon glyphicon-briefcase"></span> Convert Data Set
+								</button></a>
+							<button type="button" class="btn btn-danger btn-lg" ng-show="selected.annotations.length>0" ng-click="saveDataSets(selectedDataSet)">
+								<span class="glyphicon glyphicon-briefcase"></span> Save
+							</button>
+
+
+
+					</div>
+					<div class="portlet-body">
+						<table class="table table-hover table-light">
+							<thead>
+							<tr class="uppercase">
+								<th width="80%">Classes in data set</th>
+
+								<!--<th width="50%">Media</th>-->
+								<th width="20%">Count</th>
+
+							</tr>
+
+							</thead>
+							<tbody>
+							<tr
+
+								ng-repeat="item in classes">
+								<td><strong>{{ item.class }}</strong></td>
+								<td><strong>{{ item.count }}</strong></td>
+
+
+
+
+							</tr>
+							</tbody>
+						</table>
+
+						<div class="file-drop-zone" style="width: 100%; min-height: 300px;" >
+							<ul dnd-list="selected.annotations"   dnd-drop="dropCallbackAnnotations(event, index, item, external, type, 'itemType')">
+								<div class="table-scrollable table-scrollable-borderless">
+								<table class="table table-hover table-light">
+									<thead>
+									<tr class="uppercase">
+										<th width="80%">Annotation Id</th>
+
+										<!--<th width="50%">Media</th>-->
+										<th width="20%">Actions</th>
+
+									</tr>
+
+									</thead>
+									<tbody>
+									<tr dnd-list="selected.annotations"     dnd-drop="dropCallbackAnnotations(event, index, item, external, type, 'itemType')"
+
+										ng-repeat="item in selected.annotations | filter:(selectedMediaDataSet==='all' ? undefined : { media_name: selectedMediaDataSet }) track by $index ">
+										<td><strong>{{ item._id }}</strong></td>
+										<!--<td><strong>{{ item.media_name }}</strong></td>-->
+										<td nowrap>
+											<button type="button" class="btn btn-default btn-xs" ng-click="select(item)">
+												<span class="glyphicon glyphicons-demo"></span> See annotations
+											</button>
+										</td>
+										<td nowrap>
+											<button type="button" class="btn btn-danger btn-xs" ng-click="removeFromSelectedAnn($index)">
+												<span class="glyphicon glyphicon-trash"></span> Remove
+											</button>
+										</td>
+
+
+									</tr>
+									</tbody>
+								</table>
+								</div>
+
+							</ul >
+
+
+
+
+
+
+						</div>
+
+
+					</div>
+
+
+
+				</div>
+
+
+
+					</div>
+
+
+		<div id="myModal_conversions" class="modal fade" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true"></button>
+						<h4 class="modal-title">Status:{{selectedConversion.status}}</h4>
+						<h4 class="modal-title">Data Set name:{{selectedConversion.record_name}}</h4>
+					</div>
+					<div class="modal-body form">
+						<form action="#" class="form-horizontal form-row-seperated">
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Images Height</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+												<span class="input-group-addon">
+													px
+												</span>
+										<input ng-disabled="1" type="text"
+											   ng-value="selectedConversion.img_h"
+											   id="typeahead_example_modal_1"
+											   name="typeahead_example_modal_1" class="form-control"/>
+
+									</div>
+
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Images Width</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+												<span class="input-group-addon">
+													px
+												</span>
+										<input ng-disabled="1" type="text" ng-value="selectedConversion.img_w"
+
+											   id="typeahead_example_modal_3"
+											   name="typeahead_example_modal_1" class="form-control"/>
+
+									</div>
+
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Test Train Split</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+												<span class="input-group-addon">
+														%
+												</span>
+										<input type="text" ng-disabled="1" ng-value="selectedConversion.test_train_split"
+
+											   id="typeahead_example_modal_5"
+											   name="typeahead_example_modal_1" class="form-control"/>
+
+									</div>
+
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Destination Path</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+												<span class="input-group-addon">
+
+												</span>
+										<input type="text" ng-disabled="1"
+											   ng-value="selectedConversion.data_set_path"
+											   id="typeahead_example_modal_4"
+											   name="typeahead_example_modal_1" class="form-control"/>
+
+									</div>
+
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Type</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+												<span class="input-group-addon">
+
+												</span>
+										<input type="text" ng-disabled="1"
+											   ng-value="selectedConversion.conversion_type"
+											   id="typeahead_example_modal_4"
+											   name="typeahead_example_modal_1" class="form-control"/>
+
+									</div>
+
+								</div>
+
+							</div>
+
+
+
+
+
+
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close
+						</button>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="myModal_autocomplete" class="modal fade" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true"></button>
+						<h4 class="modal-title">{{tempClassCollection.name}}</h4>
+					</div>
+					<div class="modal-body form">
+						<form action="#" class="form-horizontal form-row-seperated">
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Images Height</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+												<span class="input-group-addon">
+													px
+												</span>
+										<input type="text" ng-model="conversionSettings.image_height"
+											   ng-value="conversionSettings.image_height"
+											   id="typeahead_example_modal_1"
+											   name="typeahead_example_modal_1" class="form-control"/>
+
+									</div>
+
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Images Width</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+												<span class="input-group-addon">
+													px
+												</span>
+										<input type="text" ng-model="conversionSettings.image_width"
+											   ng-value="conversionSettings.image_width"
+											   id="typeahead_example_modal_3"
+											   name="typeahead_example_modal_1" class="form-control"/>
+
+									</div>
+
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Test Train Split</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+												<span class="input-group-addon">
+														%
+												</span>
+										<input type="text" ng-model="conversionSettings.test_train_split"
+											   ng-value="conversionSettings.test_train_split*100"
+											   id="typeahead_example_modal_5"
+											   name="typeahead_example_modal_1" class="form-control"/>
+
+									</div>
+
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Destination Path</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+												<span class="input-group-addon">
+
+												</span>
+										<input type="text" ng-model="conversionSettings.dest_path"
+											   ng-value="conversionSettings.dest_path"
+											   id="typeahead_example_modal_4"
+											   name="typeahead_example_modal_1" class="form-control"/>
+
+									</div>
+
+								</div>
+
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Type</label>
+								<div class="col-sm-8">
+									<div class="input-group">
+
+										<div class="btn-group">
+											<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown"
+											   dropdown-menu-hover data-close-others="true">
+												{{selectedConversionType}} <i class="fa fa-angle-down"></i>
+											</a>
+											<ul class="dropdown-menu">
+												<li ng-repeat="type in conversionSettings.types">
+													<a ng-click="setConversionType(type)">
+														<i class="i"></i> {{type}} </a>
+													<!--<a href="#" data-target="#myModal_autocomplete" role="button"  ng-click="annotationService.addNewClasses()" class="btn red" data-toggle="modal">
+                                                        View in Modal </a>-->
+												</li>
+
+
+
+											</ul>
+										</div>
+
+									</div>
+
+								</div>
+
+							</div>
+
+
+
+
+
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close
+						</button>
+						<button type="button" ng-click="convertDataset()"
+								data-dismiss="modal" class="btn btn-primary"><i class="fa fa-check"></i>
+							Convert Data Set
+						</button>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-3">
+			<div class="portlet light">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="icon-bar-chart font-green-sharp hide"></i>
+						<span class="caption-helper">My</span> &nbsp; <span class="caption-subject font-green-sharp bold uppercase">annotations</span>
+					</div>
+					<div class="actions">
+						<i class="icon-bar-chart font-green-haze hide"></i>
+
+						<div class="btn-group">
+							<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown"
+							   dropdown-menu-hover data-close-others="true">
+								Filter by Video :
+
+								{{selectedMedia}}
+
+
+								<i class="fa fa-angle-down"></i>
+							</a>
+
+							<ul class="dropdown-menu pull-right scrollspy-example">
+								<!--<li>-->
+								<!--<a data-target="#myModal_autocomplete" data-toggle="modal">-->
+								<!--<i class="i"></i> Add New </a>-->
+								<!--&lt;!&ndash;<a href="#" data-target="#myModal_autocomplete" role="button"  ng-click="annotationService.addNewClasses()" class="btn red" data-toggle="modal">-->
+								<!--View in Modal </a>&ndash;&gt;-->
+								<!--</li>-->
+
+								<li ng-repeat="video in mediafiles">
+
+									<a ng-click="groupByMedia(video)">
+										<i class="i"></i> {{video}} </a>
+									<!--<span class="label label-sm label-success">play<i class="fa fa-play-circle-o"></i></span></a>-->
+									<!--</span>-->
+									<!--<a  ng-click="setSelectedClasses($index)">-->
+									<!--<i class="i"></i> {{video.title}} </a>-->
+
+								</li>
+
+							</ul>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="portlet-body">
+
+					<button type="button" class="btn btn-danger btn-small" ng-click="moveAllSelected()">
+						<span class="glyphicon glyphicon-adjust"></span> Move all selected
+					</button>
+					<div class="table-scrollable table-scrollable-borderless">
+						<table class="table table-hover table-light">
+							<thead>
+
+							<tr class="uppercase">
+								<th><input type="checkbox" ng-model="allItemsSelected"  ng-check="allItemsSelected" ng-click="selectAll()"></th>
+
+								<th>Media Name</th>
+								<th>See annotations</th>
+
+							</tr>
+							</thead>
+							<tbody>
+
+							<tr dnd-draggable="item"
+								 ng-repeat="item in files| filter:(selectedMedia==='all' ? undefined : { media_name: selectedMedia })" >
+								<td><input  type="checkbox" ng-model="item.isChecked" ng-check="item.isChecked" ng-click="selectAnnotation(item) "></td>
+
+								<td  ><strong>
+									{{ item.media_name }}
+
+								</strong>
+								</td>
+								<td nowrap>
+									<button type="button" class="btn btn-default btn-xs" ng-click="select(item)">
+										<span class="glyphicon glyphicons-demo"></span> See annotations
+									</button>
+								</td>
+
+								<!--<td ng-show="uploader.isHTML5" nowrap>&lt;!&ndash;{{ item.media.grid.length/1024/1024|number:2 }}&ndash;&gt; MB</td>-->
+
+							</tr>
+							</tbody>
+						</table>
+					</div>
+
+
+
+
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div  class="todo-content">
+				<div class="portlet light">
+					<!-- PROJECT HEAD -->
+
+					<!-- end PROJECT HEAD -->
+					<div class="portlet-body">
+						<div class="row">
+							<div class="col-md-12 col-sm-12">
+								<div class="col-md-12 col-sm-12">
+									<div class="scroller" style="max-height: 100%; min-height: 700px;" data-always-visible="1" data-rail-visible="1" data-handle-color="#dae3e7">
+										<div class="todo-tasklist">
+											<div  id="{{selection.currentTime}}"   ng-repeat="selection in selectedAnnotation.annotation " class="todo-tasklist-item todo-tasklist-item-border-green">
+												<img  class="todo-userpic pull-left" ng-src="{{selection.objectSelector.dataUrl}}" width="75px" height="75px">
+
+												<div class="todo-tasklist-controls pull-left">
+													<span class="todo-tasklist-date"><i class="fa fa-calendar"></i>  {{selection.currentTime| date:'mm:ss' }}</span>
+													<span class="todo-tasklist-badge badge badge-roundless">Class:{{selection.objectSelector.class.name}}</span>
+													<span>x1:{{selection.objectSelector.x1}} x2:{{selection.objectSelector.x2}} y1:{{selection.objectSelector.y1}} y2:{{selection.objectSelector.y2}}</span>
+												</div>
+
+											</div>
+											<div ng-show="false"class="todo-tasklist-item todo-tasklist-item-border-red">
+
+											</div>
+
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- BEGIN: ACCORDION DEMO -->
+
+			<!-- END: ACCORDION DEMO -->
+		</div>
+	</div>
+	</div>
+
+
+
+</div>
+</div>
+</div>
+
+<!-- END MAIN CONTENT -->
+
+<!-- BEGIN MAIN JS-->
+<script>
+
+</script>
+<!-- BEGIN MAIN JS -->

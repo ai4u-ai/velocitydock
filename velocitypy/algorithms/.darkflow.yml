@@ -1,0 +1,50 @@
+model_git:
+algorithms: [darkflow,objectdetection]
+darkflow:
+  git:
+    url:  https://github.com/thtrieu/darkflow.git
+
+  python: 3.6
+  install:
+
+      - pip install -r test/requirements-testing.txt
+      - pip install -e .
+
+objectdetection:
+  git:
+    url: https://github.com/tensorflow/models
+  python: 3.6
+  install:
+      - pip install --ignore-installed --upgrade tensorflow
+      - pip install pillow lxml jupyter matplotlib opencv-python opencv-contrib-python scipy
+
+  cd_installs:
+    - cd:
+          path: <PATH_TO>/github.com@tensorflow@models/research
+          install:
+              - protoc object_detection/protos/*.proto --python_out=.
+              - python setup.py build
+              - python setup.py install
+  git_installs:
+    - git_inst:
+        git: https://github.com/cocodataset/cocoapi.git
+        path: <PATH_TO>/PythonAPI
+        install:
+          - make
+          - cp -r pycocotools <PATH_TO>/research/
+
+        cd:
+          path: <PATH_TO>/research
+          install:
+            - python setup.py build
+            - python setup.py install
+
+  exp_vars:
+    - echo 'export PYTHONPATH=$PYTHONPATH:<PATH_TO>/github.com@tensorflow@models/research/object_detection' >> ~/.bash_profile
+    - echo 'export PYTHONPATH=$PYTHONPATH:<PATH_TO>/github.com@tensorflow@models/research/:<PATH_TO>/github.com@tensorflow@models/research/slim' >> ~/.bash_profile
+# command to run tests
+script: pytest -x --cov=./
+
+#Upload code coverage statistics
+after_success:
+  - codecov

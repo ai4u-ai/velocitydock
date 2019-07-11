@@ -1,0 +1,96 @@
+name: aind
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - appnope=0.1.0=py37_1000
+  - atomicwrites=1.2.1=py_0
+  - attrs=18.2.0=py_0
+  - backcall=0.1.0=py_0
+  - bleach=3.1.0=py_0
+  - ca-certificates=2018.11.29=ha4d7672_0
+  - certifi=2018.11.29=py37_1000
+  - cycler=0.10.0=py_1
+  - decorator=4.3.0=py_0
+  - entrypoints=0.3=py37_1000
+  - html5lib=1.0.1=py_0
+  - ipykernel=5.1.0=py37h24bf2e0_1001
+  - ipython=7.2.0=py37h24bf2e0_1000
+  - ipython_genutils=0.2.0=py_1
+  - ipywidgets=7.4.2=py_0
+  - jedi=0.13.2=py37_1000
+  - jinja2=2.10=py_1
+  - jsonschema=3.0.0a3=py37_1000
+  - jupyter=1.0.0=py_1
+
+  - jupyter_console=6.0.0=py_0
+  - jupyter_core=4.4.0=py_0
+  - libffi=3.2.1=hfc679d8_5
+  - libsodium=1.0.16=h470a237_1
+  - markupsafe=1.1.0=py37h470a237_0
+  - mistune=0.8.4=py37h470a237_0
+  - more-itertools=4.3.0=py37_1000
+
+  - nbformat=4.4.0=py_1
+  - ncurses=6.1=hfc679d8_2
+
+  - openssl=1.0.2p=h470a237_2
+  - pandoc=2.5=0
+  - pandocfilters=1.4.2=py_1
+  - parso=0.3.1=py_0
+  - path.py=11.0.1=py_0
+  - pexpect=4.6.0=py37_1000
+  - pickleshare=0.7.5=py37_1000
+  - pip=18.1=py37_1000
+  - pluggy=0.8.1=py_0
+  - prometheus_client=0.5.0=py_0
+  - prompt_toolkit=2.0.7=py_0
+  - ptyprocess=0.6.0=py37_1000
+  - py=1.7.0=py_0
+  - pygments=2.3.1=py_0
+  - pyparsing=2.3.0=py_0
+  - pyqt=5.6.0=py37h8210e8a_8
+  - pyrsistent=0.14.9=py37h470a237_0
+  - pytest=4.1.1=py37_1000
+  - python=3.7.1=h46c1a51_0
+  - python-dateutil=2.7.5=py_0
+  - pytz=2018.9=py_0
+  - pyzmq=17.1.2=py37hae99301_1
+  - qtconsole=4.4.3=py_0
+  - readline=7.0=haf1bffa_1
+  - send2trash=1.5.0=py_0
+  - setuptools=40.6.3=py37_0
+  - simplegeneric=0.8.1=py_1
+  - sip=4.18.1=py37hfc679d8_0
+  - six=1.12.0=py37_1000
+  - sqlite=3.26.0=hb1c47c0_0
+  - terminado=0.8.1=py37_1001
+  - testpath=0.4.2=py37_1000
+  - tk=8.6.9=ha92aebf_0
+  - tornado=5.1.1=py37h470a237_0
+  - traitlets=4.3.2=py37_1000
+  - wcwidth=0.1.7=py_1
+  - webencodings=0.5.1=py_1
+  - wheel=0.32.3=py37_0
+  - widgetsnbextension=3.4.2=py37_1000
+  - xz=5.2.4=h470a237_1
+  - zeromq=4.2.5=hfc679d8_6
+  - zlib=1.2.11=h470a237_4
+  - cloog=0.18.0=0
+  - freetype=2.5.5=2
+  - gcc=4.8.5=8
+  - gmp=6.1.0=0
+  - icu=54.1=0
+  - isl=0.12.2=1
+  - libpng=1.6.27=0
+  - matplotlib=2.0.0=np112py36_0
+  - mkl=2017.0.1=0
+  - mpc=1.0.3=0
+  - mpfr=3.1.5=0
+  - numpy=1.12.0=py36_0
+  - pandas=0.19.2=np112py36_1
+  - qt=5.6.2=0
+  - scikit-learn=0.18.1=np112py36_1
+  - scipy=0.19.0=np112py36_0
+prefix: /Users/ivanjacobs/anaconda3/envs/aind
+

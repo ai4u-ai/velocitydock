@@ -1,0 +1,50 @@
+<!-- BEGIN PAGE BREADCRUMB -->
+<!-- BEGIN PAGE SPINNER -->
+<!--<div ng-spinner-bar class="page-spinner-bar">
+	<div class="bounce1"></div>
+	<div class="bounce2"></div>
+	<div class="bounce3"></div>
+</div>-->
+<!-- END PAGE SPINNER -->
+
+<!-- BEGIN HEADER -->
+<!--<div data-ng-include="'tpl/header.html'" data-ng-controller="HeaderController" class="page-header navbar navbar-fixed-top">
+</div>-->
+<!-- END HEADER -->
+
+<!--
+<div class="clearfix">
+</div>
+-->
+
+<!-- BEGIN CONTAINER -->
+<!--<div class="page-container">-->
+	<!-- BEGIN SIDEBAR -->
+	<div data-ng-include="'tpl/sidebar.html'" data-ng-controller="SidebarController" class="page-sidebar-wrapper">
+	</div>
+	<!-- END SIDEBAR -->
+	<!--<div class="page-content-wrapper">-->
+	<!--	<div class="page-content">-->
+			<!-- BEGIN PAGE HEAD -->
+			<div data-ng-include="'tpl/page-head.html'" data-ng-controller="PageHeadController" class="page-head">
+			</div>
+
+			<!--    <scopetest count="count">
+
+
+                </scopetest>
+-->
+
+			<!-- END PAGE HEAD -->
+			<!-- BEGIN ACTUAL CONTENT -->
+			<div ui-view class="fade-in-up">
+			</div>
+			<!-- END ACTUAL CONTENT -->
+	<!--	</div>-->
+	<!--</div>-->
+<!--</div>-->
+<!-- END CONTAINER -->
+
+<!-- BEGIN FOOTER -->
+<div data-ng-include="'tpl/footer.html'" data-ng-controller="FooterController" class="page-footer">
+</div>

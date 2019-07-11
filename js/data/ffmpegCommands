@@ -1,0 +1,5 @@
+ffmpeg -i file.avi -c:v libx264 -pix_fmt yuv420p file.mp4
+HTML5 progressive download
+ffmpeg -i file.avi -c:v libx264 -pix_fmt yuv420p -movflags faststart file.mp4
+
+ffmpeg -re -i  AVSS_AB_Easy_Divx.avi -g 52 -acodec libvo_aacenc -ab 64k -vcodec libx264 -vb 448k -f mp4 -movflags frag_keyframe+empty_moov output.mp4

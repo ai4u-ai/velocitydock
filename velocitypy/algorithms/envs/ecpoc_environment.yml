@@ -1,0 +1,34 @@
+name: ec_poc
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - ca-certificates=2019.3.9=hecc5488_0
+  - certifi=2019.3.9=py36_0
+  - cffi=1.11.5=py36h342bebf_1001
+  - cld2-cffi=0.1.4=py36hfc679d8_0
+  - dateparser=0.7.1=py_0
+  - icu=58.2=h0a44026_1000
+  - libcxx
+  - libffi=3.2.1=hfc679d8_5
+  - llvm-meta=7.0.0=0
+  - ncurses=6.1=hfc679d8_2
+  - openssl=1.1.1b=h01d97ff_2
+  - pip=18.1=py36_1000
+  - pycparser=2.19=py_0
+  - pyicu=2.0.5=py36h5d6a6da_0
+  - python-dateutil=2.8.0=py_0
+  - pytz=2019.1=py_0
+  - readline=7.0=haf1bffa_1
+  - regex=2019.04.14=py36h01d97ff_0
+  - setuptools=40.6.3=py36_0
+  - six=1.12.0=py36_1000
+  - sqlite=3.26.0=hb1c47c0_0
+  - tk=8.6.9=ha92aebf_0
+  - tzlocal=1.5.1=py_0
+  - wheel=0.32.3=py36_0
+  - xz=5.2.4=h470a237_1
+  - zlib=1.2.11=h470a237_4
+  - python=3.6.8=haf84260_0
+prefix: /Users/ivanjacobs/anaconda3/envs/ec_poc
+

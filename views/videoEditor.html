@@ -1,0 +1,1607 @@
+<div ng-controller="DashboardController" class="margin-top-10">
+    <!-- BEGIN PAGE BREADCRUMB -->
+    <!--<ul class="page-breadcrumb breadcrumb hide">-->
+        <!--<li>-->
+            <!--<a href="#">Home</a><i class="fa fa-circle"></i>-->
+        <!--</li>-->
+        <!--<li class="active">-->
+            <!--Dashboard-->
+        <!--</li>-->
+
+        <!--&lt;!&ndash; BEGIN THEME PANEL &ndash;&gt;-->
+
+        <!--&lt;!&ndash; END THEME PANEL &ndash;&gt;-->
+    <!--</ul>-->
+
+    <!-- END PAGE BREADCRUMB -->
+    <!-- BEGIN MAIN CONTENT -->
+
+
+    <!--<div class="note note-success note-bordered">
+        <h3>Meet Metronic AngularJS Version! <span class="close" data-close="note"></span></h3>
+        <p>
+            AngularJS version of Metronic gives an extremely fast browsing experience to users.
+            It uses lazy loading of dependency resources(modules, controllers, templates, jquery plugins, javascripts and even css files) on demand.
+            UI-Router is used for flexible routing with nested views. UI Bootstrap enables using all Bootstrap framework components
+            with pure AngularJS directives.
+        </p>
+        <span class="label label-danger">NOTE:</span> All Metronic features from the HTML version(pages, layout options, components, plugins, etc) are fully compatible in the AngularJS version.</span>
+        </p>
+    </div>-->
+
+
+    <div class="row" >
+
+        <div class="col-md-8 col-sm-12"  >
+
+            <div class="todo-content" >
+
+                <!-- BEGIN: ACCORDION DEMO -->
+                <div class="portlet light" >
+
+
+                    <div class="portlet-body" >
+
+                        <!--<nc-darkroom  id="destCanvas" image=""
+
+                                     history="true"
+                                     crop="{}"
+                                     rotate="false"
+                                     save="false">
+                        </nc-darkroom>-->
+                        <!--<a href="#"
+                           analytics-on="mouseover"
+
+                           analytics-event="Download">Download</a>-->
+                        <!--in-view="inviewService.lineInView($inview, $inviewpart)" -->
+
+
+                        <!--style="z-index: 1; position: fixed; right: 0px; bottom: 20px; width:150px; height:150px;background-color: #000000;"-->
+                        <!-- update Time method in case rxj does not work   <videogular   vg-update-time="ctrl.onUpdateTime($currentTime, $duration)"   -->
+
+                            <videogular vg-cue-points="videoService.currentVideo.timeFrames"
+                                        vg-player-ready="videoService.onPlayerReady($API)"
+                                        vg-complete="videoService.onCompleteVideo()"
+                                        vg-theme="videoService.config.theme.url">
+                                <!--<vg-overlay-play-dr  rectangle-list='rectangles'></vg-overlay-play-dr>-->
+
+                                <drawing src="" crop="{}" mr-selector="videoService.selector" mr-drawer="drawer"
+                                         rectangle-list='videoService.currentVideo.rectangles'></drawing>
+
+                                <vg-media vg-src="videoService.config.sources" vg-youtube="rel=1;showinfo=1"
+                                          vg-tracks="videoService.config.tracks">
+                                </vg-media>
+
+                                <vg-controls>
+                                    <vg-play-pause-button></vg-play-pause-button>
+                                    <vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+                                    <vg-scrub-bar>
+                                        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                                    </vg-scrub-bar>
+                                    <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+
+                                    <vg-volume>
+                                        <vg-mute-button></vg-mute-button>
+                                        <vg-volume-bar></vg-volume-bar>
+                                    </vg-volume>
+                                    <vg-fullscreen-button></vg-fullscreen-button>
+                                </vg-controls>
+
+                                <vg-scrub-bar-cue-points class="console"
+                                                         vg-cue-points="videoService.currentVideo.timeFrames"></vg-scrub-bar-cue-points>
+                                <vg-analytics vg-track-info="analytics"></vg-analytics>
+
+                                <!-- <drawing width="500" height="300" rectangle-list='rectangles'></drawing>-->
+
+                                <vg-buffering></vg-buffering>
+
+                                <!--<vg-poster vg-url='videoService.config.plugins.poster'></vg-poster>-->
+                            </videogular>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+            <!--<div class="portlet lightgrey">-->
+                <!--<div class="portlet-title">-->
+                    <!--<div class="btn-group">-->
+                        <!--<button type="button"  class="btn btn-default-focus" ng-click="videoService.addTimeFrames()">Add time line</button>-->
+
+
+
+                    <!--</div>-->
+                    <!--<div class="actions">-->
+                        <!--<i class="icon-bar-chart font-green-haze hide"></i>-->
+
+                        <!--<div class="btn-group">-->
+                            <!--<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown"-->
+                               <!--dropdown-menu-hover data-close-others="true">-->
+                                <!--Selected Video : {{videoService.currentVideo.title}}<i class="fa fa-angle-down"></i>-->
+                            <!--</a>-->
+
+                            <!--<ul class="dropdown-menu pull-right scrollspy-example">-->
+                                <!--&lt;!&ndash;<li>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<a data-target="#myModal_autocomplete" data-toggle="modal">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<i class="i"></i> Add New </a>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;&lt;!&ndash;<a href="#" data-target="#myModal_autocomplete" role="button"  ng-click="annotationService.addNewClasses()" class="btn red" data-toggle="modal">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;View in Modal </a>&ndash;&gt;&ndash;&gt;-->
+                                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+
+                                <!--<li ng-class="{'active':video._id===videoService.currentVideo._id; overflow: scroll; max-height: 272px; }"-->
+                                    <!--ng-repeat="video in videoService.playList track by $index">-->
+                                    <!--<a ng-click="videoService.selectVideo(video)">-->
+                                        <!--<i class="i"></i> {{video.title}} </a>-->
+                                    <!--&lt;!&ndash;<span class="label label-sm label-success">play<i class="fa fa-play-circle-o"></i></span></a>&ndash;&gt;-->
+                                    <!--</span>-->
+                                    <!--&lt;!&ndash;<a  ng-click="setSelectedClasses($index)">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<i class="i"></i> {{video.title}} </a>&ndash;&gt;-->
+
+                                <!--</li>-->
+                                <!--<li class="divider">-->
+                                <!--</li>-->
+
+                                <!--<li class="divider">-->
+                                <!--</li>-->
+                                <!--<li>-->
+                                    <!--<a ng-hide="videoService.currentVideo.selections.length===0">-->
+                                        <!--<i class="fa fa-trash-o"></i> Delete All</a>-->
+                                <!--</li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="portlet-body">-->
+                    <!--<div class="task-content">-->
+                        <!--&lt;!&ndash;		<div class="scroller" style="height: 300px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2">&ndash;&gt;-->
+                        <!--&lt;!&ndash; START TASK LIST &ndash;&gt;-->
+                        <!--<ul class="task-list">-->
+                            <!--<li ng-repeat="frame in videoService.currentVideo.timeFrames">-->
+
+                                <!--<rzslider-->
+                                        <!--rz-slider-model="frame.timeLapse.start"-->
+                                        <!--rz-slider-high="frame.timeLapse.end"-->
+                                        <!--rz-slider-options="videoService.getTimeFramesOptions(videoService.currentVideo,frame).options"-->
+                                        <!--rz-vid-api="videoService.API"></rzslider>-->
+
+                                <!--<div ng-hide="editing" ng-dblClick="editing = true">-->
+                                    <!--<div class="task-title">-->
+										<!--&lt;!&ndash;<span class="task-title-sp">&ndash;&gt;-->
+										<!--&lt;!&ndash;Time line: {{$index}} </span>&ndash;&gt;-->
+
+
+                                        <!--&lt;!&ndash;<span class="task-bell">&ndash;&gt;-->
+
+
+										<!--&lt;!&ndash;</span>&ndash;&gt;-->
+
+                                        <!--&lt;!&ndash;<span class="task-bell">&ndash;&gt;-->
+											<!--&lt;!&ndash;<a ng-click="videoService.seekTime(frame.timeLapse.start)">&ndash;&gt;-->
+											<!--&lt;!&ndash;<span class="label label-sm label-primary">{{frame.timeLapse.start | date:'mm:ss'}}  <i&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;class="fa fa-bookmark-o"></i></span></a>&ndash;&gt;-->
+										<!--&lt;!&ndash;</span>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<span class="task-bell">&ndash;&gt;-->
+												<!--&lt;!&ndash;<a ng-click="videoService.seekTime(frame.timeLapse.end)">&ndash;&gt;-->
+										<!--&lt;!&ndash;<span class="label label-sm label-primary">{{frame.timeLapse.end | date:'mm:ss'}}  <i&ndash;&gt;-->
+                                                <!--&lt;!&ndash;class="fa fa-bookmark-o"></i></span></a>&ndash;&gt;-->
+										<!--&lt;!&ndash;</span>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<span class="task-bell">&ndash;&gt;-->
+										<!--&lt;!&ndash;<span class="label label-sm label-primary">{{videoService.getTimeVideo(videoService.currentVideo) | date:'mm:ss'}}  <i&ndash;&gt;-->
+                                                <!--&lt;!&ndash;class="fa fa-clock-o"></i></span>&ndash;&gt;-->
+										<!--&lt;!&ndash;</span>&ndash;&gt;-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                                <!--<div class="btn-arrow-link pull-right">-->
+                                    <!--<span class="label label-icon label-primary">{{videoService.getTimeVideo(videoService.currentVideo) | date:'mm:ss'}}  <i-->
+                                            <!--class="fa fa-clock-o"></i></span>-->
+                                    <!--</span>-->
+                                    <!--<button type="button"  class="btn btn-sm btn-danger" ng-click="videoService.removeTimeFrames($index)"> <i class="fa fa-trash-o"></i> Delete line</button>-->
+
+                                    <!--&lt;!&ndash;<a ng-click="videoService.playAlFramesSelectedVideo($index)"><span&ndash;&gt;-->
+                                            <!--&lt;!&ndash;class="label label-sm label-info">Play Selection <span&ndash;&gt;-->
+                                            <!--&lt;!&ndash;ng-if="videoService.config.autoPlay" class="task-bell"> to annotate</span>  <span&ndash;&gt;-->
+                                            <!--&lt;!&ndash;ng-if="!videoService.config.autoPlay"&ndash;&gt;-->
+                                            <!--&lt;!&ndash;class="task-bell"> one by one</span> <i&ndash;&gt;-->
+                                            <!--&lt;!&ndash;class="fa fa-th-large"></i></span></a>&ndash;&gt;-->
+                                <!--</div>-->
+                                <!--&lt;!&ndash;<div class="btn-arrow-link pull-right">-->
+                                    <!--<a ng-click="videoService.cropSelected()"> <i class="fa fa-save "></i> Validate selection </span></a>-->
+                                <!--</div>&ndash;&gt;-->
+                                <!--<button type="button"  class="btn btn-sm btn-primary" ng-click="videoService.playAlFramesSelectedVideo($index)"> Play-->
+                                        <!--</button>-->
+                                <!--<button type="button"  class="btn btn-sm btn-info" ng-click="videoService.pouseVideo()">Stop</button>-->
+
+                                <!--&lt;!&ndash;<a ng-click="videoService.playAlFramesSelectedVideo($index)">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<span class="label label-sm label-success">play selected frames<i&ndash;&gt;-->
+                                            <!--&lt;!&ndash;class="fa fa-play-circle-o"></i></span></a>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<div class="task-title" ng-show="editing">-->
+                                    <!--<div class="task-title">-->
+                                    <!--<span class="task-title-sp">-->
+                                     <!--<label>From:</label>-->
+                                     <!--<input type="time"  placeholder="mm:ss" ng-model="frame.timeLapse.start" placeholder="timeLapse.start"/>-->
+                                     <!--<label>To:</label>-->
+                                     <!--<input  type="time"  placeholder="mm:ss" 	 ng-model="frame.timeLapse.end" placeholder="timeLapse.end" />-->
+
+                                    <!--<span class="task-bell">-->
+                                    <!--<a class="fa fa-save" ng-click="editing = false"></a>-->
+                                    <!--</span>-->
+                                    <!--</span>-->
+                                    <!--</div>-->
+                                <!--</div>&ndash;&gt;-->
+
+
+                                <!--&lt;!&ndash;<div class="task-config">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="task-config-btn btn-group">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<a class="task-config-btn btn-xl" href="javascript:;" data-toggle="dropdown"&ndash;&gt;-->
+                                           <!--&lt;!&ndash;dropdown-menu-hover data-close-others="true">&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<i class="fa fa-cog"></i>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<ul class="dropdown-menu pull-right">&ndash;&gt;-->
+
+                                            <!--&lt;!&ndash;&lt;!&ndash;	<li >&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<a href="javascript:;">&ndash;&gt;-->
+                                                        <!--&lt;!&ndash;<i class="fa fa-check"></i> Complete </a>&ndash;&gt;-->
+                                                <!--&lt;!&ndash;</li>&ndash;&gt;&ndash;&gt;-->
+
+
+                                            <!--&lt;!&ndash;<li ng-show="editing">&ndash;&gt;-->
+                                                <!--&lt;!&ndash;<a ng-click="editing=false">&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<i class="fa fa-check"></i> Complete </a>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;</li>&ndash;&gt;-->
+
+
+                                            <!--&lt;!&ndash;<li ng-hide="editing">&ndash;&gt;-->
+
+                                                <!--&lt;!&ndash;<a ng-click="editing=true">&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<i class="fa fa-pencil"></i> Edit </a>&ndash;&gt;-->
+
+                                            <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;<li>&ndash;&gt;-->
+                                                <!--&lt;!&ndash;<a ng-click="videoService.removeTimeFrames($index)">&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<i class="fa fa-trash-o"></i> Delete frames </a>&ndash;&gt;-->
+                                            <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--<div class="task-checkbox">-->
+
+                                    <!--<input type="hidden" value="1" name="test"/>-->
+                                    <!--&lt;!&ndash;	<input type="checkbox"class="liChild" value="1" name="test"/>&ndash;&gt;-->
+                                <!--</div>-->
+                            <!--</li>-->
+
+
+                        <!--</ul>-->
+                        <!--&lt;!&ndash; END START TASK LIST &ndash;&gt;-->
+
+
+                        <!--&lt;!&ndash;			</div>&ndash;&gt;-->
+
+
+                        <!--&lt;!&ndash;<div class="task-footer">&ndash;&gt;-->
+                            <!--&lt;!&ndash;&lt;!&ndash;<div class="btn-arrow-link pull-right">&ndash;&gt;&ndash;&gt;-->
+                            <!--&lt;!&ndash;&lt;!&ndash;<a ng-click="videoService.removeAll()"><span class="label label-sm label-danger">delete all<i&ndash;&gt;&ndash;&gt;-->
+                            <!--&lt;!&ndash;&lt;!&ndash;class="fa fa-remove"></i></span></a>&ndash;&gt;&ndash;&gt;-->
+                            <!--&lt;!&ndash;&lt;!&ndash;</div>&ndash;&gt;&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="btn-arrow-link pull-right">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<a ng-click="videoService.playAlFramesSelectedVideo()"><span&ndash;&gt;-->
+                                        <!--&lt;!&ndash;class="label label-sm label-info">play <span&ndash;&gt;-->
+                                        <!--&lt;!&ndash;ng-if="videoService.config.autoPlay"&ndash;&gt;-->
+                                        <!--&lt;!&ndash;class="task-bell"> all timeframes</span>  <span&ndash;&gt;-->
+                                        <!--&lt;!&ndash;ng-if="!videoService.config.autoPlay" class="task-bell"> one by one</span> <i&ndash;&gt;-->
+                                        <!--&lt;!&ndash;class="fa fa-th-large"></i></span></a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="col-md-4 col-sm-12">
+
+            <div class="todo-content">
+                <div class="portlet light">
+
+                    <!-- PROJECT HEAD -->
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-bar-chart font-green-sharp hide"></i>
+                            <span class="caption-helper"></span> &nbsp; <span
+                                class="caption-subject font-green-sharp bold uppercase">annotations</span>
+                        </div>
+
+
+                        <!--<div class="actions">-->
+                            <!--<div class="btn-group">-->
+                                <!--<a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown"-->
+                                   <!--dropdown-menu-hover data-close-others="true">-->
+                                    <!--MANAGE <i class="fa fa-angle-down"></i>-->
+                                <!--</a>-->
+                                <!--<ul class="dropdown-menu pull-right">-->
+                                    <!--<li>-->
+                                        <!--<a ng-hide="videoService.currentVideo.selections.length===0"-->
+                                           <!--ng-click="videoService.saveAnnotations()">-->
+                                            <!--<i class="i"></i> Save </a>-->
+                                    <!--</li>-->
+                                    <!--<li class="divider">-->
+                                    <!--</li>-->
+
+                                    <!--<li class="divider">-->
+                                    <!--</li>-->
+                                    <!--<li>-->
+                                        <!--<a ng-hide="videoService.currentVideo.selections.length===0"-->
+                                           <!--ng-click="videoService.removeAllAnnotations()">-->
+                                            <!--<i class="fa fa-trash-o"></i> Delete All</a>-->
+                                    <!--</li>-->
+                                <!--</ul>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="actions">
+                            <div class="btn-group">
+                                <a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown"
+                                   dropdown-menu-hover data-close-others="true">
+                                    Class Group<i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul class="dropdown-menu pull-right">
+                                    <li>
+                                        <a data-target="#myModal_autocomplete" data-toggle="modal">
+                                            <i class="i"></i> Add New </a>
+                                        <!--<a href="#" data-target="#myModal_autocomplete" role="button"  ng-click="annotationService.addNewClasses()" class="btn red" data-toggle="modal">
+                                            View in Modal </a>-->
+                                    </li>
+                                    <li class="divider">
+                                    <li ng-class="{'active':getSelectedClasses()._id===class._id }"
+                                        ng-repeat="class in classes track by $index">
+                                        <a ng-click="setSelectedClasses($index)">
+                                            <i class="i"></i> {{class.name}} </a>
+
+                                    </li>
+                                    <li class="divider">
+                                    </li>
+
+                                    <li class="divider">
+                                    </li>
+                                    <li>
+                                        <a ng-hide="videoService.currentVideo.selections.length===0">
+                                            <i class="fa fa-trash-o"></i> Delete All</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="myModal_autocomplete" class="modal fade" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"
+                                                aria-hidden="true"></button>
+                                        <h4 class="modal-title">{{tempClassCollection.name}}</h4>
+                                    </div>
+                                    <div class="modal-body form">
+                                        <form action="#" class="form-horizontal form-row-seperated">
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">Classes group Name</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+												<span class="input-group-addon">
+
+												</span>
+                                                        <input type="text" ng-model="tempClassCollection.name"
+                                                               ng-value="tempClassCollection.name | replaceSpaces | lowercase"
+                                                               id="typeahead_example_modal_1"
+                                                               name="typeahead_example_modal_1" class="form-control"/>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="class in tempClassCollection.classes" class="form-group">
+                                                <label class="col-sm-4 control-label">Class {{class.number}}</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-search"></i>
+												</span>
+                                                        <input type="text" ng-model="class.name "
+                                                               ng-value="class.name | replaceSpaces | lowercase"
+                                                               id="typeahead_example_modal_2"
+                                                               name="typeahead_example_modal_2" class="form-control"/>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group last">
+                                                <label class="col-sm-4 control-label">Add class</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-check"></i>
+												</span>
+                                                        <button ng-click="addTempClass()" type="button"
+                                                                class="btn btn-default">Add class
+                                                        </button>
+                                                    </div>
+                                                    <p class="help-block">
+                                                        <!--	Two datasets that are prefetched, stored, and searched on the client. Highlighting is enabled.-->
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close
+                                        </button>
+                                        <button type="button" ng-click="saveClasses(tempClassCollection)"
+                                                data-dismiss="modal" class="btn btn-primary"><i class="fa fa-check"></i>
+                                            Save changes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="myModal_editClasses" class="modal fade" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"
+                                                aria-hidden="true"></button>
+                                        <h4 class="modal-title">{{getSelectedClasses().name}}</h4>
+                                    </div>
+                                    <div class="modal-body form">
+                                        <form action="#" class="form-horizontal form-row-seperated">
+                                            <div class="form-group">
+                                                <label class="col-sm-4 control-label">Classes group Name</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+												<span class="input-group-addon">
+
+												</span>
+                                                        <input type="text" ng-model="getSelectedClasses().name"
+                                                               ng-value="getSelectedClasses().name | replaceSpaces | lowercase"
+                                                               id="typeahead_example_modal_1"
+                                                               name="typeahead_example_modal_1" class="form-control"/>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div ng-repeat="class in getSelectedClasses().classes" class="form-group">
+                                                <label class="col-sm-4 control-label">Class {{class.number}}</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-search"></i>
+												</span>
+                                                        <input type="text" ng-model="class.name"
+                                                               ng-value="class.name | replaceSpaces | lowercase"
+                                                               id="typeahead_example_modal_2"
+                                                               name="typeahead_example_modal_2" class="form-control"/>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group last">
+                                                <label class="col-sm-4 control-label">Add class</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-group">
+												<span class="input-group-addon">
+												<i class="fa fa-check"></i>
+												</span>
+                                                        <button ng-click="addClass()" type="button"
+                                                                class="btn btn-default">Add class
+                                                        </button>
+                                                    </div>
+                                                    <p class="help-block">
+                                                        <!--Two datasets that are prefetched, stored, and searched on the client. Highlighting is enabled.-->
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close
+                                        </button>
+                                        <button type="button" ng-click="saveClasses(getSelectedClasses())"
+                                                data-dismiss="modal" class="btn btn-primary"><i class="fa fa-check"></i>
+                                            Save changes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <div class="btn-group">
+                                <a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown"
+                                   dropdown-menu-hover data-close-others="true">
+
+                                    Class: {{selectedClass.name}}
+
+
+                                    <i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul class="dropdown-menu pull-right">
+                                    <li>
+                                        <span class="dropdown-fix-left"> {{getSelectedClasses().classes.length}} classes</span>
+
+                                        <a data-toggle="modal" data-target="#myModal_editClasses ">
+											<span class="label label-sm label-icon label-success">
+												<i class="fa fa-pencil-square-o"></i>
+												</span>Edit</a>
+                                    </li>
+                                    <li class="divider">
+                                    </li>
+                                    <li>
+                                        <div class="slimScrollDiv"
+                                             style="position: relative; overflow: hidden; width: auto; ">
+                                            <ul class="dropdown-menu-list scroller"
+                                                style=" overflow: hidden; width: auto;" data-handle-color="#637283">
+                                                <li ng-class="{'active':selectedClass._id===class._id }"
+                                                    ng-click="setSelectedClass($index)"
+                                                    ng-repeat="class in getSelectedClasses().classes track by $index">
+                                                    <a href="javascript:;">
+                                                        <span class="time">{{class.number}}</span>
+                                                        <span class="details">
+															<!--<span class="label label-sm label-icon label-success">
+														<i  ng-click="deleteClass($index)" class="fa fa-trash"></i>
+															</span>-->
+																{{class.name}}
+																</span>
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                            <!--<div class="slimScrollBar" style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div>-->
+                                        </div>
+                                    </li>
+
+                                    <li class="divider">
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end PROJECT HEAD -->
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="scroller" style="height: 355px; max-height: 700px;"
+                                         data-always-visible="0" data-rail-visible="1" data-handle-color="#dae3e7">
+                                        <div class="todo-tasklist">
+                                            <div ng-show="selection.objectSelector.mouseDown"
+                                                 ng-repeat="selection in videoService.currentVideo.selections | reverse"
+                                                 class="todo-tasklist-item todo-tasklist-item-border-green">
+                                                <img class="todo-userpic pull-left"
+                                                     ng-src="{{selection.objectSelector.dataUrl}}" width="75px"
+                                                     height="75px">
+                                                <!--<div class="todo-tasklist-item-title">
+                                                    Slider Redesign
+                                                </div>
+                                                <div class="todo-tasklist-item-text">
+                                                    Lorem dolor sit amet ipsum dolor sit consectetuer dolore.
+                                                </div>-->
+                                                <div class="todo-tasklist-controls pull-left">
+                                                    <span class="todo-tasklist-date"><i class="fa fa-calendar"></i>  {{selection.currentTime| date:'mm:ss' }}</span>
+                                                    <span class="todo-tasklist-badge badge badge-roundless">Class:{{selection.objectSelector.class.name}}</span>
+                                                    <span>x1:{{selection.objectSelector.x1}} x2:{{selection.objectSelector.x2}} y1:{{selection.objectSelector.y1}} y2:{{selection.objectSelector.y2}}</span>
+                                                </div>
+                                                <div class="todo-tasklist-controls pull-right">
+                                                    <button type="button" class="btn btn-danger btn-xs"
+                                                            ng-click="videoService.removeAnnotation($index)">
+                                                        <span class="glyphicon glyphicon-trash"></span> Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div ng-show="false"
+                                                 class="todo-tasklist-item todo-tasklist-item-border-red">
+                                                <img class="todo-userpic pull-left" src="" width="27px" height="27px">
+                                                <div class="todo-tasklist-item-title">
+                                                    Homepage Alignments to adjust
+                                                </div>
+                                                <div class="todo-tasklist-item-text">
+                                                    Lorem ipsum dolor sit amet, consectetuer dolore dolor sit amet.
+                                                </div>
+                                                <div class="todo-tasklist-controls pull-left">
+                                                    <span class="todo-tasklist-date"><i
+                                                            class="fa fa-calendar"></i> </span>
+                                                    <span class="todo-tasklist-badge badge badge-roundless">Important</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-bar-chart font-green-sharp hide"></i>
+                            <span class="caption-helper"></span> &nbsp; <span
+                                class="caption-subject font-green-sharp bold uppercase"></span>
+                        </div>
+
+
+                        <div class="actions">
+
+                            <button type="button"  class="btn btn-sm btn-info" ng-click="videoService.saveAnnotations()">Save Annotations</button>
+                            <button type="button"  class="btn btn-sm btn-danger" ng-click="videoService.removeAllAnnotations()"> <i class="fa fa-trash-o"></i> Delete Annotations</button>
+
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="portlet lightgrey">
+                <div class="portlet-title">
+                    <div class="btn-group">
+                        <button type="button"  class="btn btn-default-focus" ng-click="videoService.addTimeFrames()">Add time line</button>
+
+
+
+                    </div>
+                    <div class="actions">
+                        <i class="icon-bar-chart font-green-haze hide"></i>
+
+                        <div class="btn-group">
+                            <a class="btn green-haze btn-circle btn-sm" href="#" data-toggle="dropdown"
+                               dropdown-menu-hover data-close-others="true">
+                                Selected Video : {{videoService.currentVideo.title}}<i class="fa fa-angle-down"></i>
+                            </a>
+
+                            <ul class="dropdown-menu pull-right scrollspy-example">
+                                <!--<li>-->
+                                <!--<a data-target="#myModal_autocomplete" data-toggle="modal">-->
+                                <!--<i class="i"></i> Add New </a>-->
+                                <!--&lt;!&ndash;<a href="#" data-target="#myModal_autocomplete" role="button"  ng-click="annotationService.addNewClasses()" class="btn red" data-toggle="modal">-->
+                                <!--View in Modal </a>&ndash;&gt;-->
+                                <!--</li>-->
+
+                                <li
+                                    ng-repeat="video in videoService.playList track by $index">
+                                    <a ng-click="videoService.selectVideo(video)">
+                                        <i class="i"></i> {{video.title}} </a>
+                                    <!--<span class="label label-sm label-success">play<i class="fa fa-play-circle-o"></i></span></a>-->
+                                    </span>
+                                    <!--<a  ng-click="setSelectedClasses($index)">-->
+                                    <!--<i class="i"></i> {{video.title}} </a>-->
+
+                                </li>
+                                <li class="divider">
+                                </li>
+
+                                <li class="divider">
+                                </li>
+                                <li>
+                                    <a ng-hide="videoService.currentVideo.selections.length===0">
+                                        <i class="fa fa-trash-o"></i> Delete All</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="task-content">
+                        <!--		<div class="scroller" style="height: 300px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2">-->
+                        <!-- START TASK LIST -->
+                        <ul class="task-list">
+                            <li ng-repeat="frame in videoService.currentVideo.timeFrames">
+
+                                <rzslider
+                                        rz-slider-model="frame.timeLapse.start"
+                                        rz-slider-high="frame.timeLapse.end"
+                                        rz-slider-options="videoService.getTimeFramesOptions(videoService.currentVideo,frame).options"
+                                        rz-vid-api="videoService.API"></rzslider>
+
+                                <div ng-hide="editing" ng-dblClick="editing = true">
+                                    <div class="task-title">
+                                        <!--<span class="task-title-sp">-->
+                                        <!--Time line: {{$index}} </span>-->
+
+
+                                        <!--<span class="task-bell">-->
+
+
+                                        <!--</span>-->
+
+                                        <!--<span class="task-bell">-->
+                                        <!--<a ng-click="videoService.seekTime(frame.timeLapse.start)">-->
+                                        <!--<span class="label label-sm label-primary">{{frame.timeLapse.start | date:'mm:ss'}}  <i-->
+                                        <!--class="fa fa-bookmark-o"></i></span></a>-->
+                                        <!--</span>-->
+                                        <!--<span class="task-bell">-->
+                                        <!--<a ng-click="videoService.seekTime(frame.timeLapse.end)">-->
+                                        <!--<span class="label label-sm label-primary">{{frame.timeLapse.end | date:'mm:ss'}}  <i-->
+                                        <!--class="fa fa-bookmark-o"></i></span></a>-->
+                                        <!--</span>-->
+                                        <!--<span class="task-bell">-->
+                                        <!--<span class="label label-sm label-primary">{{videoService.getTimeVideo(videoService.currentVideo) | date:'mm:ss'}}  <i-->
+                                        <!--class="fa fa-clock-o"></i></span>-->
+                                        <!--</span>-->
+                                    </div>
+                                </div>
+
+                                <div class="btn-arrow-link pull-right">
+                                    <span class="label label-icon label-primary">{{videoService.getTimeVideo(videoService.currentVideo) | date:'mm:ss'}}  <i
+                                            class="fa fa-clock-o"></i></span>
+                                    </span>
+                                    <button type="button"  class="btn btn-sm btn-danger" ng-click="videoService.removeTimeFrames($index)"> <i class="fa fa-trash-o"></i> Delete line</button>
+
+                                    <!--<a ng-click="videoService.playAlFramesSelectedVideo($index)"><span-->
+                                    <!--class="label label-sm label-info">Play Selection <span-->
+                                    <!--ng-if="videoService.config.autoPlay" class="task-bell"> to annotate</span>  <span-->
+                                    <!--ng-if="!videoService.config.autoPlay"-->
+                                    <!--class="task-bell"> one by one</span> <i-->
+                                    <!--class="fa fa-th-large"></i></span></a>-->
+                                </div>
+                                <!--<div class="btn-arrow-link pull-right">
+                                    <a ng-click="videoService.cropSelected()"> <i class="fa fa-save "></i> Validate selection </span></a>
+                                </div>-->
+                                <button type="button"  class="btn btn-sm btn-primary" ng-click="videoService.playAlFramesSelectedVideo($index)"> Play
+                                </button>
+                                <button type="button"  class="btn btn-sm btn-info" ng-click="videoService.pouseVideo()">Stop</button>
+
+                                <!--<a ng-click="videoService.playAlFramesSelectedVideo($index)">-->
+                                <!--<span class="label label-sm label-success">play selected frames<i-->
+                                <!--class="fa fa-play-circle-o"></i></span></a>-->
+                                <!--<div class="task-title" ng-show="editing">
+                                    <div class="task-title">
+                                    <span class="task-title-sp">
+                                     <label>From:</label>
+                                     <input type="time"  placeholder="mm:ss" ng-model="frame.timeLapse.start" placeholder="timeLapse.start"/>
+                                     <label>To:</label>
+                                     <input  type="time"  placeholder="mm:ss" 	 ng-model="frame.timeLapse.end" placeholder="timeLapse.end" />
+
+                                    <span class="task-bell">
+                                    <a class="fa fa-save" ng-click="editing = false"></a>
+                                    </span>
+                                    </span>
+                                    </div>
+                                </div>-->
+
+
+                                <!--<div class="task-config">-->
+                                <!--<div class="task-config-btn btn-group">-->
+                                <!--<a class="task-config-btn btn-xl" href="javascript:;" data-toggle="dropdown"-->
+                                <!--dropdown-menu-hover data-close-others="true">-->
+                                <!--<i class="fa fa-cog"></i>-->
+                                <!--</a>-->
+                                <!--<ul class="dropdown-menu pull-right">-->
+
+                                <!--&lt;!&ndash;	<li >-->
+                                <!--<a href="javascript:;">-->
+                                <!--<i class="fa fa-check"></i> Complete </a>-->
+                                <!--</li>&ndash;&gt;-->
+
+
+                                <!--<li ng-show="editing">-->
+                                <!--<a ng-click="editing=false">-->
+                                <!--<i class="fa fa-check"></i> Complete </a>-->
+                                <!--</li>-->
+
+
+                                <!--<li ng-hide="editing">-->
+
+                                <!--<a ng-click="editing=true">-->
+                                <!--<i class="fa fa-pencil"></i> Edit </a>-->
+
+                                <!--</li>-->
+                                <!--<li>-->
+                                <!--<a ng-click="videoService.removeTimeFrames($index)">-->
+                                <!--<i class="fa fa-trash-o"></i> Delete frames </a>-->
+                                <!--</li>-->
+                                <!--</ul>-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <div class="task-checkbox">
+
+                                    <input type="hidden" value="1" name="test"/>
+                                    <!--	<input type="checkbox"class="liChild" value="1" name="test"/>-->
+                                </div>
+                            </li>
+
+
+                        </ul>
+                        <!-- END START TASK LIST -->
+
+
+                        <!--			</div>-->
+
+
+                        <!--<div class="task-footer">-->
+                        <!--&lt;!&ndash;<div class="btn-arrow-link pull-right">&ndash;&gt;-->
+                        <!--&lt;!&ndash;<a ng-click="videoService.removeAll()"><span class="label label-sm label-danger">delete all<i&ndash;&gt;-->
+                        <!--&lt;!&ndash;class="fa fa-remove"></i></span></a>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--<div class="btn-arrow-link pull-right">-->
+                        <!--<a ng-click="videoService.playAlFramesSelectedVideo()"><span-->
+                        <!--class="label label-sm label-info">play <span-->
+                        <!--ng-if="videoService.config.autoPlay"-->
+                        <!--class="task-bell"> all timeframes</span>  <span-->
+                        <!--ng-if="!videoService.config.autoPlay" class="task-bell"> one by one</span> <i-->
+                        <!--class="fa fa-th-large"></i></span></a>-->
+                        <!--</div>-->
+
+                        <!--</div>-->
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="row">-->
+
+        <!--<div class="col-md-6 col-sm-12">-->
+            <!--&lt;!&ndash; BEGIN PORTLET&ndash;&gt;-->
+            <!--<div class="portlet light tasks-widget">-->
+
+                <!--<div class="portlet-title">-->
+                    <!--<div class="caption caption-md">-->
+                        <!--<i class="icon-bar-chart font-green-haze hide"></i>-->
+                        <!--<span class="caption-subject font-green-haze bold uppercase">Videos</span>-->
+                        <!--<span class="caption-helper">{{videoService.playList.length}}</span>-->
+
+                    <!--</div>-->
+
+                    <!--<div class="tools">-->
+                        <!--<a href="" ng-click="isCollapsed = !isCollapsed" class="collapse">-->
+                        <!--</a>-->
+
+                    <!--</div>-->
+                    <!--<div class="inputs">-->
+                        <!--<div class="portlet-input input-group-sm input-inline">-->
+                            <!--<div class="input-icon right">-->
+
+
+                                <!--<a class="task-config-btn btn-xl" href="javascript:;" data-toggle="dropdown"-->
+                                   <!--dropdown-menu-hover data-close-others="true">-->
+                                    <!--<i class="fa fa-cog"></i>-->
+                                <!--</a>-->
+                                <!--<ul class="dropdown-menu pull-right">-->
+                                    <!--<li>-->
+                                        <!--<a ng-click="videoService.addEmptyVideo()">-->
+                                            <!--<i class="fa fa-check"></i> Add new </a>-->
+                                    <!--</li>-->
+                                    <!--&lt;!&ndash;<li>-->
+                                        <!--<a href="javascript:;">-->
+                                            <!--<i class="fa fa-pencil"></i> Edit </a>-->
+                                    <!--</li>-->
+                                    <!--<li>-->
+                                        <!--<a ng-click="videoService.removeVideo(video)">-->
+                                            <!--<i class="fa fa-trash-o"></i> Delete </a>-->
+                                    <!--</li>&ndash;&gt;-->
+                                <!--</ul>-->
+
+
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                <!--</div>-->
+
+                <!--<div class="portlet-body">-->
+                    <!--<div class="task-content">-->
+                        <!--&lt;!&ndash;			<div class="scroller" style="height: 282px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2">&ndash;&gt;-->
+                        <!--&lt;!&ndash; START TASK LIST &ndash;&gt;-->
+
+
+                        <!--<ul class="task-list">-->
+                            <!--<li ng-class="{'label-default': video._id===videoService.currentVideo._id}"-->
+                                <!--ng-repeat="video in videoService.playList" ng-click="videoService.selectVideo(video)">-->
+
+
+                                <!--<div ng-hide="editing" ng-dblClick="editing = true">-->
+                                    <!--<div class="task-title">-->
+										<!--<span class="task-title-sp">-->
+										<!--{{video.title}} </span>-->
+                                        <!--<span ng-if="!videoService.isPlaying(video)" class="task-bell">-->
+
+										<!--<a ng-click="videoService.setVideo($index)">-->
+											<!--<span class="label label-sm label-success">play<i-->
+                                                    <!--class="fa fa-play-circle-o"></i></span></a>-->
+										<!--</span>-->
+                                        <!--<span class="task-bell">-->
+
+										<!--<a ng-click="videoService.pouseVideo(video)">-->
+											<!--<span class="label label-sm label-success">pause<i class="fa fa-pause"></i></span></a>-->
+										<!--</span>-->
+                                        <!--<span class="task-bell">-->
+										<!--<a ng-click="videoService.removeVideo(video)"><span-->
+                                                <!--class="label label-sm label-danger">delete <i class="fa fa-remove"></i></span></a>-->
+										<!--</span>-->
+                                        <!--<span class="task-bell">-->
+										<!--<span class="label label-sm label-primary">{{videoService.getTimeVideo(video) | date:'mm:ss'}}  <i-->
+                                                <!--class="fa fa-bookmark-o"></i></span>-->
+										<!--</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                                <!--<div class="task-title" ng-show="editing">-->
+                                    <!--<div class="task-title">-->
+										<!--<span class="task-title-sp">-->
+										 <!--<label>Name:</label>-->
+										 <!--<input ng-model="video.title" placeholder="Name"/>-->
+										 <!--<label>Src:</label>-->
+										 <!--<input ng-model="video.src" placeholder="Src"/>-->
+										 <!--<label>Src:</label>-->
+										 <!--<input ng-model="video.type" placeholder="type"/>-->
+										<!--<span class="task-bell">-->
+										<!--<a class="fa fa-save" ng-click="editing = false"></a>-->
+										<!--</span>-->
+										<!--</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+
+                                <!--<div class="task-config">-->
+                                    <!--<div class="task-config-btn btn-group">-->
+                                        <!--<a class="task-config-btn btn-xl" href="javascript:;" data-toggle="dropdown"-->
+                                           <!--dropdown-menu-hover data-close-others="true">-->
+                                            <!--<i class="fa fa-cog"></i>-->
+                                        <!--</a>-->
+                                        <!--<ul class="dropdown-menu pull-right">-->
+
+                                            <!--&lt;!&ndash;	<li >-->
+                                                    <!--<a href="javascript:;">-->
+                                                        <!--<i class="fa fa-check"></i> Complete </a>-->
+                                                <!--</li>&ndash;&gt;-->
+
+
+                                            <!--<li ng-show="editing">-->
+                                                <!--<a ng-click="editing=false">-->
+                                                    <!--<i class="fa fa-check"></i> Complete </a>-->
+                                            <!--</li>-->
+
+
+                                            <!--<li ng-hide="editing">-->
+
+                                                <!--<a ng-click="editing=true">-->
+                                                    <!--<i class="fa fa-pencil"></i> Edit </a>-->
+
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<a ng-click="videoService.removeVideo(video)">-->
+                                                    <!--<i class="fa fa-trash-o"></i> Delete </a>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="task-checkbox">-->
+
+                                    <!--<input type="hidden" value="1" name="test"/>-->
+                                    <!--&lt;!&ndash;	<input type="checkbox"class="liChild" value="1" name="test"/>&ndash;&gt;-->
+                                <!--</div>-->
+                            <!--</li>-->
+
+
+                        <!--</ul>-->
+                        <!--&lt;!&ndash; END START TASK LIST &ndash;&gt;-->
+
+
+                        <!--&lt;!&ndash;	</div>&ndash;&gt;-->
+                        <!--<div class="task-footer">-->
+                            <!--<div class="btn-arrow-link pull-right">-->
+                                <!--<a ng-click="videoService.removeAll()"><span class="label label-sm label-danger">delete all <i-->
+                                        <!--class="fa fa-remove"></i></span></a>-->
+                            <!--</div>-->
+                            <!--<div class="btn-arrow-link pull-right">-->
+                                <!--<a ng-click="videoService.toggleAutoplay()"><span class="label label-sm label-info">play <span-->
+                                        <!--ng-if="videoService.config.autoPlay" class="task-bell"> all</span>  <span-->
+                                        <!--ng-if="!videoService.config.autoPlay" class="task-bell"> one by one</span> <i-->
+                                        <!--class="fa fa-th-large"></i></span></a>-->
+                            <!--</div>-->
+
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+            <!--</div>-->
+
+        <!--</div>-->
+        <!--<div class="col-md-6 col-sm-12">-->
+            <!--&lt;!&ndash; BEGIN PORTLET&ndash;&gt;-->
+            <!--<div class="portlet light tasks-widget">-->
+                <!--<div class="portlet-title">-->
+
+                    <!--<div class="tools">-->
+                        <!--<a href="" class="collapse">-->
+                        <!--</a>-->
+
+                    <!--</div>-->
+                    <!--<div class="actions">-->
+
+                    <!--</div>-->
+                    <!--<div class="inputs">-->
+                        <!--<div class="portlet-input input-group-sm input-inline">-->
+
+
+                            <!--<div class="input-icon right">-->
+
+
+                                <!--<a class="task-config-btn btn-xl" href="javascript:;" data-toggle="dropdown"-->
+                                   <!--dropdown-menu-hover data-close-others="true">-->
+                                    <!--<i class="fa fa-cog"></i>-->
+                                <!--</a>-->
+                                <!--<ul class="dropdown-menu pull-right">-->
+                                    <!--<li>-->
+                                        <!--<a ng-click="videoService.addTimeFrames()">-->
+                                            <!--<i class="fa fa-check"></i> Add new time frames</a>-->
+                                    <!--</li>-->
+                                    <!--&lt;!&ndash;<li>-->
+                                        <!--<a href="javascript:;">-->
+                                            <!--<i class="fa fa-pencil"></i> Edit </a>-->
+                                    <!--</li>-->
+                                    <!--<li>-->
+                                        <!--<a ng-click="videoService.removeVideo(video)">-->
+                                            <!--<i class="fa fa-trash-o"></i> Delete </a>-->
+                                    <!--</li>&ndash;&gt;-->
+
+                                <!--</ul>-->
+
+
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                <!--</div>-->
+                <!--<div>-->
+
+                <!--</div>-->
+
+
+                <!--<div class="portlet-body">-->
+                    <!--<div class="task-content">-->
+                        <!--&lt;!&ndash;		<div class="scroller" style="height: 300px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2">&ndash;&gt;-->
+                        <!--&lt;!&ndash; START TASK LIST &ndash;&gt;-->
+                        <!--<ul class="task-list">-->
+                            <!--<li ng-repeat="frame in videoService.currentVideo.timeFrames">-->
+
+                                <!--<rzslider-->
+                                        <!--rz-slider-model="frame.timeLapse.start"-->
+                                        <!--rz-slider-high="frame.timeLapse.end"-->
+                                        <!--rz-slider-options="videoService.getTimeFramesOptions(videoService.currentVideo,frame).options"-->
+                                        <!--rz-vid-api="videoService.API"></rzslider>-->
+
+                                <!--<div ng-hide="editing" ng-dblClick="editing = true">-->
+                                    <!--<div class="task-title">-->
+										<!--<span class="task-title-sp">-->
+										<!--Time Frame: {{$index}} </span>-->
+
+
+                                        <!--<span class="task-bell">-->
+
+
+										<!--</span>-->
+
+                                        <!--<span class="task-bell">-->
+											<!--<a ng-click="videoService.seekTime(frame.timeLapse.start)">-->
+											<!--<span class="label label-sm label-primary">{{frame.timeLapse.start | date:'mm:ss'}}  <i-->
+                                                    <!--class="fa fa-bookmark-o"></i></span></a>-->
+										<!--</span>-->
+                                        <!--<span class="task-bell">-->
+												<!--<a ng-click="videoService.seekTime(frame.timeLapse.end)">-->
+										<!--<span class="label label-sm label-primary">{{frame.timeLapse.end | date:'mm:ss'}}  <i-->
+                                                <!--class="fa fa-bookmark-o"></i></span></a>-->
+										<!--</span>-->
+                                        <!--<span class="task-bell">-->
+										<!--<span class="label label-sm label-primary">{{videoService.getTimeVideo(videoService.currentVideo) | date:'mm:ss'}}  <i-->
+                                                <!--class="fa fa-bookmark-o"></i></span>-->
+										<!--</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+
+                                <!--<div class="btn-arrow-link pull-right">-->
+                                    <!--<a ng-click="videoService.playAlFramesSelectedVideo($index)"><span-->
+                                            <!--class="label label-sm label-info">Play Selection <span-->
+                                            <!--ng-if="videoService.config.autoPlay" class="task-bell"> to annotate</span>  <span-->
+                                            <!--ng-if="!videoService.config.autoPlay"-->
+                                            <!--class="task-bell"> one by one</span> <i-->
+                                            <!--class="fa fa-th-large"></i></span></a>-->
+                                <!--</div>-->
+                                <!--&lt;!&ndash;<div class="btn-arrow-link pull-right">-->
+                                    <!--<a ng-click="videoService.cropSelected()"> <i class="fa fa-save "></i> Validate selection </span></a>-->
+                                <!--</div>&ndash;&gt;-->
+                                <!--<a ng-click="videoService.playAlFramesSelectedVideo($index)">-->
+                                    <!--<span class="label label-sm label-success">play selected frames<i-->
+                                            <!--class="fa fa-play-circle-o"></i></span></a>-->
+                                <!--&lt;!&ndash;<div class="task-title" ng-show="editing">-->
+                                    <!--<div class="task-title">-->
+                                    <!--<span class="task-title-sp">-->
+                                     <!--<label>From:</label>-->
+                                     <!--<input type="time"  placeholder="mm:ss" ng-model="frame.timeLapse.start" placeholder="timeLapse.start"/>-->
+                                     <!--<label>To:</label>-->
+                                     <!--<input  type="time"  placeholder="mm:ss" 	 ng-model="frame.timeLapse.end" placeholder="timeLapse.end" />-->
+
+                                    <!--<span class="task-bell">-->
+                                    <!--<a class="fa fa-save" ng-click="editing = false"></a>-->
+                                    <!--</span>-->
+                                    <!--</span>-->
+                                    <!--</div>-->
+                                <!--</div>&ndash;&gt;-->
+
+
+                                <!--<div class="task-config">-->
+                                    <!--<div class="task-config-btn btn-group">-->
+                                        <!--<a class="task-config-btn btn-xl" href="javascript:;" data-toggle="dropdown"-->
+                                           <!--dropdown-menu-hover data-close-others="true">-->
+                                            <!--<i class="fa fa-cog"></i>-->
+                                        <!--</a>-->
+                                        <!--<ul class="dropdown-menu pull-right">-->
+
+                                            <!--&lt;!&ndash;	<li >-->
+                                                    <!--<a href="javascript:;">-->
+                                                        <!--<i class="fa fa-check"></i> Complete </a>-->
+                                                <!--</li>&ndash;&gt;-->
+
+
+                                            <!--<li ng-show="editing">-->
+                                                <!--<a ng-click="editing=false">-->
+                                                    <!--<i class="fa fa-check"></i> Complete </a>-->
+                                            <!--</li>-->
+
+
+                                            <!--<li ng-hide="editing">-->
+
+                                                <!--<a ng-click="editing=true">-->
+                                                    <!--<i class="fa fa-pencil"></i> Edit </a>-->
+
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<a ng-click="videoService.removeTimeFrames($index)">-->
+                                                    <!--<i class="fa fa-trash-o"></i> Delete frames </a>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="task-checkbox">-->
+
+                                    <!--<input type="hidden" value="1" name="test"/>-->
+                                    <!--&lt;!&ndash;	<input type="checkbox"class="liChild" value="1" name="test"/>&ndash;&gt;-->
+                                <!--</div>-->
+                            <!--</li>-->
+
+
+                        <!--</ul>-->
+                        <!--&lt;!&ndash; END START TASK LIST &ndash;&gt;-->
+
+
+                        <!--&lt;!&ndash;			</div>&ndash;&gt;-->
+
+
+                        <!--<div class="task-footer">-->
+                            <!--<div class="btn-arrow-link pull-right">-->
+                                <!--<a ng-click="videoService.removeAll()"><span class="label label-sm label-danger">delete all<i-->
+                                        <!--class="fa fa-remove"></i></span></a>-->
+                            <!--</div>-->
+                            <!--<div class="btn-arrow-link pull-right">-->
+                                <!--<a ng-click="videoService.playAlFramesSelectedVideo()"><span-->
+                                        <!--class="label label-sm label-info">play <span-->
+                                        <!--ng-if="videoService.config.autoPlay"-->
+                                        <!--class="task-bell"> all timeframes</span>  <span-->
+                                        <!--ng-if="!videoService.config.autoPlay" class="task-bell"> one by one</span> <i-->
+                                        <!--class="fa fa-th-large"></i></span></a>-->
+                            <!--</div>-->
+
+                        <!--</div>-->
+
+                    <!--</div>-->
+                <!--</div>-->
+                <!--&lt;!&ndash; END PORTLET&ndash;&gt;-->
+            <!--</div>-->
+
+
+        <!--</div>-->
+
+
+    <!--</div>-->
+
+    <div ng-show="!videoService.annottate" class="row">
+        <div class="col-md-6 col-sm-12">
+            <div class="portlet light tasks-widget">
+                <div class="portlet-title">
+                    <div class="caption caption-md">
+                        <i class="icon-bar-chart font-green-haze hide"></i>
+                        <span class="caption-subject font-green-haze bold uppercase">Algo's</span>
+                        <span class="caption-helper">{{algoService.getMyAlgoritms().length}}</span>
+                    </div>
+
+                    <div ng-show="!videoService.annottate" class="caption caption-md">
+                        <i class="icon-bar-chart font-green-haze hide"></i>
+                        <span class="caption-subject font-green-haze bold uppercase">Loss</span>
+                        <span class="caption-helper">{{algoService.getStats().cost_loss}}</span>
+                        <span class="caption-subject font-green-haze bold uppercase">l2 Decay Loss</span>
+                        <span class="caption-helper">{{algoService.getStats().l2_decay_loss;}}</span>
+
+                    </div>
+                    <div ng-show="!videoService.annottate" class="caption caption-md">
+                        <i class="icon-bar-chart font-green-haze hide"></i>
+                        <span class="caption-subject font-green-haze bold uppercase"> Accu</span>
+                        <span class="caption-helper">{{algoService.getStats().train_acc}}</span>
+                    </div>
+                    <div class="tools">
+
+                        <a href="" class="collapse">
+                        </a>
+
+                    </div>
+                    <div class="inputs">
+                        <div class="portlet-input input-group-sm input-inline">
+                            <div class="input-icon right">
+
+
+                                <a class="task-config-btn btn-xl" href="javascript:;" data-toggle="dropdown"
+                                   dropdown-menu-hover data-close-others="true">
+                                    <i class="fa fa-cog"></i>
+                                </a>
+                                <ul class="dropdown-menu pull-right">
+                                    <li>
+                                        <a ng-click="videoService.addTimeFrames()">
+                                            <i class="fa fa-check"></i> Add new time frames</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i class="fa fa-pencil"></i> Edit </a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="videoService.removeVideo(video)">
+                                            <i class="fa fa-trash-o"></i> Delete </a>
+                                    </li>
+                                </ul>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div>
+
+                </div>
+
+
+                <div class="portlet-body">
+
+
+                    <!-- START TASK LIST -->
+                    <ul class="task-list">                                        <!-- START TASK LIST -->
+
+
+                        <li ng-click="algoService.select($index)"
+                            ng-repeat="algo in algoService.getMyAlgoritms()  track by $index">
+
+
+                            <div ng-hide="editing" ng-dblClick="editingN = true">
+                                <div class="task-title" ng-show="!editingN">
+
+
+                                    <label>Name:</label> {{algo.name}} <label>Version:</label>{{algo.version}}
+                                    <span ng-if="algoService.isSelected($index)" class="task-bell">
+
+										<a>
+											<span class="label label-important label-danger"><i class="fa fa-plug "></i></span></a>
+										</span>
+
+                                    <a ng-click="algoService.saveAlgorithm(algo)">
+                                        <span class="label label-important label-success"><i
+                                                class="fa fa-save"></i></span></a>
+                                    </span>
+
+                                    <a ng-click="algoService.loadAlgorithm()">
+                                        <span class="label label-important label-success"><i class="fa fa-refresh"></i></span></a>
+                                    </span>
+                                </div>
+
+                                <div class="task-title" ng-show="editingN">
+                                    <div class="task-title">
+												<span class="task-title-sp">
+														 <label>Name:</label>
+															<input type="String" ng-model="algo.name" value="algo.name"
+                                                                   placeholder="algo.name"/>
+														 <label>Version:</label>
+															<input type="String" ng-model="algo.version"
+                                                                   value="algo.version" placeholder="algo.version"/>
+
+														<span class="task-bell">
+														<a class="fa fa-save"
+                                                           ng-click="algoService.saveAlgorithm(algo); editingN = false"></a>
+														</span>
+													</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul dnd-list="list" class="task-list" ng-show="editing"><!-- START TASK LIST -->
+
+
+                                </span>
+                                <li dnd-moved="algoService.getLayers().splice($index, 1)"
+                                    dnd-effect-allowed="move" dnd-draggable="layer"
+                                    ng-repeat="layer in algoService.getLayers()  track by $index">
+                                    <Label>Layer: {{$index}} {{layer.type}}</Label>
+
+                                    <ul>
+
+                                        <li ng-hide="attribute!='num_neurons'&&attribute!='num_classes'&&attribute!='out_sx'&&attribute!='out_sy'&&attribute!='out_depth'&&attribute!='pad'&&attribute!='type'&&attribute!='activation'&&attribute!='sx'&&attribute!='filters'&&attribute!='sy'&&attribute!='stride'"
+                                            ng-repeat="(attribute, value) in layer">
+                                            <label>{{attribute}} </label>
+                                            <input ng-disabled="$parent.$index===0" ng-value="value" ng-model="newValue"
+                                                   ng-change="algoService.getLayers()[$parent.$index].{{attribute}}=newValue"
+                                                   placeholder="attribute">
+                                        </li>
+                                    </ul>
+
+                                    <!--{{layer}}-->
+
+                                    <!--<div class="task-title"  ng-show="editing">
+                                        <div class="task-title">
+                                            <span class="task-title-sp">
+                                            Type:
+                                             <input  ng-disabled="$index===0"  ng-model="layer.type" placeholder="type"/>
+                                             <label>out_sx:</label>
+                                             <input  ng-disabled="$index===0"  ng-model="layer.out_sx" placeholder="out_sx" />
+                                             <label>Src:</label>
+                                             <input  ng-disabled="$index===0" ng-model="video.type" placeholder="type" />
+
+
+                                            </span>
+                                        </div>
+                                    </div>-->
+                                    <a href="javascript:;" data-toggle="dropdown" dropdown-menu-hover
+                                       data-close-others="true">
+
+
+												<span class="details">
+													<span class="label label-sm label-icon label-success">
+													<i class="fa fa-plus"></i>
+													</span>
+														Add Layer</span>
+
+                                    </a>
+
+
+                                    <span class="details" ng-disabled="$parent.$index===0">
+
+													<a ng-click="algoService.deleteLayer($index)" href="javascript:;"
+                                                       data-toggle="dropdown" dropdown-menu-hover
+                                                       data-close-others="true">
+
+													<i class="fa fa-trash-o"></i>
+
+														Delete Layer
+													</a>
+												</span>
+
+
+                                    <ul class="dropdown-menu darkCyan pull-left">
+
+                                        <!--	<li >
+                                                <a href="javascript:;">
+                                                    <i class="fa fa-check"></i> Complete </a>
+                                            </li>-->
+                                        <li class="dropdown-dark"
+                                            ng-repeat="defLayer in algoService.getSelectedAlgo().layers">
+
+
+                                            <a ng-click="algoService.addLayer($parent.$index,$index)">
+                                                <i class="fa fa-angle-right"></i>Type: {{defLayer.type}} </a>
+                                        </li>
+
+                                        <!--<li class="dropdown-dark" ng-show="editing">
+                                            <a ng-click="algoService.addLayer($index,'conv')">
+                                                <i class="fa fa-check"></i> conv </a>
+                                        </li>
+                                        <li class="dropdown-dark" ng-show="editing">
+                                            <a ng-click="algoService.addLayer($index,'pool')">
+                                                <i class="fa fa-check"></i> pool </a>
+                                        </li>
+                                        <li class="dropdown-dark"  ng-click="algoService.addLayer($index,'softmax')">
+                                            <a ng-click="editing=false" >
+                                                <i class="fa fa-check"></i> softmax </a>
+                                        </li>
+                                        <li class="dropdown-dark" ng-click="algoService.addLayer($index,'fc')">
+                                            <a ng-click="editing=false">
+                                                <i class="fa fa-check"></i> fc </a>
+                                        </li>-->
+                                    </ul>
+                                </li>
+                                <li class="external">
+                                    <h3><span class="bold"> {{getClasses.length}} classes</span></h3>
+                                    <a ng-click="addClasses()"><span class="label label-sm label-icon label-success">
+												<i class="fa fa-plus"></i>
+												</span>add new class</a>
+                                </li>
+                                <li>
+                                    <div class="slimScrollDiv"
+                                         style="position: relative; overflow: hidden; width: auto; height: 250px;">
+                                        <ul class="dropdown-menu-list scroller"
+                                            style="height: 250px; overflow: hidden; width: auto;"
+                                            data-handle-color="#637283">
+                                            <li ng-class="{'active': getSelectedClass()._id === class._id}"
+                                                ng-click="setSelectedClass($index)"
+                                                ng-repeat="class in selectedClasses.classes track by $index">
+                                                <a href="javascript:;">
+                                                    <span class="time">{{class.number}}</span>
+                                                    <span class="details">
+															<span class="label label-sm label-icon label-success">
+															<i ng-click="deleteClass($index)" class="fa fa-trash"></i>
+															</span>
+																<input ng-disabled="$index!=class.number"
+                                                                       ng-value="class.name" ng-model="class.name"
+                                                                       placeholder="class.name">
+																</span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                        <div class="slimScrollBar"
+                                             style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div>
+                                        <div class="slimScrollRail"
+                                             style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div>
+                                    </div>
+                                </li>
+
+                                <span class="task-bell ">
+												<a class="fa fa-save large -align-right"
+                                                   ng-click="editing = false;algoService.createTrainer()"></a>
+
+											</span>
+                            </ul>
+
+
+                            <div ng-show="!videoService.annottate" class="task-config">
+                                <div class="task-config-btn btn-group">
+                                    <a class="task-config-btn btn-xl" href="javascript:;" data-toggle="dropdown"
+                                       dropdown-menu-hover data-close-others="true">
+                                        <i class="fa fa-cog"></i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+
+                                        <!--	<li >
+                                                <a href="javascript:;">
+                                                    <i class="fa fa-check"></i> Complete </a>
+                                            </li>-->
+
+
+                                        <li ng-show="editing">
+                                            <a ng-click="editing=false">
+                                                <i class="fa fa-check"></i> Complete </a>
+                                        </li>
+
+
+                                        <li ng-hide="editing">
+
+                                            <a ng-click="editing=true">
+                                                <i class="fa fa-pencil"></i> Edit </a>
+
+                                        </li>
+                                        <li>
+                                            <a ng-click="algoService.deteletAlgo(algo)">
+                                                <i class="fa fa-trash-o"></i> Delete </a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+
+                    </ul>
+
+
+                    <div class="task-footer">
+
+
+                        <ul class="nav navbar-nav pull-right">
+                            <li class="separator hide"></li>
+                            <!-- BEGIN NOTIFICATION DROPDOWN -->
+                            <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                            <li class="dropdown dropdown-extended dropdown-notification dropdown-dark"
+                                id="header_notification_bar">
+                                <a href="javascript:;" class="dropdown-toggle hover-initialized" data-toggle="dropdown"
+                                   data-hover="dropdown" data-close-others="true">
+
+								<span ng-if="videoService.mouseDown" class="badge badge-danger">
+											Training Class:{{algoService.getSelectedClass()}}</span>
+                                    <span ng-if="!videoService.mouseDown" class="badge badge-success ">
+											Testing Class:{{algoService.getSelectedClass()}}</span>
+
+
+                                    <i class="fa fa-list-ul">
+                                    </i>
+
+                                </a>
+
+                                <ul class="dropdown-menu">
+                                    <li class="external">
+                                        <h3><span class="bold"> {{algoService.getLayers()[algoService.getLayers().length-1].num_classes}} classes</span>
+                                        </h3>
+                                        <a ng-click="algoService.addClasses()"><span
+                                                class="label label-sm label-icon label-success">
+												<i class="fa fa-plus"></i>
+												</span>add new class</a>
+                                    </li>
+                                    <li>
+                                        <div class="slimScrollDiv"
+                                             style="position: relative; overflow: hidden; width: auto; ">
+                                            <ul class="dropdown-menu-list scroller"
+                                                style=" overflow: hidden; width: auto;" data-handle-color="#637283">
+                                                <li ng-click="algoService.setSelectedClass($index)"
+                                                    ng-repeat="class in algoService.getClasses() track by $index">
+                                                    <a href="javascript:;">
+                                                        <span class="time">{{class.number}}</span>
+                                                        <span class="details">
+															<span class="label label-sm label-icon label-success">
+															<i ng-click="algoService.deleteClass($index)"
+                                                               class="fa fa-trash"></i>
+															</span>
+																{{class.name}}
+																</span>
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                            <div class="slimScrollBar"
+                                                 style="background: rgb(99, 114, 131); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div>
+                                            <div class="slimScrollRail"
+                                                 style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(234, 234, 234); opacity: 0.2; z-index: 90; right: 1px;"></div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+
+
+                            <!-- END NOTIFICATION DROPDOWN -->
+
+                            <!-- END USER LOGIN DROPDOWN -->
+                        </ul>
+
+                    </div>
+
+
+                    <div id="visnet"></div>
+
+
+                    <!-- END PORTLET-->
+                    <!-- BEGIN PORTLET-->
+
+
+                    <!-- END PORTLET-->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!--	old<canvas  id="old"></canvas>
+        new<canvas  id="new"></canvas>
+        newOrg<canvas  id="newOrg"></canvas>
+        convnet<canvas  id="convnet"></canvas>
+        <canvas  id="destCanvas"></canvas>
+        <canvas  id="drawing" ></canvas>
+-->
+
+</div>
+
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS & CSS -->
+<script>
+    //Index.init();
+    //Tasks.initDashboardWidget();
+</script>
+<!-- BEGIN MAIN JS & CSS -->

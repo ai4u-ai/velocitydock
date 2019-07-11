@@ -1,0 +1,23 @@
+name: ganoftrones_tf_v2
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - ca-certificates=2019.3.9=hecc5488_0
+  - certifi=2019.3.9=py36_0
+  - libcxx=8.0.0=2
+  - libcxxabi=8.0.0=2
+  - libffi=3.2.1=h6de7cb9_1006
+  - ncurses=6.1=h0a44026_1002
+  - openssl=1.1.1b=h01d97ff_2
+  - pip=19.1=py36_0
+  - python=3.6.7=h8dc6b48_1004
+  - readline=7.0=hcfe32e1_1001
+  - setuptools=41.0.1=py36_0
+  - sqlite=3.28.0=h9721f7c_0
+  - tk=8.6.9=ha441bb4_1001
+  - wheel=0.33.4=py36_0
+  - xz=5.2.4=h1de35cc_1001
+  - zlib=1.2.11=h1de35cc_1004
+prefix: /Users/ivanjacobs/anaconda3/envs/ganoftrones_tf_v2
+
