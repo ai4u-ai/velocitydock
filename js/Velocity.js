@@ -319,7 +319,7 @@ VelocityModule.service('AuthService', function($q, $http, API_ENDPOINT) {
         return $q(function(resolve, reject) {
 
 
-            $http.post('http://ec2-3-90-102-164.compute-1.amazonaws.com'+ '/authenticate', user).then(function(result) {
+            $http.post('http://ec2-3-90-102-164.compute-1.amazonaws.com:3000'+ '/authenticate', user).then(function(result) {
                 if (result.data.success) {
                     storeUserCredentials(result.data.token);
                     resolve(result.data.msg);
