@@ -209,7 +209,7 @@ VelocityModule.constant('AUTH_EVENTS', {
         url: 'http://localhost:3000/api'
         //  For a simulator use: url: 'http://127.0.0.1:8080/api'
     });
-VelocityModule.service('AuthService', function($q, $http, API_ENDPOINT) {
+VelocityModule.service('AuthService', function($q, $http, $location,API_ENDPOINT) {
     var LOCAL_TOKEN_KEY = 'yourTokenKey';
     var isAuthenticated = false;
     var authToken;
@@ -319,7 +319,7 @@ VelocityModule.service('AuthService', function($q, $http, API_ENDPOINT) {
         return $q(function(resolve, reject) {
 
 
-            $http.post('http://ec2-3-90-102-164.compute-1.amazonaws.com:3000/api'+ '/authenticate', user).then(function(result) {
+            $http.post($location.origin + '/authenticate', user).then(function(result) {
                 if (result.data.success) {
                     storeUserCredentials(result.data.token);
                     resolve(result.data.msg);
