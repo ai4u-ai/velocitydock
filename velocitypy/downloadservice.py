@@ -62,4 +62,4 @@ def server_stats(trainingpath):
     return redirect(tf_board.get_url(), code=302)
 
 if __name__ == '__main__':
-    app.run(debug=True, use_debugger=False, use_reloader=False, passthrough_errors=True)
+    app.run(debug=True, use_debugger=False, use_reloader=False, passthrough_errors=True,host= '0.0.0.0')
