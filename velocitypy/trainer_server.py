@@ -35,7 +35,7 @@ import argparse
 import time
 import grpc
 
-import trainer_service.dynamic_import
+from  trainer_service import dynamic_import
 import mongoclient as mongocl
 import retrainForServer as retrain
 from nets import inception_resnet_v2
