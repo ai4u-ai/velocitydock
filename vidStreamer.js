@@ -2597,7 +2597,7 @@ app.delete('/api/media/deleteAll', passport.authenticate('jwt', {session: false}
 app.use('/api', apiRoutes);
 
 // app.listen(port);
-server.listen(port, 'localhost');
+server.listen(port);
 
 
 /*var file = './tmp/data.json';
