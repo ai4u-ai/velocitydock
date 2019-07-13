@@ -44,7 +44,7 @@ var Algo = require('./js/models/algo');
 var AlgoAnnoRun = require('./js/models/algoannorun');
 var AlgoService = require('./js/models/algoservice');
 var Algoannotation = require('./js/models/algoannotation');
-var port = process.env.PORT || 8800;
+var port = process.env.PORT || 3000;
 var jwt = require('jwt-simple');
 var spawn = require('child_process').spawn;
 // connect to database
