@@ -205,10 +205,37 @@ VelocityModule.constant('AUTH_EVENTS', {
     notAuthenticated: 'auth-not-authenticated'
 })
 
-    .constant('API_ENDPOINT', {
-        url: 'http://localhost:3000/api'
-        //  For a simulator use: url: 'http://127.0.0.1:8080/api'
-    });
+
+    // .constant('API_ENDPOINT', {
+    //     url:  '/api'
+    //     //  For a simulator use: url: 'http://127.0.0.1:8080/api'
+    // });
+
+VelocityModule.service('API_ENDPOINT',function($q,$location){
+   return {url:$location.protocol()+'://'+$location.host()+':'+$location.port()+'/api'}
+});
+
+
+
+VelocityModule.factory('ChangeAPICallsIntercepter', ['$log', function($log,$location,API_ENDPOINT) {
+    $log.debug('$log is here to show you that this is a regular factory with injection');
+
+    var myInterceptor = {
+        'request': function (config) {
+            if (API_ENDPOINT !=undefined){
+                $log.debug( API_ENDPOINT.url());
+
+            }
+
+            return config || $q.when(config);
+
+        }
+    };
+
+    return myInterceptor;
+}]) .config(function ($httpProvider) {
+    $httpProvider.interceptors.push('ChangeAPICallsIntercepter');
+});
 VelocityModule.service('AuthService', function($q, $http, $location,API_ENDPOINT) {
     var LOCAL_TOKEN_KEY = 'yourTokenKey';
     var isAuthenticated = false;
@@ -319,7 +346,7 @@ VelocityModule.service('AuthService', function($q, $http, $location,API_ENDPOINT
         return $q(function(resolve, reject) {
 
 
-            $http.post(    $location.protocol()+'://'+ $location.host()+':'+ $location.port() +'/api'+ '/authenticate', user).then(function(result) {
+            $http.post(    API_ENDPOINT.url+ '/authenticate', user).then(function(result) {
                 if (result.data.success) {
                     storeUserCredentials(result.data.token);
                     resolve(result.data.msg);
@@ -363,6 +390,8 @@ VelocityModule.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS)
     .config(function ($httpProvider) {
         $httpProvider.interceptors.push('AuthInterceptor');
     });
+
+
 
 VelocityModule.factory("annotationService",function($rootScope,$http,API_ENDPOINT,AuthService) {
 var classes={};

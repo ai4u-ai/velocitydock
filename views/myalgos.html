@@ -888,7 +888,7 @@
 															<i class="fa fa-cogs"></i>
 															</span>
 
-																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.model_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="{{dowloadsApi}}{{selected.selectedTraining.model_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
 															</div>
 															<p ng-show="selected.selectedTraining==undefined" class="alert-block red">
 																<span class="badge badge-danger">
@@ -908,7 +908,7 @@
 															<i class="fa fa-cogs"></i>
 															</span>
 
-																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.labels_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="{{dowloadsApi}}{{selected.selectedTraining.labels_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
 															</div>
 															<p ng-show="selected.selectedTraining==undefined" class="alert-block red">
 																<span class="badge badge-danger">
@@ -928,7 +928,7 @@
 															<i class="fa fa-cogs"></i>
 															</span>
 
-																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.model_dir_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="{{dowloadsApi}}{{selected.selectedTraining.model_dir_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
 															</div>
 															<p ng-show="selected.selectedTraining==undefined" class="alert-block red">
 																<span class="badge badge-danger">
@@ -948,7 +948,7 @@
 															<i class="fa fa-cogs"></i>
 															</span>
 
-																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.checkpoint_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="{{dowloadsApi}}{{selected.selectedTraining.checkpoint_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
 															</div>
 															<p ng-show="selected.selectedTraining==undefined" class="help-block red-title">
 																<span class="badge badge-danger">
@@ -968,7 +968,7 @@
 															<i class="fa fa-cogs"></i>
 															</span>
 
-																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.data_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="{{dowloadsApi}}{{selected.selectedTraining.data_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
 															</div>
 															<p ng-show="selected.selectedTraining==undefined" class="help-block red-title">
 																<span class="badge badge-danger">
@@ -988,7 +988,7 @@
 															<i class="fa fa-cogs"></i>
 															</span>
 
-																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="http://localhost:5000/downloads{{selected.selectedTraining.dest_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
+																<a ng-show="selected.selectedTraining!=undefined" ng-disabled="selected.selectedTraining==undefined" ng-href="{{dowloadsApi}}{{selected.selectedTraining.dest_path}}"  class="form-control" download="fileName" target="_blank">Download</a>
 															</div>
 															<p ng-show="selected.selectedTraining==undefined" class="help-block red-title">
 																<span class="badge badge-danger">

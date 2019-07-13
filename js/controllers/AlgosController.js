@@ -31,9 +31,9 @@ MetronicApp.filter('propsFilter', function() {
         return out;
     };
 });
-MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthService,$http,$location,FileUploader,$filter,$interval) {
+MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthService,$http,$location,FileUploader,$filter,$interval,DOWNLOAD_API_ENDPOINT) {
 
-
+    $scope.dowloadsApi=DOWNLOAD_API_ENDPOINT.url;
 
 // anotations
     $scope.annotations=[];
