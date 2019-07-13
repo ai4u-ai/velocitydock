@@ -23,6 +23,14 @@ var ffmpegFrames = require('./js/stream/ffmpegFrames');
 var express = require("express");
 var connectDomain = require('connect-domain');
 var app = express();
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
 // app.use(connectDomain());
 var vidStreamer = require("vid-streamer");
 const videoStreamer = require('video-streamer');
