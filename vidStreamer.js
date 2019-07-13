@@ -24,6 +24,12 @@ var express = require("express");
 var connectDomain = require('connect-domain');
 var app = express();
 
+app.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
+
 app.use(function (req, res, next) {
     /*var err = new Error('Not Found');
      err.status = 404;
