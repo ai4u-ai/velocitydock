@@ -2599,10 +2599,10 @@ app.use('/api', apiRoutes);
 // app.listen(port);
 //server.listen(port);
 server.listen(port, 'localhost', function() {
-    console.log("... port %d in %s mode", app.address().port, app.settings.env);
+    console.log("... port in %s mode", app.settings.env);
 });
 app.listen(port, 'localhost', function() {
-    console.log("... port %d in %s mode", app.address().port, app.settings.env);
+    console.log("... port %d mode",  app.settings.env);
 });
 /*var file = './tmp/data.json';
 jsonfile.readFileSync(file, function(err, obj) {
