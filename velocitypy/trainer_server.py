@@ -397,7 +397,7 @@ class Trainer(trainerServer_pb2.TrainerServicer):
             return train_path,test_path
 
     def TrainModel(self, request, context):
-        import annotations_converter_coco as annotations_converter_yolo
+
         training=mongocl.find_training(request.trainingid)
         conversion,destPath=self.prep_conversion(training)
         train_path,test_path=self.convert(training,conversion,destPath)
