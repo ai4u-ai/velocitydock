@@ -319,7 +319,7 @@ VelocityModule.service('AuthService', function($q, $http, $location,API_ENDPOINT
         return $q(function(resolve, reject) {
 
 
-            $http.post(     $location.host()+':'+ $location.port() + '/authenticate', user).then(function(result) {
+            $http.post(     $location.host()+':'+ $location.port() +'/api'+ '/authenticate', user).then(function(result) {
                 if (result.data.success) {
                     storeUserCredentials(result.data.token);
                     resolve(result.data.msg);
