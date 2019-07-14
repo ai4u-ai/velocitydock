@@ -52,8 +52,8 @@ def download_model(filename):
     return send_file(filename,as_attachment=True)
 
 @app.route('/stats/', methods=['GET', 'POST'])
-def server_stats(trainingpath):
-    print('ffffffff',trainingpath)
+def server_stats():
+   
 
     trainingpath=request.args.get('path')
     host=request.args.get('host')
