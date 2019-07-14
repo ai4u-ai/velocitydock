@@ -1,6 +1,6 @@
 import threading
 import zipfile
-
+from flask import request
 from flask import Flask, send_from_directory, current_app, send_file,redirect
 import os
 from os.path import expanduser
@@ -51,15 +51,17 @@ def download_model(filename):
     print('newfilename',filename)
     return send_file(filename,as_attachment=True)
 
-@app.route('/stats/<path:trainingpath>', methods=['GET', 'POST'])
+@app.route('/stats/', methods=['GET', 'POST'])
 def server_stats(trainingpath):
     print('ffffffff',trainingpath)
 
-    trainingpath=trainingpath.replace('path:','')
+    trainingpath=request.args.get('path')
+    host=request.args.get('host')
     tf_board.reset_server([None, '--logdir', trainingpath])
     x = threading.Thread(target=tf_board.start_server)
     x.start()
-    return redirect(tf_board.get_url(), code=302)
+    port=tf_board.get_url().split(':')[-1]
+    return redirect(host+':'+port, code=302)
 
 if __name__ == '__main__':
     app.run(debug=True, use_debugger=False, use_reloader=False, passthrough_errors=True, host='0.0.0.0')

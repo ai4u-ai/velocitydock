@@ -751,7 +751,7 @@
 															<i class="fa fa-cogs"></i>
 															</span>
 
-																	<a ng-show="stats.selectedTraining!=undefined" ng-disabled="stats.selectedTraining==undefined" ng-href={{flask_api+"/stats/path:"+stats.selectedTraining.logdir_path}}  class="form-control" download="fileName" target="_blank">Tensorboard</a>
+																	<a ng-show="stats.selectedTraining!=undefined" ng-disabled="stats.selectedTraining==undefined" ng-href={{flask_api+"/stats/?path="+stats.selectedTraining.logdir_path+'&host='+current_host}}  class="form-control" download="fileName" target="_blank">Tensorboard</a>
 																</div>
 																<p ng-show="selected.selectedTraining==undefined" class="help-block red-title">
 																<span class="badge badge-danger">

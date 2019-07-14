@@ -212,7 +212,7 @@ VelocityModule.constant('AUTH_EVENTS', {
     // });
 
 VelocityModule.service('API_ENDPOINT',function($q,$location){
-   return {url:$location.protocol()+'://'+$location.host()+':'+$location.port()+'/api',flask_api:$location.protocol()+'://'+$location.host()+':5000'}
+   return {url:$location.protocol()+'://'+$location.host()+':'+$location.port()+'/api',flask_api:$location.protocol()+'://'+$location.host()+':5000',current_host:$location.protocol()+'://'+$location.host()}
 });
 
 

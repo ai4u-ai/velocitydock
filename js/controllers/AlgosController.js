@@ -34,6 +34,7 @@ MetronicApp.filter('propsFilter', function() {
 MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthService,$http,$location,FileUploader,$filter,$interval) {
 
     $scope.flask_api=API_ENDPOINT.flask_api
+    $scope.current_host=API_ENDPOINT.current_host
 
 // anotations
     $scope.annotations=[];
