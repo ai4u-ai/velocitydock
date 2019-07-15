@@ -53,7 +53,7 @@ def download_model(filename):
 
 @app.route('/stats/', methods=['GET', 'POST'])
 def server_stats():
-   
+
 
     trainingpath=request.args.get('path')
     host=request.args.get('host')

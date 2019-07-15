@@ -131,6 +131,7 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
 
     # Currently only a single Eval Spec is allowed.
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_specs[0])
+    mongocl.update_training(training, 'status', 'end')
 
 
 
