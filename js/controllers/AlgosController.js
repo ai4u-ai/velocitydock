@@ -459,8 +459,7 @@ MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthServ
    'ResNet50V2'	,
    'ResNet101V2'	,
    'ResNet152V2'	,
-   'ResNeXt50'	,
-   'ResNeXt101'	,
+
    'InceptionV3'	,
    'InceptionResNetV2'	,
    'MobileNet'	,

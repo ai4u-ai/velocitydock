@@ -1,5 +1,6 @@
 import inspect
 import json
+import math
 import os
 import pkgutil
 import sys
@@ -21,6 +22,11 @@ from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.callbacks import EarlyStopping
 import tensorflow as tf
+import logging
+
+logger = logging.getLogger('root')
+logger.debug('dynamic import')
+
 # from modulefinder import ModuleFinder
 #
 # name='xception'
@@ -61,16 +67,32 @@ class LossAccuracyHistory(keras.callbacks.Callback):
     def __init__(self,training, mongoclient):
         self.mongoclient = mongoclient
         self.training = training
+
+        self.logger = logging.getLogger('root')
+
     def on_train_begin(self,logs={},):
         self.losses = []
         self.accuracies = []
-
-    def on_batch_end(self, batch, logs={}):
+        self.logger.debug('starting training')
+        return
+    def on_train_batch_end(self, batch, logs={}):
+        self.logger.debug('train batch {} end  acc: {}'.format(batch,logs))
+        return
+    def on_test_batch_begin(self, batch, logs=None):
+        self.logger.debug('test batch {} begin  acc: {}'.format(batch, logs))
+        return
+    def on_test_batch_end(self, batch, logs=None):
+        self.logger.debug('test batch {} end  acc: {}'.format(batch, logs))
+        return
+    def on_epoch_end(self, epoch, logs={}):
 
         self.losses.append(logs.get('loss'))
+        self.logger.debug('epoch {} end  acc: {}'.format(epoch, logs))
         self.mongoclient.update_training(self.training, 'losses',  [str(loss) for loss in self.losses])
         self.accuracies.append(logs.get('acc'))
+        self.logger.debug('epoch enn acc: {}'.format(str(logs.get('acc'))))
         self.mongoclient.update_training(self.training, 'accuracies', [str(i) for i in self.accuracies])
+        return
 def create_model_name(training):
         return training['endModel']['name']+'_'+training['algoType'].replace(' ','_').lower()
 
@@ -145,15 +167,26 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     logdir=os.path.join(training_path,'logs')
 
 
+    logger.debug('training path {}'.format(training_path))
 
 
 
     mongocl.update_training(training, 'logdir_path', logdir)
+
+
+    logger.debug('logdir_path {}'.format(logdir))
     mongocl.update_training(training, 'training_path', training_path)
     model_path=os.path.join(training_path,'model')
 
+
+    logger.debug('model_path {}'.format(model_path))
     labels_path=os.path.join(model_path,'labels.json')
+
+
+    logger.debug('labels_path {}'.format(labels_path))
     mongocl.update_training(training, 'model_dir_path', model_path)
+
+
 
 
     mongocl.update_training(training, 'labels_path', labels_path)
@@ -162,6 +195,7 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     checkpoint_path = os.path.join(model_path,create_model_name(training)+'_weights.h5')
 
 
+    logger.debug('checkpoint_path {}'.format( checkpoint_path))
     mongocl.update_training(training, 'checkpoint_path', checkpoint_path)
 
     if not os.path.isdir(training_path):
@@ -208,6 +242,7 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
 
 
     base_model = load_model(modelname, include_top=include_top, weights='imagenet')
+    logger.debug('loaded model: {} '.format(modelname))
     if include_top is False:
         # add a global spatial average pooling layer
         x = base_model.output
@@ -234,11 +269,13 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     # model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
     # train the model on the new data for a few epochs
+
     if os.path.isfile(os.path.join(training_path, create_model_name(training) + '_weights.h5')):
         model.load_weights(os.path.join(training_path, create_model_name(training) + '_weights.h5'))
 
-
+        logger.debug('loaded weights from {}'.format(os.path.join(training_path, create_model_name(training) + '_weights.h5')))
     if 'startFromPrevTraining' in training.keys():
+        logger.debug('startFromPrevTraining')
         prev_base_path=base_path.replace(str(training['_id']),training['startFromPrevTraining'])
 
         prev_training_path = os.path.join(prev_base_path, 'training')
@@ -247,11 +284,13 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
         prev_training=mongocl.find_training(training['startFromPrevTraining'])
         with open(prev_labels_path) as file:
             prev_labels=json.load(file)
+            logger.debug('loaded labels from {}'.format(prev_labels_path))
 
         prev_checkpoint_path = os.path.join(prev_model_path, create_model_name(training)+'_weights.h5')
 
         if (prev_labels==labels):
             model=keras.models.load_model(prev_training['model_path'])
+            logger.debug('loaded model from {} '.format(prev_training['model_path']) )
         # else:
         #     restore weights with different model
         #     https: // github.com / keras - team / keras / issues / 7924
@@ -311,23 +350,47 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     #from tensorflow.python.keras.optimizers import SGD
 
 
+
+
     loss = 'categorical_crossentropy'
     if class_mode == 'binary':
         loss = 'binary_crossentropy'
     model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
-
+    logger.debug('compiled model with loss: {}'.format(loss))
     # we train our model again (this time fine-tuning the top 2 inception blocks
     # alongside the top Dense layers
     mongocl.update_training(training,'status','training')
+
+
+    logger.debug('starting training')
+
+
+
+    logger.debug('eval files found {}'.format(str(len(validation_generator.filepaths))))
+
+
+    logger.debug('train files found {}'.format(str(len(train_generator.filepaths))))
+    if len(validation_generator.filepaths)==0:
+        logger.debug('setting eval_steps to None ')
+        eval_steps=None
+        validation_generator=None
+    else:
+        eval_steps=math.ceil(len(train_generator.filepaths)/32)
+
     model.fit_generator(train_generator
                         , steps_per_epoch=steps,
                         epochs=epochs,
                         validation_data=validation_generator,
-                        validation_steps=10, callbacks=[cp_callback,loggCallback,tensorboard_callback])
+                        validation_steps=eval_steps, callbacks=[cp_callback,loggCallback,tensorboard_callback])
     mongocl.update_training(training,'status','training_finished')
 
 
+    logger.debug('training finished')
+
     mongocl.update_training(training, 'status', 'saving_model')
+
+
+    logger.debug('saving_model ')
 
     model.save(os.path.join(model_path,create_model_name(training)+'.h5'))
 
@@ -335,6 +398,7 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     mongocl.update_training(training, 'model_path', os.path.join(model_path,create_model_name(training)+'.h5'))
 
 
+    logger.debug('model saved to  {}'.format(os.path.join(model_path,create_model_name(training)+'.h5')))
 
 
 

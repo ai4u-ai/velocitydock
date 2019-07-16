@@ -29,10 +29,13 @@
 
 """The Python implementation of the GRPC helloworld.Greeter server."""
 import datetime
+import logging
 import os
 from concurrent import futures
 import argparse
 import time
+from os.path import expanduser
+
 import grpc
 
 from  trainer_service import dynamic_import
@@ -46,6 +49,17 @@ from converter.conversion_service.annotations_converter_coco import split_train_
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
+
+formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
+logging.basicConfig(filename=os.path.join(expanduser("~"),'velocitypy.log'),  filemode='a')
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+fh=logging.FileHandler(os.path.join(expanduser("~"),'velocitypy.log'))
+fh.setFormatter(formatter)
+logger = logging.getLogger('root')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+logger.addHandler(fh)
 
 class Trainer(trainerServer_pb2.TrainerServicer):
     def __init__(self):
@@ -307,8 +321,8 @@ class Trainer(trainerServer_pb2.TrainerServicer):
             os.mkdir(train_path)
         if training['algoType'] in [model['name'] for model in self.obj_det_models]:
 
-            print('__--------------------------------------------------------------------------Call')
-            print('__--------------------------------------------------------------------------DEV DATASET START')
+            logger.debug('__--------------------------------------------------------------------------Call')
+            logger.debug('__--------------------------------------------------------------------------DEV DATASET START')
             returnstate, conversion = convert_annotations_coco(
                 dataset_id=training['dataSet']['_id'],
                 annotations_list=train,
@@ -323,8 +337,8 @@ class Trainer(trainerServer_pb2.TrainerServicer):
             training['conversion'] = conversion
             mongocl.update_training(training,'conversion',conversion["_id"])
 
-            print('__--------------------------------------------------------------------------DEV DATASET END')
-            print('__--------------------------------------------------------------------------TEST DATASET START')
+            logger.debug('__--------------------------------------------------------------------------DEV DATASET END')
+            logger.debug('__--------------------------------------------------------------------------TEST DATASET START')
             if returnstate=="ERROR":
                 training['exceptions_conversion']=conversion['exceptions']
                 training['state']='error_conversion'
@@ -353,7 +367,7 @@ class Trainer(trainerServer_pb2.TrainerServicer):
             mongocl.update_training(training, 'status', 'CONVERTED_TEST')
 
 
-            print('__--------------------------------------------------------------------------TEST DATASET END')
+            logger.debug('__--------------------------------------------------------------------------TEST DATASET END')
             return train_path, test_path
         elif training['algoType'] == 'Yolo':
 
@@ -377,6 +391,7 @@ class Trainer(trainerServer_pb2.TrainerServicer):
                 mongocl.update_training(training,'status', 'error_conversion')
                 return
             conversion['status'] = 'CONVERTED_TRAIN'
+            logger.debug('__--------------------------------------------------------------------------CONVERTED_TRAIN')
             training['status']='CONVERTED_TRAIN'
             training['conversion']=conversion
             mongocl.update_training(training, 'conversion', conversion["_id"])
@@ -414,7 +429,7 @@ class Trainer(trainerServer_pb2.TrainerServicer):
         except Exception as exc:
             training['status']='error'
             mongocl.update_training(training,'status','error')
-            print(exc)
+            logger.error(exc)
        # mongocl.downloadAnnotations(request.annotations,request.imagename)
         #
         #
