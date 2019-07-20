@@ -38,6 +38,7 @@ from os.path import expanduser
 
 import grpc
 
+from MongoLoggingHandler import MongoLoggingHandler
 from  trainer_service import dynamic_import
 import mongoclient as mongocl
 import retrainForServer as retrain
@@ -47,23 +48,25 @@ from converter.conversion_service.annotations_converter_coco import split_train_
     convert_inception
 
 
-_ONE_DAY_IN_SECONDS = 60 * 60 * 24
+_ONE_DAY_IN_SECONDS = 60 * 60 * 24*364
 
 
 formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
-logging.basicConfig(filename=os.path.join(expanduser("~"),'velocitypy.log'),  filemode='a')
+logging.basicConfig(filename=os.path.join(expanduser("~"),'trainer_server.log'),  filemode='a')
 handler = logging.StreamHandler()
 handler.setFormatter(formatter)
-fh=logging.FileHandler(os.path.join(expanduser("~"),'velocitypy.log'))
+fh=logging.FileHandler(os.path.join(expanduser("~"),'trainer_server.log'))
 fh.setFormatter(formatter)
+mongohandler=MongoLoggingHandler(logging.DEBUG)
 logger = logging.getLogger('root')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 logger.addHandler(fh)
+logger.addHandler(mongohandler)
 
 class Trainer(trainerServer_pb2.TrainerServicer):
     def __init__(self):
-        print ('init trainer service')
+        logging.debug ('init trainer service')
         self.obj_det_models=[
 {'name':'ssd_mobilenet_v1_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz'},
 {'name':'ssd_mobilenet_v1_0.75_depth_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_0.75_depth_300x300_coco14_sync_2018_07_03.tar.gz'},
@@ -414,6 +417,9 @@ class Trainer(trainerServer_pb2.TrainerServicer):
     def TrainModel(self, request, context):
 
         training=mongocl.find_training(request.trainingid)
+        for handler in logger.handlers:
+            if handler.name == 'MongoLoggingHandler':
+                handler.training=training
         conversion,destPath=self.prep_conversion(training)
         train_path,test_path=self.convert(training,conversion,destPath)
         include_top=training['trainingMode']!='Transfer Learning'

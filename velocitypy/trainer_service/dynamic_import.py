@@ -4,6 +4,8 @@ import math
 import os
 import pkgutil
 import sys
+from os.path import expanduser
+
 from object_detection import model_hparams
 
 from object_detection import model_lib
@@ -22,10 +24,31 @@ from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.utils import np_utils
 from tensorflow.python.keras.callbacks import EarlyStopping
 import tensorflow as tf
+from tensorflow.python.platform import tf_logging
 import logging
+
+from MongoLoggingHandler import MongoLoggingHandler
 
 logger = logging.getLogger('root')
 logger.debug('dynamic import')
+
+tf.logging.set_verbosity(tf.logging.INFO)
+
+log=tf_logging.get_logger()
+#log = logging.getLogger('tensorflow')
+log.setLevel(logging.DEBUG)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+mongohandler=MongoLoggingHandler(logging.INFO)
+mongohandler.setLevel(logging.INFO)
+mongohandler.setFormatter(formatter)
+# create file handler which logs even debug messages
+fh = logging.FileHandler(os.path.join(expanduser("~"),'trainer_server.log'))
+fh.setLevel(logging.INFO)
+fh.setFormatter(formatter)
+log.addHandler(fh)
+log.addHandler(mongohandler)
 
 # from modulefinder import ModuleFinder
 #
@@ -76,16 +99,35 @@ class LossAccuracyHistory(keras.callbacks.Callback):
         self.logger.debug('starting training')
         return
     def on_train_batch_end(self, batch, logs={}):
+        self.losses.append(logs.get('loss'))
+        self.accuracies.append(logs.get('acc'))
+        self.mongoclient.update_training(self.training, 'losses', [str(loss) for loss in self.losses])
+        self.mongoclient.update_training(self.training, 'accuracies', [str(i) for i in self.accuracies])
         self.logger.debug('train batch {} end  acc: {}'.format(batch,logs))
+        self.mongoclient.update_training(self.training, 'status',
+                                'train batch {} end  acc: {}'.format(batch,logs))
         return
     def on_test_batch_begin(self, batch, logs=None):
+        self.losses.append(logs.get('loss'))
+        self.accuracies.append(logs.get('acc'))
+        self.mongoclient.update_training(self.training, 'losses', [str(loss) for loss in self.losses])
+        self.mongoclient.update_training(self.training, 'accuracies', [str(i) for i in self.accuracies])
         self.logger.debug('test batch {} begin  acc: {}'.format(batch, logs))
+        self.mongoclient.update_training(self.training, 'status',
+                                     'test batch {} end  acc: {}'.format(batch, logs))
         return
     def on_test_batch_end(self, batch, logs=None):
+        self.losses.append(logs.get('loss'))
+        self.accuracies.append(logs.get('acc'))
+        self.mongoclient.update_training(self.training, 'losses', [str(loss) for loss in self.losses])
+        self.mongoclient.update_training(self.training, 'accuracies', [str(i) for i in self.accuracies])
         self.logger.debug('test batch {} end  acc: {}'.format(batch, logs))
+        self.mongoclient.update_training(self.training, 'status',
+                                     'test batch {} end  acc: {}'.format(batch, logs))
         return
     def on_epoch_end(self, epoch, logs={}):
-
+        self.mongoclient.update_training(self.training, 'status',
+                                     'epoch   {} end  acc: {}'.format(epoch, logs))
         self.losses.append(logs.get('loss'))
         self.logger.debug('epoch {} end  acc: {}'.format(epoch, logs))
         self.mongoclient.update_training(self.training, 'losses',  [str(loss) for loss in self.losses])
@@ -98,17 +140,29 @@ def create_model_name(training):
 
 
 def train_object_det_model(training,base_path,modelname,dataset_train_path,dataset_test_path,classes,image_with= 200,image_height = 200,include_top=False,epochs=10,steps=10,class_mode='categorical',hparams_overrides=None):
+    for handler in log.handlers:
+        if handler.name == 'MongoLoggingHandler':
+            handler.training = training
     training_path = os.path.join(base_path, 'training')
-
-
+    logger.debug('base_path : {}'.format(base_path))
+    mongocl.update_training(training, 'status','base_path : {}'.format(base_path))
     mongocl.update_training(training, 'training_path', training_path)
+    mongocl.update_training(training, 'status', 'training_path : {}'.format(training_path))
+    logger.debug('training_path : {}'.format(training_path))
     model_path = os.path.join(training_path, 'model')
+    logger.debug('model_path : {}'.format(model_path))
+    mongocl.update_training(training, 'status', 'model_path : {}'.format(training_path))
     logdir = model_path
-
+    logger.debug('logdir_path : {}'.format(logdir))
+    mongocl.update_training(training, 'status', 'logdir_path : {}'.format(logdir))
     mongocl.update_training(training, 'logdir_path', logdir)
+    logger.debug('training_path : {}'.format(training_path))
+    mongocl.update_training(training, 'status', 'training_path : {}'.format(training_path))
     labels_path = os.path.join(training_path,'label_map.pbtxt')
+    logger.debug('model_path : {}'.format(model_path))
+    mongocl.update_training(training, 'status', 'model_path : {}'.format(model_path))
     mongocl.update_training(training, 'model_dir_path', model_path)
-
+    logger.debug('labels_path : {}'.format(labels_path))
     mongocl.update_training(training, 'labels_path', labels_path)
 
 
@@ -122,7 +176,7 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
         os.makedirs(model_path)
     if not os.path.isdir(logdir):
         os.makedirs(logdir)
-
+    mongocl.update_training(training, 'status', 'configuring pipeline ')
     pipeline_config_path = config_object_det_algo(model_name=modelname, destpath=training_path,
                                                   classes=classes,num_steps=epochs,from_detection_checkpoint=include_top,train_tf_record_path=dataset_train_path,eval_tf_record_path=dataset_test_path)
 
@@ -143,6 +197,7 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
     eval_on_train_input_fn = train_and_eval_dict['eval_on_train_input_fn']
     predict_input_fn = train_and_eval_dict['predict_input_fn']
     train_steps = train_and_eval_dict['train_steps']
+    mongocl.update_training(training, 'status', 'starting training')
     train_spec, eval_specs = model_lib.create_train_and_eval_specs(
         train_input_fn,
         eval_input_fns,
@@ -152,8 +207,10 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
         eval_on_train_data=False)
 
     # Currently only a single Eval Spec is allowed.
+
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_specs[0])
     mongocl.update_training(training, 'status', 'end')
+    logger.debug('finished training')
 
 
 
@@ -162,6 +219,10 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     #image_with = 200
     #image_height = 200
    #
+    for handler in logger.handlers:
+       if handler.name == 'MongoLoggingHandler':
+           handler.training = training
+    mongocl.update_training(training, 'status', 'configuring paths')
     training_path=os.path.join(base_path,'training')
 
     logdir=os.path.join(training_path,'logs')
@@ -209,6 +270,7 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     cp_callback = callbacks.ModelCheckpoint(checkpoint_path,monitor = 'acc', verbose = 1, save_best_only = True, mode = 'max')
 
 
+    mongocl.update_training(training, 'status', 'configuring callbacks')
 
 
     tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
@@ -241,7 +303,13 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
         json.dump(labels,file)
 
 
+    mongocl.update_training(training, 'status', 'configuring images ')
+
+
     base_model = load_model(modelname, include_top=include_top, weights='imagenet')
+
+
+    mongocl.update_training(training, 'status', 'loaded model: {}'.format(modelname))
     logger.debug('loaded model: {} '.format(modelname))
     if include_top is False:
         # add a global spatial average pooling layer
@@ -272,10 +340,11 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
 
     if os.path.isfile(os.path.join(training_path, create_model_name(training) + '_weights.h5')):
         model.load_weights(os.path.join(training_path, create_model_name(training) + '_weights.h5'))
-
+        mongocl.update_training(training, 'status', 'loaded weights from {}'.format(os.path.join(training_path, create_model_name(training) + '_weights.h5')))
         logger.debug('loaded weights from {}'.format(os.path.join(training_path, create_model_name(training) + '_weights.h5')))
     if 'startFromPrevTraining' in training.keys():
         logger.debug('startFromPrevTraining')
+        mongocl.update_training(training, 'status', 'startFromPrevTraining')
         prev_base_path=base_path.replace(str(training['_id']),training['startFromPrevTraining'])
 
         prev_training_path = os.path.join(prev_base_path, 'training')
@@ -285,12 +354,14 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
         with open(prev_labels_path) as file:
             prev_labels=json.load(file)
             logger.debug('loaded labels from {}'.format(prev_labels_path))
+            mongocl.update_training(training, 'status', 'loaded labels from {}'.format(prev_labels_path))
 
         prev_checkpoint_path = os.path.join(prev_model_path, create_model_name(training)+'_weights.h5')
 
         if (prev_labels==labels):
             model=keras.models.load_model(prev_training['model_path'])
             logger.debug('loaded model from {} '.format(prev_training['model_path']) )
+            mongocl.update_training(training, 'status', 'loaded model from {} '.format(prev_training['model_path']) )
         # else:
         #     restore weights with different model
         #     https: // github.com / keras - team / keras / issues / 7924
@@ -357,6 +428,9 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
         loss = 'binary_crossentropy'
     model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
     logger.debug('compiled model with loss: {}'.format(loss))
+
+
+    mongocl.update_training(training, 'status', 'compiled model with loss: {}'.format(loss))
     # we train our model again (this time fine-tuning the top 2 inception blocks
     # alongside the top Dense layers
     mongocl.update_training(training,'status','training')
@@ -365,17 +439,29 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     logger.debug('starting training')
 
 
+    mongocl.update_training(training, 'status', 'starting training')
+
 
     logger.debug('eval files found {}'.format(str(len(validation_generator.filepaths))))
 
 
+    mongocl.update_training(training, 'status', 'eval files found {}'.format(str(len(validation_generator.filepaths))))
+
     logger.debug('train files found {}'.format(str(len(train_generator.filepaths))))
+
+
+    mongocl.update_training(training, 'status', 'train files found {}'.format(str(len(train_generator.filepaths))))
+
     if len(validation_generator.filepaths)==0:
         logger.debug('setting eval_steps to None ')
+        mongocl.update_training(training, 'status', 'setting eval_steps to None')
         eval_steps=None
         validation_generator=None
     else:
         eval_steps=math.ceil(len(train_generator.filepaths)/32)
+        mongocl.update_training(training, 'status', 'setting eval_steps to {}'.format(str(eval_steps)))
+
+        logger.debug('setting eval_steps to {}'.format(str(eval_steps)))
 
     model.fit_generator(train_generator
                         , steps_per_epoch=steps,
@@ -387,7 +473,7 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
 
     logger.debug('training finished')
 
-    mongocl.update_training(training, 'status', 'saving_model')
+    mongocl.update_training(training, 'status', 'saving_model to {} '.format(os.path.join(model_path,create_model_name(training)+'.h5')))
 
 
     logger.debug('saving_model ')
@@ -401,6 +487,8 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     logger.debug('model saved to  {}'.format(os.path.join(model_path,create_model_name(training)+'.h5')))
 
 
+    mongocl.update_training(training, 'status',
+                        'saved_model to {} '.format(os.path.join(model_path, create_model_name(training) + '.h5')))
 
 
     mongocl.update_training(training, 'status', 'end')

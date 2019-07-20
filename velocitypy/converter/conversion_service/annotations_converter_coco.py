@@ -3,7 +3,7 @@ import copy
 import datetime
 import glob
 import io
-
+from os.path import expanduser
 
 import contextlib2
 import numpy as np
@@ -27,7 +27,18 @@ fsbucket = gridfs.GridFSBucket(db)
 flags = tf.app.flags
 flags.DEFINE_string('output_path', 'train.tfrecords', 'Path to output TFRecord')
 FLAGS = flags.FLAGS
+import logging
 
+formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
+logging.basicConfig(filename=os.path.join(expanduser("~"),'annotationsconverter.log'),  filemode='a')
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+fh=logging.FileHandler(os.path.join(expanduser("~"),'annotationsconverter.log'))
+fh.setFormatter(formatter)
+logger = logging.getLogger('root')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+logger.addHandler(fh)
 
 def find_last_file_name(dirName):
     # files = [f for f in listdir(dirName) if isfile(join(dirName, f))]
@@ -43,7 +54,7 @@ def find_last_file_name(dirName):
 def check_for_previous(dirName):
     if os.path.exists(dirName) and os.path.isdir(dirName):
         if not os.listdir(dirName):
-            print("Directory is empty")
+            logger.debug("Directory is empty")
             return 1
         else:
             return find_last_file_name(dirName)
@@ -133,7 +144,7 @@ def create_tf_example(annotation, image, class_number):
     #
     #
     #    _image = tf.image.decode_jpeg(encoded_image_data, channels=3)
-    # print(_image.eval().shape)
+    # logger.debug(_image.eval().shape)
     # cv2.imshow('',np.asarray(_image.eval()))
     #cv2.imwrite('image.jpeg', np.asarray(_image.eval()))
     # cv2.imshow('',_image.eval())
@@ -172,7 +183,7 @@ def convert_inception(annotations,destpath_name, img_w,img_h,conversion):
 
             try:
                 for anno in annotation["annotation"]:
-                    #print(anno["objectSelector"]["dataUrl"])
+                    #logger.debug(anno["objectSelector"]["dataUrl"])
                     filename = str(int(anno["currentTime"])) + ".jpeg"
                     classname = str(anno["objectSelector"]["class"]["name"])
                     if not os.path.isdir(destpath_name + '/' + classname):
@@ -183,7 +194,7 @@ def convert_inception(annotations,destpath_name, img_w,img_h,conversion):
                     img=cv2.resize(img,(img_h,img_w))
                     cv2.imwrite(os.path.join(os.path.join(destpath_name, classname), filename),img)
             except Exception as exc:
-                    print(exc)
+                    logger.error(str(exc))
                     exceptions.extend(exc)
 
         return 'success',conversion
@@ -201,7 +212,7 @@ def convert_annotation_obj_det(annotations,writer,img_w,img_h):
     exceptions=[]
     media_id = annotations['annotatedOnMedia']
     media = db.media.find_one({'_id': ObjectId(media_id)})
-    print(media['name'])
+    logger.debug(media['name'])
     if not 'filePath' in media.keys():
         download('tmp', media['name'], media['media']['id'])
         try:
@@ -216,7 +227,7 @@ def convert_annotation_obj_det(annotations,writer,img_w,img_h):
             exceptions.append(exc)
             return exceptions
     if (vidcap.isOpened() == False):
-        print("Error opening video stream or file")
+        logger.debug("Error opening video stream or file")
         exceptions.append("Error opening video stream or file")
         return exceptions
 
@@ -230,7 +241,7 @@ def convert_annotation_obj_det(annotations,writer,img_w,img_h):
         if success:
             try:
                 image = cv2.resize(image, (img_w,img_h))
-                print(image.shape[:2])
+                logger.debug(image.shape[:2])
                 tf_example = create_tf_example(annotation, image,
                                                classes.index(annotation['objectSelector']['class']['name']))
                 writer.write(tf_example.SerializeToString())
@@ -238,6 +249,7 @@ def convert_annotation_obj_det(annotations,writer,img_w,img_h):
             except Exception as ex:
 
                 exceptions.append(str(ex))
+                logger.error(str(ex))
                 continue
 
         # if index==5:
@@ -255,7 +267,7 @@ def convert_annotation_yolo(annotations,destpath,img_width,img_heitght):
     for anno in annotations:
         media_id = anno['annotatedOnMedia']
         media = db.media.find_one({'_id': ObjectId(media_id)})
-        print(media['name'])
+        logger.debug(media['name'])
         if not 'filePath' in media.keys():
             download('tmp', media['name'], media['media']['id'])
             vidcap = cv2.VideoCapture(os.path.join('tmp', media['name']))
@@ -271,10 +283,11 @@ def convert_annotation_yolo(annotations,destpath,img_width,img_heitght):
             try:
                 image = cv2.resize(image, (img_width, img_heitght))
             except Exception as ex:
+                logger.error(str(ex))
                 continue
-                print(str(ex))
 
-            print(image.shape[:2])
+
+            logger.debug(image.shape[:2])
             if success:
 
                 oldX = int(annotation['origSize']['width'])
@@ -410,8 +423,8 @@ def covnert_data_sets(request):
             db.conversion.save(conversion)
             if not os.path.isdir(dest_path):
                 os.mkdir(dest_path)
-            print('__--------------------------------------------------------------------------Call')
-            print('__--------------------------------------------------------------------------DEV DATASET START')
+            logger.debug('__--------------------------------------------------------------------------Call')
+            logger.debug('__--------------------------------------------------------------------------DEV DATASET START')
             returnstate, conversion_id = convert_annotations_coco(
                 dataset_id=request.dataset_id,
                 annotations_list=train,
@@ -419,10 +432,10 @@ def covnert_data_sets(request):
                 record_name=request.record_name + '_train',
                 img_w=int(request.img_w),
                 img_h=int(request.img_h),conversion=conversion)
-            print('__--------------------------------------------------------------------------DEV DATASET END')
+            logger.debug('__--------------------------------------------------------------------------DEV DATASET END')
             conversion['status'] = 'converted_train'
             db.conversion.save(conversion)
-            print('__--------------------------------------------------------------------------TEST DATASET START')
+            logger.debug('__--------------------------------------------------------------------------TEST DATASET START')
             returnstate, conversion_id = convert_annotations_coco(
                 dataset_id=request.dataset_id,
                 annotations_list=test,
@@ -431,7 +444,7 @@ def covnert_data_sets(request):
                 img_w=int(request.img_w),
                 img_h=int(request.img_h),conversion=conversion)
             conversion['status']='end'
-            print('__--------------------------------------------------------------------------TEST DATASET END')
+            logger.debug('__--------------------------------------------------------------------------TEST DATASET END')
             db.conversion.save(conversion)
         elif request.conversion_type == 'Yolo':
             type_path = os.path.join(destPath, 'yolo')
@@ -459,7 +472,7 @@ def covnert_data_sets(request):
 
     except Exception as exc:
         returnstate = 'Error'
-        print(exc)
+        logger.debug(exc)
     conversion['status'] = 'ENDED'
     conversion['modif_date'] = datetime.datetime.now().isoformat()
     conversion['exceptions'].append(exceptions)
@@ -499,10 +512,10 @@ def convert_annotations_coco(dataset_id,annotations_list,destpath,record_name,im
 
 
 def main(argv=None):
-    print('in main')
+    logger.debug('in main')
     # tf.InteractiveSession()
     # tf.initialize_all_variables().run()
-    # print()
+    # logger.debug()
     # image=cv2.imread('/Users/ivanjacobs/Documents/development/deme/object_detection_project/deme/yolo_darknet_org/images/00738.jpg')
     # cv2.rectangle(image, (272-100, 175), (299-100, 137), (0, 0, 255), 2)
     # cv2.rectangle(image, (272 , 175), (299, 137), (0, 0, 255), 2)
@@ -537,7 +550,7 @@ def main(argv=None):
     # # for anno in annotations:
     # #     annotations_list.append(str(anno['_id']))
     #
-    # print(convert_annotations_coco(annotations_list,destpath,record_name,img_w,img_h))
+    # logger.debug(convert_annotations_coco(annotations_list,destpath,record_name,img_w,img_h))
 
 if __name__ == '__main__':
     main()

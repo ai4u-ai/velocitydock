@@ -8,7 +8,8 @@ import tensorflow as tf
 from google.protobuf import text_format
 from object_detection.protos import pipeline_pb2
 from object_detection.protos import string_int_label_map_pb2
-
+import logging
+logger=logging.getLogger('root')
 models=[
 {'name':'ssd_mobilenet_v1_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz'},
 {'name':'ssd_mobilenet_v1_0.75_depth_coco','url':'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_0.75_depth_300x300_coco14_sync_2018_07_03.tar.gz'},
@@ -68,11 +69,12 @@ def download_model(MODEL_NAME,url,destpath):
 
 def change_config(config_path,dest_path,num_classes,num_steps,fine_tune_checkpoint,from_detection_checkpoint,train_tf_record_path,eval_tf_record_path,label_map_path,training,eval_num_examples=10,max_evals=10,eval_shuffle=True):
             pipeline_config = pipeline_pb2.TrainEvalPipelineConfig()
-
+            logger.debug('reading config : {}'.format(config_path))
             with tf.io.gfile.GFile(config_path, "r") as f:
                     proto_str = f.read()
                     text_format.Merge(proto_str, pipeline_config)
             #
+
             for file in os.listdir(train_tf_record_path):
 
                         train_tf_record_path=os.path.join(train_tf_record_path,file)
@@ -96,7 +98,7 @@ def change_config(config_path,dest_path,num_classes,num_steps,fine_tune_checkpoi
             pipeline_config.eval_input_reader[0].shuffle=eval_shuffle
             pipeline_config.eval_input_reader[0].tf_record_input_reader.input_path[0]=eval_tf_record_path
 
-
+            logger.debug('Saving config to: {}'.format(os.path.join(dest_path,'pipeline.config')))
             config_text = text_format.MessageToString(pipeline_config)
             with tf.gfile.Open(os.path.join(dest_path,'pipeline.config'), "wb") as f:
                          f.write(config_text)
