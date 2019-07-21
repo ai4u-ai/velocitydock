@@ -30,7 +30,7 @@ from tensorflow.python.platform import tf_logging
 import tensorflow as tf
 import logging
 
-from MongoLoggingHandler import MongoLoggingHandler
+from velociytloggers.MongoLoggingHandler import MongoLoggingHandler
 
 logger = logging.getLogger('root')
 logger.debug('dynamic import')
