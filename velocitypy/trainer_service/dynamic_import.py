@@ -32,7 +32,7 @@ from MongoLoggingHandler import MongoLoggingHandler
 logger = logging.getLogger('root')
 logger.debug('dynamic import')
 
-tf.logging.set_verbosity(tf.logging.INFO)
+tf.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
 log=tf_logging.get_logger()
 #log = logging.getLogger('tensorflow')
@@ -42,7 +42,7 @@ log.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 mongohandler=MongoLoggingHandler(logging.INFO)
 mongohandler.setLevel(logging.INFO)
-mongohandler.setFormatter(formatter)
+
 # create file handler which logs even debug messages
 fh = logging.FileHandler(os.path.join(expanduser("~"),'trainer_server.log'))
 fh.setLevel(logging.INFO)
@@ -180,7 +180,7 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
     pipeline_config_path = config_object_det_algo(model_name=modelname, destpath=training_path,
                                                   classes=classes,num_steps=epochs,from_detection_checkpoint=include_top,train_tf_record_path=dataset_train_path,eval_tf_record_path=dataset_test_path)
 
-    config = tf.estimator.RunConfig(model_dir=model_path)
+    config = tf.estimator.RunConfig(model_dir=model_path,log_step_count_steps=1)
 
 
     train_and_eval_dict = model_lib.create_estimator_and_inputs(
@@ -210,7 +210,7 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
 
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_specs[0])
     mongocl.update_training(training, 'status', 'end')
-    logger.debug('finished training')
+
 
 
 
@@ -219,9 +219,9 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     #image_with = 200
     #image_height = 200
    #
-    for handler in logger.handlers:
-       if handler.name == 'MongoLoggingHandler':
-           handler.training = training
+    # for handler in logger.handlers:
+    #    if handler.name == 'MongoLoggingHandler':
+    #        handler.training = training
     mongocl.update_training(training, 'status', 'configuring paths')
     training_path=os.path.join(base_path,'training')
 

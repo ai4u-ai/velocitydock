@@ -417,19 +417,24 @@ class Trainer(trainerServer_pb2.TrainerServicer):
     def TrainModel(self, request, context):
 
         training=mongocl.find_training(request.trainingid)
-        for handler in logger.handlers:
-            if handler.name == 'MongoLoggingHandler':
-                handler.training=training
+
         conversion,destPath=self.prep_conversion(training)
         train_path,test_path=self.convert(training,conversion,destPath)
         include_top=training['trainingMode']!='Transfer Learning'
         mongocl.update_training(training,'dest_path',destPath)
         try:
             if training['algoType'] in [model['name'] for model in self.obj_det_models]:
+                for handler in logger.handlers:
+                    if handler.name == 'MongoLoggingHandler':
+                        handler.training = training
+                        handler.type_logging = 'TENSORFLOW'
                 include_top = training['trainingMode'] == 'Transfer Learning'
                 dynamic_import.train_object_det_model(training,destPath,training['algoType'],train_path,test_path,training['classes'],int(training['conversionSettings']['image_width']),int(training['conversionSettings']['image_height']),include_top,int(training['epochs']),int(training['steps']),
                                    training['conversionSettings']['classMode'])
             else:
+                for handler in logger.handlers:
+                    if handler.name == 'MongoLoggingHandler':
+                        handler.training = training
                 dynamic_import.train_model(training,destPath,training['algoType'],train_path,test_path,int(training['conversionSettings']['image_width']),int(training['conversionSettings']['image_height']),include_top,int(training['epochs']),int(training['steps']),
                                    training['conversionSettings']['classMode'])
         except Exception as exc:

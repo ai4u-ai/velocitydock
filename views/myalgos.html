@@ -617,43 +617,17 @@
 
 													</div>
 
-<!--													<div class="col-md-8 col-sm-6">-->
 
 
-<!--														<div  class="todo-content">-->
-<!--															<div class="portlet light">-->
-<!--																&lt;!&ndash; PROJECT HEAD &ndash;&gt;-->
 
-<!--																&lt;!&ndash; end PROJECT HEAD &ndash;&gt;-->
-<!--																<div class="portlet-body">-->
-<!--																	<div class="row">-->
-<!--																		<div class="col-md-12 col-sm-10">-->
-<!--																			<div class="col-md-12 col-sm-10">-->
-<!--																				<div class="scroller" style="max-height: 100%; min-height: 700px;" data-always-visible="1" data-rail-visible="1" data-handle-color="#dae3e7">-->
-<!--																					<div class="todo-tasklist">-->
-<!--																						<div  ng-click=""   ng-repeat="selection in selectedAnnotation " class="todo-tasklist-item todo-tasklist-item-border-green">-->
-<!--																							<img  class="todo-userpic pull-left" ng-src="{{selection.objectSelector.dataUrl}}" width="75px" height="75px">-->
 
-<!--																							<div class="todo-tasklist-controls pull-left">-->
-<!--																								<span class="todo-tasklist-date"><i class="fa fa-calendar"></i>  {{selection.currentTime| date:'mm:ss' }}</span>-->
-<!--																								<span class="todo-tasklist-badge badge badge-roundless">Class:{{selection.objectSelector.class.name}}</span>-->
-<!--																								<span>x1:{{selection.objectSelector.x1}} x2:{{selection.objectSelector.x2}} y1:{{selection.objectSelector.y1}} y2:{{selection.objectSelector.y2}}</span>-->
-<!--																							</div>-->
 
-<!--																						</div>-->
-<!--																						<div ng-show="false"class="todo-tasklist-item todo-tasklist-item-border-red">-->
 
-<!--																						</div>-->
 
-<!--																					</div>-->
-<!--																				</div>-->
-<!--																			</div>-->
 
-<!--																		</div>-->
-<!--																	</div>-->
-<!--																</div>-->
-<!--															</div>-->
-<!--														</div>-->
+
+
+
 
 
 
@@ -816,11 +790,43 @@
 															<div id="chartdiv" style="min-height: 500px"></div>
 												</div>
 											</div>
+
+
+										<div class="col-md-12">
+
+												<!-- BEGIN PORTLET-->
+												<div class="portlet light">
+													<div class="portlet-title">
+														<div class="caption">
+																Logs
+														</div>
+													</div>
+															<div class="portlet-body">
+																		<div class="scroller" style="max-height: 100%; min-height: 700px; width:100%" data-always-visible="1" data-rail-visible="1" data-handle-color="#dae3e7">
+																				<div class="todo-tasklist">
+																					<div  ng-click=""   ng-repeat="log in stats.selectedTraining.logs " class="todo-tasklist-item todo-tasklist-item-border-green">
+
+
+																						<div class="todo-tasklist-controls pull-left">
+																							<span class="todo-tasklist-date"><i class="fa fa-calendar"></i>  {{log.when|date:'dd/MM/yyyy HH:mm:ss ' }}</span>
+																							<span class="todo-tasklist-badge badge badge-roundless">Class:{{log.levelname}}</span>
+																							<span>x1:{{log.message}} </span>
+																						</div>
+
+																					</div>
+
+
+																				</div>
+																		</div>
+															</div>
+												</div>
+
 										</div>
 
 
+									</div>
 
-										<div class="row" ng-show="selectedStep===7">
+									<div class="row" ng-show="selectedStep===7">
 										<div class="col-md-12  col-sm-10">
 		<!-- BEGIN PORTLET-->
 										<div class="portlet light" >

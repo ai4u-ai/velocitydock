@@ -250,7 +250,7 @@ MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthServ
             $scope.training=data.training
             $scope.getTrainings()
 
-            $scope.startInterval()
+            $scope.startInterval(5000)
 
          // $scope.select(0);
 
@@ -720,75 +720,78 @@ MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthServ
     $rootScope.settings.layout.pageAutoScrollOnLoad = 1500;
     $rootScope.settings.layout.pageSidebarClosed = true;
 */
-    $scope.chart=am4core.create("chartdiv", am4charts.XYChart);
-    $scope.chart.data=[]
-    // Create axes
-    var xAxis =  $scope.chart.xAxes.push(new am4charts.ValueAxis());
-    xAxis.renderer.minGridDistance = 40;
+    $scope.initChart=function(){
+        $scope.chart=am4core.create("chartdiv", am4charts.XYChart);
+        $scope.chart.data=[]
+        // Create axes
+        var xAxis =  $scope.chart.xAxes.push(new am4charts.ValueAxis());
+        xAxis.renderer.minGridDistance = 40;
 
 // Create value axis
-    var yAxis =  $scope.chart.yAxes.push(new am4charts.ValueAxis());
+        var yAxis =  $scope.chart.yAxes.push(new am4charts.ValueAxis());
 
 // Create series
-    var series =  $scope.chart.series.push(new am4charts.LineSeries());
-    series.dataFields.valueX = "x";
-    series.dataFields.valueY = "ay";
-    series.dataFields.value = "aValue";
-    series.strokeWidth = 2;
+        var series =  $scope.chart.series.push(new am4charts.LineSeries());
+        series.dataFields.valueX = "x";
+        series.dataFields.valueY = "ay";
+        series.dataFields.value = "aValue";
+        series.strokeWidth = 2;
 
 // Drop-shaped tooltips
-    series.tooltip.background.cornerRadius = 20;
-    series.tooltip.background.strokeOpacity = 0;
-    series.tooltip.pointerOrientation = "vertical";
-    series.tooltip.label.minWidth = 40;
-    series.tooltip.label.minHeight = 40;
-    series.tooltip.label.textAlign = "middle";
-    series.tooltip.label.textValign = "middle";
+        series.tooltip.background.cornerRadius = 20;
+        series.tooltip.background.strokeOpacity = 0;
+        series.tooltip.pointerOrientation = "vertical";
+        series.tooltip.label.minWidth = 40;
+        series.tooltip.label.minHeight = 40;
+        series.tooltip.label.textAlign = "middle";
+        series.tooltip.label.textValign = "middle";
 
-    // Create series
-    var series =  $scope.chart.series.push(new am4charts.LineSeries());
-    series.dataFields.valueX = "x";
-    series.dataFields.valueY = "ay";
-    series.dataFields.value = "aValue";
-    series.strokeWidth = 2;
+        // Create series
+        var series =  $scope.chart.series.push(new am4charts.LineSeries());
+        series.dataFields.valueX = "x";
+        series.dataFields.valueY = "ay";
+        series.dataFields.value = "aValue";
+        series.strokeWidth = 2;
 
 // Drop-shaped tooltips
-    series.tooltip.background.cornerRadius = 20;
-    series.tooltip.background.strokeOpacity = 0;
-    series.tooltip.pointerOrientation = "vertical";
-    series.tooltip.label.minWidth = 40;
-    series.tooltip.label.minHeight = 40;
-    series.tooltip.label.textAlign = "middle";
-    series.tooltip.label.textValign = "middle";
+        series.tooltip.background.cornerRadius = 20;
+        series.tooltip.background.strokeOpacity = 0;
+        series.tooltip.pointerOrientation = "vertical";
+        series.tooltip.label.minWidth = 40;
+        series.tooltip.label.minHeight = 40;
+        series.tooltip.label.textAlign = "middle";
+        series.tooltip.label.textValign = "middle";
 
 // Make bullets grow on hover
-    var bullet = series.bullets.push(new am4charts.CircleBullet());
-    bullet.circle.strokeWidth = 2;
-    bullet.circle.radius = 4;
-    bullet.circle.fill = am4core.color("#fff");
-
-    var bullethover = bullet.states.create("hover");
-    bullethover.properties.scale = 1.3;
+        var bullet = series.bullets.push(new am4charts.CircleBullet());
+        bullet.circle.strokeWidth = 2;
+        bullet.circle.radius = 4;
+        bullet.circle.fill = am4core.color("#fff");
+        bullet.tooltipText="step:{valueX} "+ $scope.selectedMetric+":[bold]{valueY}"
+        var bullethover = bullet.states.create("hover");
+        bullethover.properties.scale = 1.3;
 
 // Make a panning cursor
-     $scope.chart.cursor = new am4charts.XYCursor();
-     $scope.chart.cursor.behavior = "panXY";
-     $scope.chart.cursor.xAxis = xAxis;
-     $scope.chart.cursor.snapToSeries = series;
+        $scope.chart.cursor = new am4charts.XYCursor();
+        $scope.chart.cursor.behavior = "panXY";
+        $scope.chart.cursor.xAxis = xAxis;
+        $scope.chart.cursor.snapToSeries = series;
 
 // Create vertical scrollbar and place it before the value axis
-     $scope.chart.scrollbarY = new am4core.Scrollbar();
-     $scope.chart.scrollbarY.parent =  $scope.chart.leftAxesContainer;
-     $scope.chart.scrollbarY.toBack();
+        $scope.chart.scrollbarY = new am4core.Scrollbar();
+        $scope.chart.scrollbarY.parent =  $scope.chart.leftAxesContainer;
+        $scope.chart.scrollbarY.toBack();
 
 // Create a horizontal scrollbar with previe and place it underneath the date axis
-     $scope.chart.scrollbarX = new am4charts.XYChartScrollbar();
-     $scope.chart.scrollbarX.series.push(series);
-     $scope.chart.scrollbarX.parent =  $scope.chart.bottomAxesContainer;
+        $scope.chart.scrollbarX = new am4charts.XYChartScrollbar();
+        $scope.chart.scrollbarX.series.push(series);
+        $scope.chart.scrollbarX.parent =  $scope.chart.bottomAxesContainer;
 
-     $scope.chart.events.on("ready", function () {
-        xAxis.zoom({start:0.79, end:1});
-    });
+        $scope.chart.events.on("ready", function () {
+            xAxis.zoom({start:0.79, end:1});
+        });
+    }
+
 
     $scope.metrics=['accuracy','loss']
     $scope.selectedMetric=$scope.metrics[0]
@@ -815,20 +818,38 @@ MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthServ
 
 
 
+        }else {
+            if ( training.losses!=undefined){
+
+
+                if( $scope.selectedMetric=='loss'){
+
+                    $scope.chart.data=  training.losses.map(function (element,index) {
+                        return {"x":index,ay:element}
+
+                    })
+                }
+
+
+
+            }
         }
 
     }
+    $scope.initChart()
     $scope.metricSelected=function(metric){
-        $scope.selectedMetric=metric,
+        $scope.selectedMetric=metric
+        $scope.initChart()
         $scope.chart.data=[];
         $scope.updateChart($scope.stats.selectedTraining)
+
 
     }
 
     $scope.trainingSelected=function(training){
 
     $scope.endInterval()
-    $scope.startInterval(2000)
+    $scope.startInterval(5000)
     $scope.stats.selectedTraining=training;
     $scope.chart.data=[];
         if (training.accuracies!=undefined){
