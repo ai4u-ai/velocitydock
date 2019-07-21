@@ -38,7 +38,7 @@ from os.path import expanduser
 
 import grpc
 
-from MongoLoggingHandler import MongoLoggingHandler
+from velociytloggers.MongoLoggingHandler import MongoLoggingHandler
 from  trainer_service import dynamic_import
 import mongoclient as mongocl
 import retrainForServer as retrain
