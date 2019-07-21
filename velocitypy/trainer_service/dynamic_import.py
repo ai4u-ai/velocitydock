@@ -10,21 +10,24 @@ from object_detection import model_hparams
 
 from object_detection import model_lib
 import numpy as np
-from  tensorflow.python import keras
-from tensorflow.python.keras import  applications
+from keras import applications
+import keras
+
+
 import importlib
 import mongoclient as mongocl
-from tensorflow.python.keras.models import Model
-from tensorflow.python.keras.applications import Xception
-from tensorflow.python.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.python.keras.optimizers import Adam
-from tensorflow.python.keras import callbacks
-from tensorflow.python.keras.applications import imagenet_utils
-from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.python.keras.utils import np_utils
-from tensorflow.python.keras.callbacks import EarlyStopping
-import tensorflow as tf
+from keras.models import Model
+from keras.applications import Xception
+from keras.layers import Dense, GlobalAveragePooling2D
+from keras.optimizers import Adam
+from keras import callbacks
+from keras.applications import imagenet_utils
+from keras.preprocessing.image import ImageDataGenerator
+from keras.utils import np_utils
+from keras.callbacks import EarlyStopping
+from tensorflow.python import keras as tf_keras
 from tensorflow.python.platform import tf_logging
+import tensorflow as tf
 import logging
 
 from MongoLoggingHandler import MongoLoggingHandler
@@ -76,17 +79,26 @@ from config_object_detection import config_object_det_algo
 
 
 def load_model(name,weights='imagenet',include_top=False):
-    for mosulz in pkgutil.walk_packages(keras.__path__,keras.__name__+'.'):
+    # for mosulz in pkgutil.walk_packages(keras.__path__,keras.__name__+'.'):
+    #
+    #     if mosulz.name.split('.')[-1]==name.replace(' ','_').lower():
+    #
+    #         module=importlib.import_module(mosulz.name)
+    #         class_=getattr(module,name.replace(' ',''))
+    #         return class_(weights=weights, include_top=include_top)
+    for mosulz in pkgutil.walk_packages(applications.__path__, applications.__name__ + '.'):
 
-        if mosulz.name.split('.')[-1]==name.replace(' ','_').lower():
 
-            module=importlib.import_module(mosulz.name)
-            class_=getattr(module,name.replace(' ',''))
-            return class_(weights=weights, include_top=include_top)
+            module = importlib.import_module(mosulz.name)
+            if hasattr(module, name.replace(' ', '')):
+                class_ = getattr(module, name.replace(' ', ''))
+                return class_(weights=weights, include_top=include_top)
+            if hasattr(module, name.replace(' ','_').lower()):
+                class_ = getattr(module, name.replace(' ','_').lower())
+                return class_(weights=weights, include_top=include_top)
 
 
-
-class LossAccuracyHistory(keras.callbacks.Callback):
+class LossAccuracyHistory(tf_keras.callbacks.Callback):
     def __init__(self,training, mongoclient):
         self.mongoclient = mongoclient
         self.training = training
@@ -143,6 +155,7 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
     for handler in log.handlers:
         if handler.name == 'MongoLoggingHandler':
             handler.training = training
+            handler.type_logging = 'TENSORFLOW'
     training_path = os.path.join(base_path, 'training')
     logger.debug('base_path : {}'.format(base_path))
     mongocl.update_training(training, 'status','base_path : {}'.format(base_path))
@@ -311,27 +324,37 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
 
     mongocl.update_training(training, 'status', 'loaded model: {}'.format(modelname))
     logger.debug('loaded model: {} '.format(modelname))
-    if include_top is False:
-        # add a global spatial average pooling layer
-        x = base_model.output
-        x = GlobalAveragePooling2D()(x)
-        # let's add a fully-connected layer
-        x = Dense(1024, activation='relu')(x)
-        # and a logistic layer -- let's say we have 200 classes
-        activation = 'softmax'
-        if class_mode == 'binary':
-            activation = 'sigmoid'
-        predictions = Dense(nb_class, activation=activation)(x)
 
-        # this is the model we will train
-        model = Model(inputs=base_model.input, outputs=predictions)
 
-        # first: train only the top layers (which were randomly initialized)
-        # i.e. freeze all convolutional InceptionV3 layers
-        for layer in base_model.layers:
-            layer.trainable = False
-    else:
-        model = base_model
+    try:
+        if include_top is False:
+            # add a global spatial average pooling layer
+            x = base_model.output
+
+            x = GlobalAveragePooling2D()(x)
+
+            # let's add a fully-connected layer
+            x = Dense(1024, activation='relu')(x)
+            # and a logistic layer -- let's say we have 200 classes
+            activation = 'softmax'
+            if class_mode == 'binary':
+                activation = 'sigmoid'
+            predictions = Dense(nb_class, activation=activation)(x)
+
+            # this is the model we will train
+            model = Model(inputs=base_model.input, outputs=predictions)
+
+            # first: train only the top layers (which were randomly initialized)
+            # i.e. freeze all convolutional InceptionV3 layers
+            for layer in base_model.layers:
+                layer.trainable = False
+        else:
+            model = base_model
+
+    except Exception as exc:
+        logger.error(exc)
+        logger.info('Loading full model failed to init transfer learning')
+        model =  load_model(modelname, include_top=True, weights='imagenet')
 
     # compile the model (should be done *after* setting layers to non-trainable)
     # model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
