@@ -523,8 +523,8 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
 
 
     strategy = tf.distribute.MirroredStrategy()
-    with  strategy.scope():
-        model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
+    #with  strategy.scope():
+    model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
     logger.debug('compiled model with loss: {}'.format(loss))
 
 
