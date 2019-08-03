@@ -6,10 +6,11 @@ NUM_GPUS_MASTER=`nvidia-smi -L | wc -l`
 if [ -z "$NUM_GPUS_MASTER"] 
 then
 	 echo "Empty"
-	 source ~/anaconda3/bin/activate ~/anaconda3/envs/velocitypy && pip uninstall tensorflow-gpu && pip install tensorflow
+	 echo 'y' | source ~/anaconda3/bin/activate ~/anaconda3/envs/velocitypy && pip uninstall tensorflow-gpu && pip install  --ignore-installed --upgrade  tensorflow
 else
 	echo "Detected $NUM_GPUS_MASTER GPUs"
-	source ~/anaconda3/bin/activate ~/anaconda3/envs/velocitypy && pip uninstall tensorflow && pip install tensorflow-gpu
+	echo 'y' |  source ~/anaconda3/bin/activate ~/anaconda3/envs/velocitypy &&  pip uninstall tensorflow && pip install --ignore-installed --upgrade tensorflow-gpu
+
 
 
 
