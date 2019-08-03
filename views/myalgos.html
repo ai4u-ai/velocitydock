@@ -163,9 +163,10 @@
 											</div>
 											<div class="form-group">
 												<div class="col-md-6">
+
 													<ui-select ng-model="algotype.selected" theme="bootstrap" on-select="algoTypeSelected($item)">
 														<ui-select-match placeholder="Select type of algorithm">{{$select.selected}}</ui-select-match>
-														<ui-select-choices repeat="type in algotype">
+														<ui-select-choices repeat="type in algonames">
 															<div ng-bind-html="type"></div>
 
 														</ui-select-choices>
@@ -331,7 +332,7 @@
 																		</span>
 																		<ui-select ng-model="algotype.selected" theme="bootstrap" on-select="algoTypeSelected($item)" >
 																			<ui-select-match placeholder="Select type of algorithm">{{$select.selected}}</ui-select-match>
-																			<ui-select-choices repeat="type in algotype">
+																			<ui-select-choices repeat="type in algonames">
 																				<div ng-bind-html="type"></div>
 
 																			</ui-select-choices>
@@ -342,6 +343,26 @@
 																</div>
 
 															</div>
+															<!--<div class="form-group">
+																<label class="col-sm-2 control-label">Optimiser</label>
+																<div class="col-sm-10">
+																	<div class="input-group">
+																		<span class="input-group-addon">
+
+																		</span>
+																		<ui-select ng-model="selectedOptimiser" theme="bootstrap" >
+																			<ui-select-match placeholder="Select type of optimiser">{{$select.selected}}</ui-select-match>
+																			<ui-select-choices repeat="optimiser in opitmiserNames">
+																				<div ng-bind-html="optimiser"></div>
+
+																			</ui-select-choices>
+																		</ui-select>
+
+																	</div>
+
+																</div>
+
+															</div>-->
 															<div class="form-group">
 																<label class="col-sm-2 control-label">Images Height</label>
 																<div class="col-sm-10">

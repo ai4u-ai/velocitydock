@@ -5,7 +5,9 @@ import os
 import pkgutil
 import sys
 from os.path import expanduser
+from types import ModuleType
 
+import keras_applications
 from object_detection import model_hparams
 
 from object_detection import model_lib
@@ -29,7 +31,6 @@ from tensorflow.python import keras as tf_keras
 from tensorflow.python.platform import tf_logging
 import tensorflow as tf
 import logging
-
 from velociytloggers.MongoLoggingHandler import MongoLoggingHandler
 
 logger = logging.getLogger('root')
@@ -78,6 +79,69 @@ log.addHandler(mongohandler)
 from config_object_detection import config_object_det_algo
 
 
+def load_optimizers(package=keras.optimizers):
+    optimizers=[]
+    for cl in inspect.getmembers(package, inspect.isclass):
+        if keras.optimizers.Optimizer in cl[1].__bases__:
+            # print(cl[0])
+            optimizers.append(cl[0])
+    return  optimizers
+
+
+def get_algo_by_name(name,include_top,weights='imagenet'):
+    for mosulz in pkgutil.iter_modules(keras_applications.__path__, keras_applications.__name__ + '.'):
+        module = importlib.import_module(mosulz.name)
+        if hasattr(module,name):
+            class_=getattr(module,name)
+            kwargs={'backend':keras.backend,'layers' :keras.layers, 'models': keras.models, 'utils': keras.utils}
+            return class_(include_top=include_top,weights=weights,**kwargs)
+
+
+def get_functions(module):
+    fs = []
+    try:
+        for mosulz in pkgutil.iter_modules(module.__path__, module.__name__ + '.'):
+            for key in mosulz.__dict__.keys():
+                f = getattr(module, key)
+                if hasattr(f, '__call__'):
+
+                    if inspect.getfullargspec(f).args == ['include_top', 'weights', 'input_tensor', 'input_shape','pooling', 'classes']:
+                        fs.append(key)
+    except:
+     pass
+    return fs
+
+def load_algos_package(package):
+    algos  =[]
+
+    for mosulz in pkgutil.iter_modules(package.__path__, package.__name__ + '.'):
+
+        # print('---------------------------', mosulz.name)
+        try:
+            module = importlib.import_module(mosulz.name)
+            for key in module.__dict__.keys():
+
+                f = getattr(module, key)
+                if isinstance(f, ModuleType):
+
+                    algos.extend(get_functions(f))
+                if hasattr(f, '__call__'):
+
+                    if inspect.getfullargspec(f).args == ['include_top', 'weights', 'input_tensor', 'input_shape',
+                                                          'pooling', 'classes']:
+                        algos.append(key)
+
+            # print(module.__dict__.iteritems())
+        except Exception as exc:
+           pass
+
+    return algos
+
+def load_all_algo_comp_vision(packages=[keras_applications]):
+    algos=[]
+    for package in packages:
+        algos.extend(load_algos_package(package))
+    return algos
 def load_model(name,weights='imagenet',include_top=False):
     # for mosulz in pkgutil.walk_packages(keras.__path__,keras.__name__+'.'):
     #
@@ -86,16 +150,23 @@ def load_model(name,weights='imagenet',include_top=False):
     #         module=importlib.import_module(mosulz.name)
     #         class_=getattr(module,name.replace(' ',''))
     #         return class_(weights=weights, include_top=include_top)
-    for mosulz in pkgutil.walk_packages(applications.__path__, applications.__name__ + '.'):
-
-
-            module = importlib.import_module(mosulz.name)
-            if hasattr(module, name.replace(' ', '')):
-                class_ = getattr(module, name.replace(' ', ''))
-                return class_(weights=weights, include_top=include_top)
-            if hasattr(module, name.replace(' ','_').lower()):
-                class_ = getattr(module, name.replace(' ','_').lower())
-                return class_(weights=weights, include_top=include_top)
+    # for mosulz in pkgutil.walk_packages(applications.__path__, applications.__name__ + '.'):
+    #
+    #
+    #         module = importlib.import_module(mosulz.name)
+    #
+    #         if hasattr(module, name.replace(' ', '')):
+    #             class_ = getattr(module, name.replace(' ', ''))
+    #             return class_(weights=weights, include_top=include_top)
+    #         if hasattr(module, name.replace(' ','_').lower()):
+    #             class_ = getattr(module, name.replace(' ','_').lower())
+    #             return class_(weights=weights, include_top=include_top)
+    for mosulz in pkgutil.iter_modules(keras_applications.__path__, keras_applications.__name__ + '.'):
+        module = importlib.import_module(mosulz.name)
+        if hasattr(module, name):
+            class_ = getattr(module, name)
+            kwargs = {'backend': keras.backend, 'layers': keras.layers, 'models': keras.models, 'utils': keras.utils}
+            return class_(include_top=include_top, weights=weights, **kwargs)
 
 
 class LossAccuracyHistory(tf_keras.callbacks.Callback):
@@ -192,8 +263,8 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
     mongocl.update_training(training, 'status', 'configuring pipeline ')
     pipeline_config_path = config_object_det_algo(model_name=modelname, destpath=training_path,
                                                   classes=classes,num_steps=epochs,from_detection_checkpoint=include_top,train_tf_record_path=dataset_train_path,eval_tf_record_path=dataset_test_path)
-
-    config = tf.estimator.RunConfig(model_dir=model_path,log_step_count_steps=1)
+    mirrored_strategy = tf.distribute.MirroredStrategy()
+    config = tf.estimator.RunConfig( train_distribute=mirrored_strategy, eval_distribute=mirrored_strategy , model_dir=model_path,log_step_count_steps=1)
 
 
     train_and_eval_dict = model_lib.create_estimator_and_inputs(
@@ -449,8 +520,12 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     loss = 'categorical_crossentropy'
     if class_mode == 'binary':
         loss = 'binary_crossentropy'
-    model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
-    logger.debug('compiled model with loss: {}'.format(loss))
+
+
+    strategy = tf.distribute.MirroredStrategy()
+    with  strategy.scope():
+        model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
+        logger.debug('compiled model with loss: {}'.format(loss))
 
 
     mongocl.update_training(training, 'status', 'compiled model with loss: {}'.format(loss))

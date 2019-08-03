@@ -411,8 +411,56 @@ MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthServ
 
 
     $scope.selected={};
+    $scope.algotype={};
+    $scope.algotype.selected="";
+    $scope.algonames=[]
+    /*["ssd_mobilenet_v1_coco", "ssd_mobilenet_v1_0.75_depth_coco", "ssd_mobilenet_v1_quantized_coco", "ssd_mobilenet_v1_0.75_depth_quantized_coco", "ssd_mobilenet_v1_ppn_coco", "ssd_mobilenet_v1_fpn_coco", "ssd_resnet_50_fpn_coco", "ssd_mobilenet_v2_coco", "ssd_mobilenet_v2_quantized_coco", "ssdlite_mobilenet_v2_coco", "ssd_inception_v2_coco", "faster_rcnn_inception_v2_coco", "faster_rcnn_resnet50_coco", "faster_rcnn_resnet50_lowproposals_coco", "rfcn_resnet101_coco", "faster_rcnn_resnet101_coco", "faster_rcnn_resnet101_lowproposals_coco", "faster_rcnn_inception_resnet_v2_atrous_coco", "faster_rcnn_inception_resnet_v2_atrous_lowproposals_coco", "faster_rcnn_nas", "faster_rcnn_nas_lowproposals_coco", "mask_rcnn_inception_resnet_v2_atrous_coco", "mask_rcnn_inception_v2_coco", "mask_rcnn_resnet101_atrous_coco", "mask_rcnn_resnet50_atrous_coco",
+        'Inception V3',
+        'Xception',
+        'VGG16',
+        'VGG19'	,
+        'ResNet50',
+        'ResNet101','ResNet152'	,
+        'ResNet50V2'	,
+        'ResNet101V2'	,
+        'ResNet152V2'	,
+        'ResNeXt50'	,
+        'ResNeXt101'	,
+        'InceptionV3'	,
+        'InceptionResNetV2'	,
+        'MobileNet'	,
+        'MobileNetV2'	,
+        'DenseNet121'	,
+        'DenseNet169'	,
+        'DenseNet201'	,
+        'NASNetMobile'	,
+        'NASNetLarge'	]
+*/
 
 
+
+
+
+
+    ;
+    $scope.getAlgoNames=function(){
+        $http.get($scope.flask_api+"/getAlgoNames/").success(function (data) {
+
+            $scope.algonames=data.map(function(m){ return m});
+            $scope.algotype.selected=$scope.algonames[0]
+
+        });
+    };
+    $scope.getOptimiserNames=function(){
+        $http.get($scope.flask_api+"/getOptimisersNames/").success(function (data) {
+
+            $scope.opitmiserNames=data.map(function(m){ return m});
+            $scope.selectedOptimiser= $scope.opitmiserNames[0]
+
+        });
+    };
+    $scope.getOptimiserNames();
+    $scope.getAlgoNames();
     $scope.loadAlgos = function () {
         $http.get('/api/load/algos').success(function (data) {
 
@@ -449,40 +497,13 @@ MetronicApp.controller('AlgosController',function ($scope, API_ENDPOINT,AuthServ
         });
     };
 
-    $scope.algotype=["ssd_mobilenet_v1_coco", "ssd_mobilenet_v1_0.75_depth_coco", "ssd_mobilenet_v1_quantized_coco", "ssd_mobilenet_v1_0.75_depth_quantized_coco", "ssd_mobilenet_v1_ppn_coco", "ssd_mobilenet_v1_fpn_coco", "ssd_resnet_50_fpn_coco", "ssd_mobilenet_v2_coco", "ssd_mobilenet_v2_quantized_coco", "ssdlite_mobilenet_v2_coco", "ssd_inception_v2_coco", "faster_rcnn_inception_v2_coco", "faster_rcnn_resnet50_coco", "faster_rcnn_resnet50_lowproposals_coco", "rfcn_resnet101_coco", "faster_rcnn_resnet101_coco", "faster_rcnn_resnet101_lowproposals_coco", "faster_rcnn_inception_resnet_v2_atrous_coco", "faster_rcnn_inception_resnet_v2_atrous_lowproposals_coco", "faster_rcnn_nas", "faster_rcnn_nas_lowproposals_coco", "mask_rcnn_inception_resnet_v2_atrous_coco", "mask_rcnn_inception_v2_coco", "mask_rcnn_resnet101_atrous_coco", "mask_rcnn_resnet50_atrous_coco",
-        'Inception V3',
-        'Xception',
-                'VGG16',
-                'VGG19'	,
-                'ResNet50',
-                        'ResNet101','ResNet152'	,
-   'ResNet50V2'	,
-   'ResNet101V2'	,
-   'ResNet152V2'	,
-   'ResNeXt50'	,
-   'ResNeXt101'	,
-   'InceptionV3'	,
-   'InceptionResNetV2'	,
-   'MobileNet'	,
-   'MobileNetV2'	,
-   'DenseNet121'	,
-   'DenseNet169'	,
-   'DenseNet201'	,
-   'NASNetMobile'	,
-   'NASNetLarge'	]
 
 
-
-
-
-
-
-    ;
     $scope.training_modes=['Transfer Learning','From Scratch',];
     $scope.class_modes=['categorical','binary','input'];
     $scope.class_mode={}
     $scope.class_mode.selected= $scope.class_modes[0]
-    $scope.algotype.selected=$scope.algotype[0]
+
     $scope.training_mode={};
     $scope.training_mode.selected=$scope.training_modes[0]
     $scope.onSelectedMode=function(mode){
