@@ -357,7 +357,7 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     mongocl.update_training(training, 'status', 'configuring callbacks')
 
 
-    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
+    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir,update_freq=2, histogram_freq=0,  write_graph=True,write_images=True)
 
     es_callback = EarlyStopping(monitor='acc', mode='max', verbose=1, patience=50)
 
