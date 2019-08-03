@@ -264,7 +264,7 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
     pipeline_config_path = config_object_det_algo(model_name=modelname, destpath=training_path,
                                                   classes=classes,num_steps=epochs,from_detection_checkpoint=include_top,train_tf_record_path=dataset_train_path,eval_tf_record_path=dataset_test_path)
     mirrored_strategy = tf.distribute.MirroredStrategy()
-    config = tf.estimator.RunConfig( train_distribute=mirrored_strategy , model_dir=model_path,log_step_count_steps=1)
+    config = tf.estimator.RunConfig( model_dir=model_path,log_step_count_steps=1)
 
 
     train_and_eval_dict = model_lib.create_estimator_and_inputs(
