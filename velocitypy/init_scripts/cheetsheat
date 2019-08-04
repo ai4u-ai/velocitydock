@@ -1,0 +1,7 @@
+watch -d -n 0.5 nvidia-smi
+# ISSUES WITH RUNNING GPU from CRON make shure cuda libs are found
+solutions:
+1. export LD_LIBRARY_PATH=/usr/local/cuda/lib64 # in script before running conda
+2. https://github.com/tensorflow/tensorflow/issues/26182
+    conda install cudatoolkit
+    conda install cudnn
