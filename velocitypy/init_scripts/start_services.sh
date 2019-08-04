@@ -11,16 +11,16 @@ sudo kill `sudo lsof -t -i:5000`
 sudo kill `sudo lsof -t -i:50051`
 sudo kill `sudo lsof -t -i:3000`
 then
-	        echo "Empty"
+	        echo "Detected $NUM_GPUS_MASTER GPUs"
 	        conda activate velocitypy
 	        echo $CONDA_DEFAULT_ENV
-            conda run -n velocitypy python  /home/ubuntu/velocitydock/velocitypy/trainer_server.py>>  /home/ubuntu/trainer_server.log 2>&1 &
-            conda run -n velocitypy python  /home/ubuntu/velocitydock/velocitypy/downloadservice.py>> /home/ubuntu/downloadservice.log 2>&1 &
-            conda run -n velocitypy python  /home/ubuntu/velocitydock/velocitypy/converter/conversion_service/annotations_converter_service.py>> /home/ubuntu/conversionservice.log 2>&1 &
+            python  /home/ubuntu/velocitydock/velocitypy/trainer_server.py>>  /home/ubuntu/trainer_server.log 2>&1 &
+            python  /home/ubuntu/velocitydock/velocitypy/downloadservice.py>> /home/ubuntu/downloadservice.log 2>&1 &
+            python  /home/ubuntu/velocitydock/velocitypy/converter/conversion_service/annotations_converter_service.py>> /home/ubuntu/conversionservice.log 2>&1 &
 else
-	        conda activate velocitypy_gpu
-	        echo "Detected $NUM_GPUS_MASTER GPUs"
 
+	        echo "Detected $NUM_GPUS_MASTER GPUs"
+            conda activate velocitypy_gpu
 	        va=$(python testgpu.py)
 	        myvariable=$(whoami)
 	        echo "Running scripts as $myvariable"
