@@ -35,7 +35,7 @@ from velociytloggers.MongoLoggingHandler import MongoLoggingHandler
 
 logger = logging.getLogger('root')
 logger.debug('dynamic import')
-
+tf.debugging.set_log_device_placement(True)
 tf.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
 log=tf_logging.get_logger()
@@ -264,7 +264,7 @@ def train_object_det_model(training,base_path,modelname,dataset_train_path,datas
     pipeline_config_path = config_object_det_algo(model_name=modelname, destpath=training_path,
                                                   classes=classes,num_steps=epochs,from_detection_checkpoint=include_top,train_tf_record_path=dataset_train_path,eval_tf_record_path=dataset_test_path)
     mirrored_strategy = tf.distribute.MirroredStrategy()
-    config = tf.estimator.RunConfig( model_dir=model_path,log_step_count_steps=1)
+    config = tf.estimator.RunConfig( model_dir=model_path,log_step_count_steps=1, train_distribute=mirrored_strategy, eval_distribute=mirrored_strategy)
 
 
     train_and_eval_dict = model_lib.create_estimator_and_inputs(
@@ -523,8 +523,8 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
 
 
     strategy = tf.distribute.MirroredStrategy()
-    #with  strategy.scope():
-    model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
+    with  strategy.scope():
+        model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
     logger.debug('compiled model with loss: {}'.format(loss))
 
 
