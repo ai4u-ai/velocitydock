@@ -219,6 +219,9 @@ class LossAccuracyHistory(tf_keras.callbacks.Callback):
         self.mongoclient.update_training(self.training, 'accuracies', [str(i) for i in self.accuracies])
         return
 def create_model_name(training):
+
+        logger.debug('endModelName : {}'.format(training['endModel']['name']))
+        logger.debug('algoType : {}'.format(training['algoType']))
         return training['endModel']['name']+'_'+training['algoType'].replace(' ','_').lower()
 
 
@@ -332,11 +335,15 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
     mongocl.update_training(training, 'model_dir_path', model_path)
 
 
-
-
+    logger.debug('updating labels_path {}'.format(labels_path))
     mongocl.update_training(training, 'labels_path', labels_path)
 
+
+    logger.debug('creating callback function')
     loggCallback=LossAccuracyHistory(training,mongocl)
+
+
+    logger.debug('creating model name')
     checkpoint_path = os.path.join(model_path,create_model_name(training)+'_weights.h5')
 
 
@@ -522,7 +529,8 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
         loss = 'binary_crossentropy'
 
 
-    strategy = tf.distribute.MirroredStrategy()
+
+    strategy = tf.distribute.MirroredStrategy(  cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
     with  strategy.scope():
         model.compile(optimizer=Adam(), loss=loss, metrics=['accuracy'])
     logger.debug('compiled model with loss: {}'.format(loss))
