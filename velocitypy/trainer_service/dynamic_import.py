@@ -219,7 +219,7 @@ class LossAccuracyHistory(tf_keras.callbacks.Callback):
         self.mongoclient.update_training(self.training, 'accuracies', [str(i) for i in self.accuracies])
         return
 def create_model_name(training):
-
+        logger.debug(training)
         logger.debug('endModelName : {}'.format(training['endModel']['name']))
         logger.debug('algoType : {}'.format(training['algoType']))
         return training['endModel']['name']+'_'+training['algoType'].replace(' ','_').lower()
