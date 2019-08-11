@@ -81,7 +81,24 @@ var StreamFromFile = StreamFunctions.streamFromFile;
 var cluster = require('cluster');
 
 var upload = multer({storage: storage});
-//authentication
+
+homedir = require('os').homedir();
+if (!fs.existsSync(homedir+"/media/")){
+    fs.mkdirSync(homedir+"/media/");
+}
+var storage = multer.diskStorage({ //multers disk storage settings
+    destination: function (req, file, cb) {
+        cb(null, homedir+"/media/")
+    },
+    filename: function (req, file, cb) {
+
+        cb(null,  file.originalname)
+    }
+});
+
+
+
+var upload = multer({ storage: storage });
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 
@@ -776,7 +793,7 @@ apiRoutes.all('/upload', passport.authenticate('jwt', {session: false}), upload.
 
                 if (req.body.type === 'multimedia') {
                     var media = new Media();
-                    media.media = req.file;
+                    //media.media = req.file;
                     media.contentType = req.file.mimetype;
                     media.name = req.file.originalname;
                     media.originalname = req.file.originalname;
@@ -784,9 +801,12 @@ apiRoutes.all('/upload', passport.authenticate('jwt', {session: false}), upload.
                     media.writeaccess = req.body.writeaccess;
                     media.uploadedBy = user._id;
 
+
+
+                    media.filePath=homedir+"/media/"+req.file.originalname
                     media.save(function (err, media) {
                         if (err) {
-                            return res.json({success: false, msg: 'Username already exists.'});
+                            return res.json({success: false, msg: err.message});
                         }
                         var startTime = new Date(Date.now() + 500);
                         // var j = schedule.scheduleJob(startTime, function(media,db){
@@ -802,6 +822,15 @@ apiRoutes.all('/upload', passport.authenticate('jwt', {session: false}), upload.
                                 + media._id
                         });
                     });
+
+// the finish event is emitted when all data has been flushed from the stream
+
+
+// close the stream
+
+
+
+
                 }
                 if (req.body.type === 'dependency') {
                     var dependency = new Dependency();
