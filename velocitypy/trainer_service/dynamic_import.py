@@ -439,10 +439,10 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
 
     # train the model on the new data for a few epochs
 
-    if os.path.isfile(os.path.join(training_path, create_model_name(training) + '_weights.h5')):
-        model.load_weights(os.path.join(training_path, create_model_name(training) + '_weights.h5'))
-        mongocl.update_training(training, 'status', 'loaded weights from {}'.format(os.path.join(training_path, create_model_name(training) + '_weights.h5')))
-        logger.debug('loaded weights from {}'.format(os.path.join(training_path, create_model_name(training) + '_weights.h5')))
+    # if os.path.isfile(os.path.join(training_path, create_model_name(training) + '_weights.h5')):
+    #     model.load_weights(os.path.join(training_path, create_model_name(training) + '_weights.h5'))
+    #     mongocl.update_training(training, 'status', 'loaded weights from {}'.format(os.path.join(training_path, create_model_name(training) + '_weights.h5')))
+    #     logger.debug('loaded weights from {}'.format(os.path.join(training_path, create_model_name(training) + '_weights.h5')))
     if 'startFromPrevTraining' in training.keys():
         logger.debug('startFromPrevTraining')
         mongocl.update_training(training, 'status', 'startFromPrevTraining')
