@@ -1,5 +1,6 @@
 import glob
 import tarfile
+import time
 
 from pymongo import MongoClient
 import gridfs
@@ -114,7 +115,15 @@ def find_training(trainingid):
     training=db.trainings.find_and_modify(query={"_id": ObjectId(trainingid)}, update={"$set": {'status':'started'}}, upsert=False)
     #training=db.trainings.find_one({'_id':ObjectId(trainingid)})
     training['startModel']=db.algomodels.find_one({'_id':ObjectId(training['startModel'])})
-    training['endModel'] = db.algomodels.find_one({'_id': ObjectId(training['endModel'])})
+
+    endModel = db.algomodels.find_one({'_id': ObjectId(training['endModel'])})
+
+    while endModel == None:
+        print('endModel is none')
+        time.sleep(1)
+        endModel = db.algomodels.find_one({'_id': ObjectId(training['endModel'])})
+
+    training['endModel'] =endModel
     training['algo'] = db.algos.find_one({'_id': ObjectId(training['algo'])})
     training['dataSet'] = db.datasets.find_one({'_id': ObjectId(training['dataSet'])})
     return training

@@ -8,6 +8,7 @@ from os.path import expanduser
 from types import ModuleType
 
 import keras_applications
+from bson import ObjectId
 from object_detection import model_hparams
 
 from object_detection import model_lib
@@ -219,9 +220,10 @@ class LossAccuracyHistory(tf_keras.callbacks.Callback):
         self.mongoclient.update_training(self.training, 'accuracies', [str(i) for i in self.accuracies])
         return
 def create_model_name(training):
-        logger.debug(training)
-        logger.debug('endModelName : {}'.format(training['endModel']['name']))
-        logger.debug('algoType : {}'.format(training['algoType']))
+        # logger.debug(training)
+        # logger.debug('endModelName : {}'.format(training['endModel']['name']))
+        # logger.debug('algoType : {}'.format(training['algoType']))
+
         return training['endModel']['name']+'_'+training['algoType'].replace(' ','_').lower()
 
 
@@ -344,7 +346,14 @@ def train_model(training,base_path,modelname,dataset_train_path,dataset_test_pat
 
 
     logger.debug('creating model name')
-    checkpoint_path = os.path.join(model_path,create_model_name(training)+'_weights.h5')
+
+
+    model_name = create_model_name(training)
+
+
+    checkpoint_path = os.path.join(model_path,model_name+'_weights.h5')
+
+
 
 
     logger.debug('checkpoint_path {}'.format( checkpoint_path))

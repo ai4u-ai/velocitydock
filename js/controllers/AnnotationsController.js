@@ -43,11 +43,11 @@ MetronicApp.controller('AnnotationsController',function ($scope, API_ENDPOINT,Au
 
             $scope.files= data.map(function(obj){
                 var method=obj.annotatedOnMedia.filePath ==undefined ? '/stream/video/' : '/stream/video/frompath';
-                var id=obj.annotatedOnMedia.filePath == undefined ? obj.annotatedOnMedia.media.id : '';
+                var id=obj.annotatedOnMedia.filePath == undefined ? obj.annotatedOnMedia._id : '';
                 // var mediaFile={src:API_ENDPOINT.url+method+id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length)+'&'+'filePath='+media.filePath+'&'+'type='+"video/mp4",type: "video/mp4" ,title:media.name};
 
                 $scope.mediafiles.push(obj.annotatedOnMedia.name)
-                return {_id:obj._id,media_name:obj.annotatedOnMedia.name,uploadedBy:obj.uploadedBy,annotation:obj.annotation,mediaFile:{_id:obj.annotatedOnMedia.media._id,src:API_ENDPOINT.url+method+id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length)+'&'+'filePath='+obj.annotatedOnMedia.filePath+'&'+'type='+"video/mp4",type: "video/mp4"}}
+                return {_id:obj._id,media_name:obj.annotatedOnMedia.name,uploadedBy:obj.uploadedBy,annotation:obj.annotation,mediaFile:{_id:obj.annotatedOnMedia._id,src:API_ENDPOINT.url+method+id+'?'+'access_token='+AuthService.getAuthToken().substring(4,AuthService.getAuthToken().length)+'&'+'filePath='+obj.annotatedOnMedia.filePath+'&'+'type='+"video/mp4",type: "video/mp4"}}
 
             });
             $scope.select($scope.files[0]);
