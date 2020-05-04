@@ -1,16 +1,14 @@
 # README #
 
-velocity box
+velocity 
 
 ### What is this repository for? ###
 
-* Quick summary
-* 1.0.0
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+Democritize Computer vision
 
 ### How do I get set up? ###
 
-* Summary of set up
+* 
 * Configuration
 * Dependencies
 * Database configuration
